@@ -28,6 +28,28 @@ router.get('/enrolled/:userId', async (req, res) => {
 
 
 
+router.post('/unenroll', async (req, res) => {
+  const { userId, courseId } = req.body;
+
+  try {
+    const enrollment = await Enrolled.findOne({ userId, courseId });
+
+    if (!enrollment) {
+      return res.status(404).json({ message: 'Enrollment not found' });
+    }
+
+    await Enrolled.deleteOne({ _id: enrollment._id });
+
+    res.status(200).json({ message: 'Unenrolled successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
+
+
+
 router.post('/enroll', async (req, res) => {
   const { userId, courseId } = req.body;
 
