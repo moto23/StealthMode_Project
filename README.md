@@ -15,7 +15,7 @@ The Course Management Platform is a web application that allows users to registe
 
 - **User Authentication**: Users can register and log in to access the platform.
 - **Course Listing**: Users can view a list of available courses.
-- **Course Enrollment**: Users can enroll in courses and view their enrolled courses.
+- **Course Enrollment**: Users can enroll in courses and view their enrolled courses in Profile section in Navbar.
 - **Responsive Design**: The application is responsive and user-friendly.
 - **Secure and Efficient**: Implements authentication, authorization, and secure database interactions.
 
