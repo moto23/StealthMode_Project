@@ -126,7 +126,6 @@
 
 // export default Enroll;
 
-
 import React, { useEffect, useState, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
@@ -208,7 +207,8 @@ function Enroll() {
       if (response.data) {
         console.log(response.data);
         setEnrolled(false);
-        localStorage.setItem(`enrolled_${id}`, 'false');
+        localStorage.removeItem(`enrolled_${id}`);
+        setShowPopup(true); // Show popup on successful unenrollment
       } else {
         console.error('Unexpected response:', response);
       }
@@ -220,7 +220,7 @@ function Enroll() {
   const Popup = () => (
     <div className="popup">
       <div className="popup-content">
-        <h2>Hurry! Course Enrolled Successfully</h2>
+        <h2>{enrolled ? 'Hurry! Course Enrolled Successfully' : 'Unenrolled Successfully'}</h2>
         <button className="close-button" onClick={() => setShowPopup(false)}>
           Close
         </button>
@@ -245,9 +245,20 @@ function Enroll() {
           <p>{course.description}</p>
           
           <p className="enroll-now">Admission Closing Soon! ENROLL NOW!</p>
-          <button className="enroll-button" onClick={enrolled ? handleUnenroll : handleEnroll}>
-            {enrolled ? 'Unenroll' : 'Enroll Now'}
-          </button>
+          {enrolled ? (
+            <div>
+              <button className="enroll-button" disabled>
+                Enrolled
+              </button>
+              <button className="unenroll-button" onClick={handleUnenroll}>
+                Unenroll
+              </button>
+            </div>
+          ) : (
+            <button className="enroll-button" onClick={handleEnroll}>
+              Enroll Now
+            </button>
+          )}
         </div>
         <div className="enroll-image">
           <img src={course.imageUrl} alt={`Image of ${course.title}`} />
