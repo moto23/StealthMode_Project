@@ -46,7 +46,7 @@ function Enroll() {
     }
 
     try {
-      const response = await axios.post('https://sleath-backend.vercel.app/courses/enroll', {
+      const response = await axios.post('http://localhost:3000/courses/enroll', {
         userId: user._id,
         courseId: course._id,
       });
