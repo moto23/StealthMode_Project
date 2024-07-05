@@ -1,17 +1,4 @@
-// // src/context/UserContext.js
-// import React, { createContext, useState } from 'react';
 
-// export const UserContext = createContext();
-
-// export const UserProvider = ({ children }) => {
-//   const [user, setUser] = useState(null);
-
-//   return (
-//     <UserContext.Provider value={{ user, setUser }}>
-//       {children}
-//     </UserContext.Provider>
-//   );
-// };
 
 
 import React, { createContext, useState, useEffect } from 'react';
@@ -25,7 +12,7 @@ export const UserProvider = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem('authToken');
     if (token) {
-      axios.get('http://localhost:3000/api/auth/me', {
+      axios.get('https://sleath-backend.vercel.app/api/auth/me', {
         headers: { 'Authorization': `Bearer ${token}` }
       })
       .then(response => {
