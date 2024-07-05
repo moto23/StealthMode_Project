@@ -24,7 +24,7 @@ function ResetPassword() {
     }
 
     try {
-      const response = await axios.post(`http://localhost:3000/api/auth/reset-password/${token}`, {
+      const response = await axios.post(`https://sleath-backend.vercel.app/api/auth/reset-password/${token}`, {
         password: formData.password,
       });
 
