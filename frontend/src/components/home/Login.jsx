@@ -34,7 +34,7 @@ function Login() {
     }
 
     try {
-      const response = await axios.post('http://localhost:3000/api/auth/login', {
+      const response = await axios.post('https://sleath-backend.vercel.app/api/auth/login', {
         email: formData.email,
         password: formData.password,
       });
