@@ -39,27 +39,6 @@ function Enroll() {
     checkEnrollment();
   }, [id]);
 
-  // const handleEnroll = async () => {
-  //   if (!user) {
-  //     alert('Please register or log in to enroll in the course.');
-  //     return;
-  //   }
-
-  //   try {
-  //     const response = await axios.post('https://sleath-backend.vercel.app/courses/enroll', {
-  //       userId: user._id,
-  //       courseId: course._id,
-  //     });
-  //     console.log(response.data);
-  //     setEnrolled(true);
-  //     localStorage.setItem(`enrolled_${id}`, 'true');
-  //     setShowPopup(true); // Show popup on successful enrollment
-  //   } catch (error) {
-  //     console.error('Error enrolling in course:', error.response.data);
-  //   }
-  // };
-
-
 
   const handleEnroll = async () => {
   if (!user) {
