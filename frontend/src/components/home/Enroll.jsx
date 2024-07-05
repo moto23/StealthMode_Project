@@ -55,7 +55,7 @@ function Enroll() {
     
     if (response.data) {
       console.log(response.data);
-      setEnrolled(True);
+      setEnrolled(true);
       localStorage.setItem(`enrolled_${id}`, 'true');
       setShowPopup(true); // Show popup on successful enrollment
     } else {
