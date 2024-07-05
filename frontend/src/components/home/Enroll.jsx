@@ -26,17 +26,17 @@ function Enroll() {
       }
     };
 
-    const checkEnrollment = () => {
-      const localEnrolled = localStorage.getItem(`enrolled_${id}`);
-      if (localEnrolled === 'true') {
-        setEnrolled(true);
-      } else {
-        setEnrolled(false);
-      }
-    };
+    // const checkEnrollment = () => {
+    //   const localEnrolled = localStorage.getItem(`enrolled_${id}`);
+    //   if (localEnrolled === 'true') {
+    //     setEnrolled(true);
+    //   } else {
+    //     setEnrolled(false);
+    //   }
+    // };
 
     fetchCourse();
-    checkEnrollment();
+    // checkEnrollment();
   }, [id]);
 
   const handleEnroll = async () => {
