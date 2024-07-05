@@ -32,13 +32,11 @@ router.post('/unenroll', async (req, res) => {
   const { userId, courseId } = req.body;
 
   try {
-    const enrollment = await Enrolled.findOne({ userId, courseId });
+    const enrollment = await Enrolled.findOneAndDelete({ userId, courseId });
 
     if (!enrollment) {
       return res.status(404).json({ message: 'Enrollment not found' });
     }
-
-    await Enrolled.deleteOne({ _id: enrollment._id });
 
     res.status(200).json({ message: 'Unenrolled successfully' });
   } catch (error) {
