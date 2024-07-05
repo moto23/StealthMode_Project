@@ -12,7 +12,7 @@ function ForgotPassword() {
     e.preventDefault();
 
     try {
-      const response = await axios.post('http://localhost:3000/api/auth/forgot-password', { email });
+      const response = await axios.post('https://sleath-backend.vercel.app/api/auth/forgot-password', { email });
       setMessage(response.data.message);
       setError('');
     } catch (error) {
