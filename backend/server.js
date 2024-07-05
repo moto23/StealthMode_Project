@@ -28,16 +28,15 @@ app.use(cors(
 
 // Connect to MongoDB
 connectDB();
+app.get("/", (req, res) => { 
+   res.json("Hello");
 
+})
 
 app.use('/api/auth', authRouter);
 app.use('/api/courses', coursesRouter);
 
 
-app.get("/", (req, res) => { 
-   res.json("Hello");
-
-})
 
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, '../frontend/build')));
