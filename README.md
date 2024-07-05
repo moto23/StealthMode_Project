@@ -4,11 +4,11 @@
 
 The Course Management Platform is a web application that allows users to register, log in, view a list of courses, and enroll in courses. The application uses React.js for the frontend, Node.js with Express for the backend, and MongoDB for the database. The backend is hosted on AWS EC2 as well as Vercel.
 
-![Dashboard Logo](S1.png)
+![Dashboard Logo](M1.png)
 
-![Dashboard Logo](S2.png)
+![Dashboard Logo](M2.png)
 
-![Dashboard Logo](S3.png)
+![Dashboard Logo](M3.png)
 
 
 ## Features
