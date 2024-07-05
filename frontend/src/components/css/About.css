@@ -1,0 +1,67 @@
+.about {
+  background-color: #f9f9f9;
+  color: #333;
+  text-align: center;
+  padding: 90px 20px; /* Adjust padding for the overall section */
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1); /* Add box shadow to the section */
+}
+
+.about-container {
+  max-width: 1100px; /* Increase max-width to enlarge the container */
+  height: 450px; /* Increase height to make the container taller */
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center content horizontally */
+}
+
+.about-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-around; /* Ensure content is spaced between image and text */
+  gap: 80px; /* Adjust gap between image and text */
+  width: 100%;
+}
+
+.about-image {
+  flex: 1; /* Adjust flex to increase the size of the image container */
+}
+
+.about-image img {
+  max-width: 100%;
+  height: 100%; /* Use height instead of fixed height to scale with the container */
+  object-fit: cover; /* Maintain aspect ratio and cover container */
+  border-radius: 10px; /* Add rounded corners to the image */
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2); /* Add box shadow to the image */
+}
+
+.about-text {
+  flex: 1.5;
+  text-align: left; /* Align text to the left */
+  padding: 20px; /* Add padding to the text container */
+}
+
+h2 {
+  margin-bottom: 40px; /* Add margin bottom to separate heading from text */
+  margin-right: 90px;
+  text-align: center;
+}
+
+p {
+  font-size: 18px; /* Increase font size for better readability */
+}
+
+.bt {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 12px 24px; /* Increase padding for larger button */
+  background-color: #4b0082; /* Set button background color */
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease; /* Add transition for smoother hover effect */
+}
+
+.bt:hover {
+  background-color: #6a0dad; /* Darken hover background color */
+}

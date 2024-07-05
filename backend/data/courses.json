@@ -1,0 +1,199 @@
+[
+  {
+      "title": "Data Science With Generative AI Course",
+      "description": "Job Assistance | Ticket to fast-tracked career growth in Data Science",
+      "registrationDate": "2024-06-29T00:00:00.000Z",
+      "category": "Paid",
+      "imageUrl": "https://cdn.analyticsvidhya.com/wp-content/uploads/2024/03/Generative-AI-course.jpg",
+      "label": "Bestseller",
+      "featureImage":"https://pat.eu/wp-content/uploads/2023/05/Enterprise-Service-Management.png",
+      "features": [
+          {
+              "title": "Live Classes",
+              "description": "One-on-One Interactive Learning."
+          },
+          {
+              "title": "Industry Ready Curriculum",
+              "description": "Updated industry integrated modules"
+          },
+          {
+              "title": "Industry Mentors",
+              "description": "Experienced AI Professionals"
+          },
+          {
+              "title": "Soft Skills Training",
+              "description": "Holistic Personality Development Classes"
+          },
+          {
+              "title": "Interview Preparation",
+              "description": "Mock Interviews & Resume Building Activities"
+          }
+      ]
+  },
+  {
+      "title": "Post Graduate Certification in Banking, Financial Services & Insurance",
+      "description": "Program for individuals who wish to kickstart their career in the Private Banking Industry.",
+      "registrationDate": "2024-07-01T00:00:00.000Z",
+      "category": "Paid",
+      "imageUrl": "https://img.freepik.com/premium-photo/group-professional-asian-businesspeople-discussing-their-business-financial-strategy_67155-28979.jpg",
+      "label": "Bestseller",
+      "featureImage":"https://pat.eu/wp-content/uploads/2023/05/Enterprise-Service-Management.png",
+      "features": [
+          {
+              "title": "Live Classes",
+              "description": "One-on-One Interactive Learning."
+          },
+          {
+              "title": "Industry Ready Curriculum",
+              "description": "BFSI industry integrated modules"
+          },
+          {
+              "title": "Industry Mentors",
+              "description": "Experienced Ex-Banking Professionals"
+          },
+          {
+              "title": "Soft Skills Training",
+              "description": "Holistic Personality Development Classes"
+          },
+          {
+              "title": "Interview Preparation",
+              "description": "Mock Interviews & Resume Building Activities"
+          }
+      ]
+  },
+  {
+      "title": "Full Stack Development Course",
+      "description": "Job Assistance | Gain Full Stack Development Expertise",
+      "registrationDate": "2024-06-29T00:00:00.000Z",
+      "category": "Paid",
+      "imageUrl": "https://oilab.in/public/img/courses/full-stack-web-developer.jpg",
+      "label": "Popular",
+      "featureImage":"https://pat.eu/wp-content/uploads/2023/05/Enterprise-Service-Management.png",
+      "features": [
+          {
+              "title": "Live Classes",
+              "description": "One-on-One Interactive Learning."
+          },
+          {
+              "title": "Industry Ready Curriculum",
+              "description": "Full-Stack integrated modules"
+          },
+          {
+              "title": "Industry Mentors",
+              "description": "Experienced Ex-Amazon,Google Professionals"
+          },
+          {
+              "title": "Soft Skills Training",
+              "description": "Holistic Personality Development Classes"
+          },
+          {
+              "title": "Interview Preparation",
+              "description": "Mock Interviews & Resume Building Activities"
+          }
+      ]
+  },
+
+
+  {
+    "title": "Product Management with Gen AI",
+    "description": "Master Product Management skills with the power of Generative AI. Get in-depth training in agile methodologies, market analysis.",
+    "registrationDate": "2024-07-29T00:00:00.000Z",
+    "category": "Paid",
+    "imageUrl": "https://www.productleadership.com/wp-content/uploads/2024/06/product-management-powered-by-gen-ai.jpg",
+    "label": "Bestseller",
+    "featureImage":"https://pat.eu/wp-content/uploads/2023/05/Enterprise-Service-Management.png",
+    "features": [
+        {
+            "title": "Live Classes",
+            "description": "One-on-One Interactive Learning."
+        },
+        {
+            "title": "Industry Ready Curriculum",
+            "description": "Updated industry integrated modules"
+        },
+        {
+            "title": "Industry Mentors",
+            "description": "Expert Mentorship: Train with Product Leader"
+        },
+        {
+            "title": "Capstone Project",
+            "description": "Apply your skills through capstone projects."
+        },
+        {
+            "title": "Interview Preparation",
+            "description": "Mock Interviews & Resume Building Activities"
+        }
+    ]
+},
+
+
+
+{
+    "title": "C++ with DSA",
+    "description": "Gain Expertise in C++ Syntax and DSA Principles for robust coding skills",
+    "registrationDate": "2024-06-26T00:00:00.000Z",
+    "category": "Paid",
+    "imageUrl": "https://www.shutterstock.com/image-illustration/c-code-on-dark-background-600nw-1896170293.jpg",
+    "label": "Bestseller",
+    "featureImage":"https://pat.eu/wp-content/uploads/2023/05/Enterprise-Service-Management.png",
+    "features": [
+        {
+            "title": "Live Classes",
+            "description": "One-on-One Interactive Learning."
+        },
+        {
+            "title": "Industry Ready Curriculum",
+            "description": "Updated industry integrated modules"
+        },
+        {
+            "title": "Project Portfolio",
+            "description": "Build job-ready profile with dynamic project portfolio"
+        },
+        {
+            "title": "Capstone Project",
+            "description": "Apply your skills through capstone projects."
+        },
+        {
+            "title": "Interview Preparation",
+            "description": "Mock Interviews & Resume Building Activities"
+        }
+    ]
+},
+
+
+{
+    "title": "DevOps and Cloud Computing Course",
+    "description": "Master the art of streamlining software development with out DevOps Course",
+    "registrationDate": "2024-08-27T00:00:00.000Z",
+    "category": "Paid",
+    "imageUrl": "https://www.whizlabs.com/blog/wp-content/uploads/2020/02/DevOps_and_Cloud.png",
+    "label": "Bestseller",
+    "featureImage":"https://pat.eu/wp-content/uploads/2023/05/Enterprise-Service-Management.png",
+    "features": [
+        {
+            "title": "Live Classes",
+            "description": "One-on-One Interactive Learning."
+        },
+        {
+            "title": "Industry Ready Curriculum",
+            "description": "Updated industry integrated modules"
+        },
+        {
+            "title": "Project Portfolio",
+            "description": "Build job-ready profile with dynamic project portfolio"
+        },
+        {
+            "title": "Capstone Project",
+            "description": "Apply your skills through capstone projects."
+        },
+        {
+            "title": "Career Growth",
+            "description": "Get opportunities to elevate and fast track your career"
+        }
+    ]
+}
+
+
+
+
+]

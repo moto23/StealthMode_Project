@@ -1,0 +1,210 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+.register-container {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(135deg, #3b4cca, #4b0082);
+  padding: 40px;
+}
+
+.register-form {
+  background: white;
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  max-width: 400px;
+  width: 100%;
+  margin: 40px 20px;
+  flex: 1;
+}
+
+.register-form h2 {
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: black;
+}
+
+.register-form p {
+  margin-top: 20px;
+  color: black;
+}
+
+.register-form .form-group {
+  margin-bottom: 20px;
+  color: black;
+}
+
+.register-form .form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.register-form .form-group input[type="text"],
+.register-form .form-group input[type="email"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.password-input-container {
+  position: relative;
+  width: 100%;
+}
+
+.password-input-container input {
+  width: calc(100% - 5px); /* Adjusted for the icon width */
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.password-toggle-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #4b0082;
+}
+
+.register-form .sign-in-link {
+  display: block;
+  color: #4b0082;
+  text-decoration: none;
+  margin-top: -19px;
+  text-align: right;
+  margin-right: 140px;
+}
+
+.register-form .sign-in-link:hover {
+  text-decoration: underline;
+}
+
+.register-form .register-button {
+  width: 100%;
+  padding: 10px;
+  background-color: #4b0082;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.register-form .register-button:hover {
+  background-color: #6a0dad;
+}
+
+.register-form .or-signup {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.register-form .social-signup {
+  display: flex;
+  justify-content: space-between;
+}
+
+.register-form .social-signup .google-button,
+.register-form .social-signup .facebook-button {
+  flex: 1;
+  padding: 10px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  text-align: center;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.register-form .social-signup .google-button {
+  margin-right: 10px;
+}
+
+.register-form .social-signup .facebook-button {
+  margin-left: 10px;
+}
+
+.register-form .social-signup .google-button:hover,
+.register-form .social-signup .facebook-button:hover {
+  border-color: #4b0082;
+}
+
+.register-image {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.register-image img {
+  max-height: 70vh;
+  width: auto;
+  border-radius: 8px;
+}
+
+.error {
+  color: red;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+.success {
+  color: green;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+@media (max-width: 768px) {
+  .register-container {
+    flex-direction: column;
+    justify-content: center;
+    padding: 10px;
+  }
+
+  .register-image {
+    order: 2;
+    margin-top: 20px;
+  }
+
+  .register-form {
+    margin: 20px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .register-form {
+    padding: 20px;
+  }
+
+  .register-form h2 {
+    font-size: 20px;
+  }
+
+  .register-form .form-group input[type="text"],
+  .register-form .form-group input[type="email"],
+  .register-form .form-group input[type="password"] {
+    padding: 8px;
+  }
+
+  .register-form .register-button {
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  .register-form .sign-in-link {
+    font-size: 14px;
+    margin-top: -19px;
+    text-align: right;
+    margin-right: 170px;
+  }
+}

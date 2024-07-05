@@ -1,0 +1,18 @@
+
+  .footer{
+    width: 100vw;
+    height: 4rem;
+    background: linear-gradient(135deg, #3b4cca, #4b0082);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 300;
+    font-size: small;
+  }
+  
+  .footer-container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  

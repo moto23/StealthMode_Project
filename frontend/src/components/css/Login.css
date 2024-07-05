@@ -1,0 +1,203 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+.login-container {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(135deg, #3b4cca, #4b0082);
+  padding: 20px;
+}
+
+.login-form {
+  background: white;
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  max-width: 400px;
+  width: 100%;
+  margin: 40px 20px;
+  flex: 1;
+}
+
+.login-form h2 {
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: black;
+}
+
+.login-form p {
+  margin-bottom: 20px;
+  color: black;
+}
+
+.login-form .form-group {
+  margin-bottom: 20px;
+  color: black;
+}
+
+.login-form .form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.login-form .form-group input[type="email"],
+.login-form .form-group .password-input-container input {
+  width: 93%;
+  padding: 12px; /* Increased padding */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px; /* Increased font size */
+}
+
+.login-form .form-group .password-input-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.login-form .form-group .password-input-container input {
+  flex: 1;
+  padding-right: 40px; /* Adjusted padding for icon */
+}
+
+.login-form .form-group .password-toggle-icon {
+  position: absolute;
+  right: 10px;
+  cursor: pointer;
+  color: #4b0082;
+}
+
+.login-form .forgot-password {
+  display: block;
+  margin-top: 5px;
+  text-align: center;
+  color: #4b0082;
+  text-decoration: none;
+}
+
+.login-form .forgot-password:hover {
+  text-decoration: underline;
+}
+
+.login-form .login-button {
+  width: 100%;
+  padding: 10px;
+  background-color: #4b0082;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.login-form .login-button:hover {
+  background-color: #6a0dad;
+}
+
+.login-form .or-login {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.login-form .social-login {
+  display: flex;
+  justify-content: space-between;
+}
+
+.login-form .social-login .google-button,
+.login-form .social-login .facebook-button {
+  flex: 1;
+  padding: 10px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  text-align: center;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.login-form .social-login .google-button {
+  margin-right: 10px;
+}
+
+.login-form .social-login .facebook-button {
+  margin-left: 10px;
+}
+
+.login-form .social-login .google-button:hover,
+.login-form .social-login .facebook-button:hover {
+  border-color: #4b0082;
+}
+
+.login-image {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.login-image img {
+  max-height: 70vh; /* Adjust this value as needed */
+  width: auto;
+  border-radius: 8px;
+}
+
+.error {
+  color: red;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+.success {
+  color: green;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+@media (max-width: 768px) {
+  .login-container {
+    flex-direction: column;
+    justify-content: center;
+    padding: 10px;
+  }
+
+  .login-image {
+    order: 2;
+    margin-top: 20px;
+  }
+
+  .login-form {
+    margin: 20px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-form {
+    padding: 20px;
+  }
+
+  .login-form h2 {
+    font-size: 20px;
+  }
+
+  .login-form .form-group input[type="email"],
+  .login-form .form-group .password-input-container input {
+    padding: 10px; /* Adjust padding for smaller screens */
+  }
+
+  .login-form .login-button {
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  .login-form .forgot-password {
+    font-size: 14px;
+  }
+}

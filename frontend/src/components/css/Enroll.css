@@ -1,0 +1,265 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  /* background-color: #1e1e1e; */
+  color: #fff;
+}
+
+.enroll-container {
+  padding: 60px;
+  background-color: #1e1e1e;
+}
+
+.breadcrumb {
+  font-size: 14px;
+  margin-bottom: 20px;
+  background-color: #1e1e1e;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.breadcrumb a {
+  color: whitesmoke;
+  text-decoration: none;
+}
+
+.breadcrumb a:hover {
+  text-decoration: underline;
+}
+
+.enroll-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.enroll-details {
+  flex: 1;
+  margin-bottom: 20px;
+  text-align: left; /* Align text to the left */
+}
+
+.label {
+  background-color: #4caf50;
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 5px;
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+.enroll-details h1 {
+  font-size: 36px;
+  margin-bottom: 20px;
+  color: #fff;
+  text-align: left;
+}
+
+.enroll-details p {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.enroll-now {
+  font-size: 20px;
+  color: #ffeb3b;
+  font-weight: bold;
+}
+
+.enroll-image {
+  margin-top: 20px; /* Move the image down */
+  text-align: center; /* Center the image */
+}
+
+.enroll-image img {
+  max-width: 100%;
+  border-radius: 10px;
+}
+
+.features-section {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.features-left {
+  flex: 1;
+  text-align: center;
+}
+
+.features-left h2 {
+  font-size: 28px;
+  margin-bottom: 20px;
+  color: #ffeb3b;
+}
+
+.features-right {
+  max-width: 800px; /* Adjust max-width as needed */
+  margin-bottom: 90px;
+  align-items: end;
+}
+
+.feature {
+  margin-bottom: 15px;
+  display: flex; /* Align items horizontally */
+  align-items: center; /* Align items vertically */
+  justify-content: center;
+  text-align: center;
+}
+
+.feature .green-tick-icon {
+  width: 20px; /* Adjust width as needed */
+  margin-right: 10px; /* Add margin to separate from text */
+}
+
+.feature h3 {
+  font-size: 20px;
+  margin-bottom: 5px;
+  color: #4caf50;
+}
+
+.feature p {
+  font-size: 16px;
+  color: #fff;
+}
+
+.enroll-button {
+  background-color: #4b0082;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 18px;
+  transition: background-color 0.3s;
+}
+
+.enroll-button:hover {
+  background-color: #6a0dad;
+}
+
+.enroll-button:disabled {
+  background-color: #28a745;
+  cursor: not-allowed;
+}
+
+@media (min-width: 768px) {
+  .enroll-content {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .enroll-details {
+    margin-right: 20px;
+    text-align: left;
+  }
+
+  .features-section {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .features-left {
+    text-align: left;
+    width:100%;
+  }
+
+  .features-left h2 {
+    text-align: left;
+    width:100%;
+    margin-right:130px;
+  }
+
+  .features-right {
+    margin-left: 70px; /* Adjust margin as needed */
+    margin-top: 180px;
+  }
+
+  .feature {
+    justify-content: flex-start;
+    text-align: left;
+  }
+}
+
+@media (max-width: 480px) {
+  .enroll-container {
+    padding: 30px;
+  }
+
+  .enroll-details h1 {
+    font-size: 28px;
+  }
+
+  .enroll-details p {
+    font-size: 16px;
+  }
+
+  .features-section {
+    margin-top: 20px;
+  }
+
+  .features-left h2 {
+    font-size: 24px;
+  }
+
+  .feature h3 {
+    font-size: 18px;
+  }
+
+  .feature p {
+    font-size: 14px;
+  }
+
+  .enroll-button {
+    padding: 8px 16px;
+    font-size: 16px;
+  }
+}
+
+
+
+.popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.popup-content {
+  background-color: #fff;
+  padding: 20px;
+  text-align: center;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.popup-content h2 {
+  color: #4b0082;
+  margin-bottom: 20px;
+}
+
+.close-button {
+  background-color: #4b0082;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+.close-button:hover {
+  background-color: #6a0dad;
+}

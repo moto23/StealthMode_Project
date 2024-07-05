@@ -1,0 +1,54 @@
+.profile-page {
+  background: linear-gradient(135deg, #3b4cca, #4b0082); /* Background color for profile page */
+  padding: 20px;
+}
+
+.profile-container {
+  max-width: 800px;
+  margin: 0 auto;
+  background: white;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  margin-top: 130px;
+  padding: 20px;
+}
+
+.profile-details {
+  margin-bottom: 20px;
+  color: black;
+}
+
+.profile-details p {
+  font-size: 18px;
+  line-height: 1.6;
+  color: black;
+}
+
+h1 {
+  text-align: center;
+  color: #333;
+}
+
+h2 {
+  font-size: 18px;
+  margin-left: 90px;
+  color: black;
+  align-items: center;
+}
+
+.course-list {
+  list-style: none;
+  padding: 0;
+  color: black;
+  text-decoration: none;
+}
+
+.course-list li {
+  background-color: #fff;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  color: black;
+  text-decoration: none;
+}
