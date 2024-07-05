@@ -26,12 +26,12 @@ function Enroll() {
       }
     };
 
-    const checkEnrollment = () => {
-      const localEnrolled = localStorage.getItem(`enrolled_${id}`);
+  const checkEnrollment = () => {
+      const localEnrolled = localStorage.getItem(enrolled_${id});
       if (localEnrolled === 'true') {
-        setEnrolled(false);
-      } else {
         setEnrolled(true);
+      } else {
+        setEnrolled(false);
       }
     };
 
