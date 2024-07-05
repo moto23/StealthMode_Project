@@ -28,7 +28,7 @@ function Enroll() {
 
     const checkEnrollment = () => {
       const localEnrolled = localStorage.getItem(`enrolled_${id}`);
-      if (localEnrolled === 'true') {
+      if (localEnrolled === 'false') {
         setEnrolled(true);
       } else {
         setEnrolled(false);
@@ -39,6 +39,7 @@ function Enroll() {
     checkEnrollment();
   }, [id]);
 
+  
 
   const handleEnroll = async () => {
   if (!user) {
