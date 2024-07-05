@@ -12,7 +12,7 @@ function Profile() {
     const fetchEnrolledCourses = async () => {
       try {
         if (user) {
-          const response = await axios.get(`http://localhost:3000/api/courses/enrolled/${user._id}`);
+          const response = await axios.get(`https://sleath-backend.vercel.app/api/courses/enrolled/${user._id}`);
           console.log('Fetched Enrolled Courses:', response.data); // Add this line to log the fetched courses
           setEnrolledCourses(response.data);
         }
