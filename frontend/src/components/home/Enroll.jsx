@@ -39,26 +39,55 @@ function Enroll() {
     checkEnrollment();
   }, [id]);
 
-  const handleEnroll = async () => {
-    if (!user) {
-      alert('Please register or log in to enroll in the course.');
-      return;
-    }
+  // const handleEnroll = async () => {
+  //   if (!user) {
+  //     alert('Please register or log in to enroll in the course.');
+  //     return;
+  //   }
 
-    try {
-      const response = await axios.post('https://sleath-backend.vercel.app/courses/enroll', {
-        userId: user._id,
-        courseId: course._id,
-      });
+  //   try {
+  //     const response = await axios.post('https://sleath-backend.vercel.app/courses/enroll', {
+  //       userId: user._id,
+  //       courseId: course._id,
+  //     });
+  //     console.log(response.data);
+  //     setEnrolled(true);
+  //     localStorage.setItem(`enrolled_${id}`, 'true');
+  //     setShowPopup(true); // Show popup on successful enrollment
+  //   } catch (error) {
+  //     console.error('Error enrolling in course:', error.response.data);
+  //   }
+  // };
+
+
+
+  const handleEnroll = async () => {
+  if (!user) {
+    alert('Please register or log in to enroll in the course.');
+    return;
+  }
+
+  try {
+    const response = await axios.post('https://sleath-backend.vercel.app/api/courses/enroll', {
+      userId: user._id,
+      courseId: course._id,
+    });
+    
+    if (response.data) {
       console.log(response.data);
       setEnrolled(true);
       localStorage.setItem(`enrolled_${id}`, 'true');
       setShowPopup(true); // Show popup on successful enrollment
-    } catch (error) {
-      console.error('Error enrolling in course:', error.response.data);
+    } else {
+      console.error('Unexpected response:', response);
     }
-  };
+  } catch (error) {
+    console.error('Error enrolling in course:', error);
+  }
+};
 
+
+  
   const Popup = () => (
     <div className="popup">
       <div className="popup-content">
