@@ -21,7 +21,7 @@ function Navbar() {
   return (
     <nav className="navbar">
       <div className="navbar-container">
-        <Link to="/" className="navbar-logo">SleathMode</Link>
+        <Link to="/" className="navbar-logo">StealthMode</Link>
         <div className="menu-icon" onClick={toggleSidebar}>
           {sidebar ? <FaTimes /> : <FaBars />}
         </div>
