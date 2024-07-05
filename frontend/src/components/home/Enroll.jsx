@@ -18,7 +18,7 @@ function Enroll() {
   useEffect(() => {
     const fetchCourse = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/courses/${id}`);
+        const response = await axios.get(`https://sleath-backend.vercel.app/api/courses/${id}`);
         setCourse(response.data);
         setFeatureImage(response.data.featureImage);
       } catch (error) {
@@ -46,7 +46,7 @@ function Enroll() {
     }
 
     try {
-      const response = await axios.post('http://localhost:3000/api/courses/enroll', {
+      const response = await axios.post('https://sleath-backend.vercel.app/courses/enroll', {
         userId: user._id,
         courseId: course._id,
       });
