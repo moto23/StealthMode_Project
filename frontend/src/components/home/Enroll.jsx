@@ -28,7 +28,7 @@ function Enroll() {
 
  const checkEnrollment = () => {
       const localEnrolled = localStorage.getItem(`enrolled_${id}`);
-      if (localEnrolled === 'falsE') {
+      if (localEnrolled === 'false') {
         setEnrolled(true);
       } else {
         setEnrolled(false);
