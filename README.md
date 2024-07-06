@@ -1,4 +1,4 @@
-# SleathMode Course Mangament
+# StealthMode Course Mangament
 
 ## Overview
 
