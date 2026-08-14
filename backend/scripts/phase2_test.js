@@ -52,6 +52,14 @@ const check = (name, cond) => {
   await User.updateOne({ email: 'admin@example.com' }, { role: 'admin' });
   const auth = (t) => ({ Authorization: `Bearer ${t}` });
 
+  // A FREE course (price 0) for enrollment tests — paid courses now require
+  // payment (Phase 3), so free enrollment only applies to price === 0 courses.
+  const freeRes = await request(app)
+    .post('/api/courses')
+    .set(auth(admin.token))
+    .send({ title: 'Phase 2 Free Course', price: 0 });
+  const freeCourseId = freeRes.body.data._id;
+
   console.log('\n[1] Admin-only course creation (RBAC via protect + requireRole)');
   let r = await request(app).post('/api/courses').send({ title: 'X' });
   check('create without token -> 401', r.status === 401);
@@ -92,14 +100,14 @@ const check = (name, cond) => {
   r = await request(app).put(`/api/courses/${courseId}`).set(auth(admin.token)).send({ price: 1499 });
   check('update as admin -> 200', r.status === 200 && r.body.data.price === 1499);
 
-  console.log('\n[6] Protected enrollment; userId derived from JWT (never body)');
-  r = await request(app).post('/api/courses/enroll').send({ courseId });
+  console.log('\n[6] Protected enrollment (free course); userId derived from JWT (never body)');
+  r = await request(app).post('/api/courses/enroll').send({ courseId: freeCourseId });
   check('enroll without token -> 401', r.status === 401);
   // Body carries a DIFFERENT userId to prove it is ignored.
-  r = await request(app).post('/api/courses/enroll').set(auth(student.token)).send({ courseId, userId: other.id });
+  r = await request(app).post('/api/courses/enroll').set(auth(student.token)).send({ courseId: freeCourseId, userId: other.id });
   check('enroll as student -> 201', r.status === 201);
   check('enrollment userId comes from JWT, not body', String(r.body.data.userId) === String(student.id));
-  r = await request(app).post('/api/courses/enroll').set(auth(student.token)).send({ courseId });
+  r = await request(app).post('/api/courses/enroll').set(auth(student.token)).send({ courseId: freeCourseId });
   check('duplicate enroll -> 409 (DB unique index)', r.status === 409);
   r = await request(app).post('/api/courses/enroll').set(auth(student.token)).send({ courseId: 'bad' });
   check('enroll invalid courseId -> 400', r.status === 400);
@@ -109,7 +117,7 @@ const check = (name, cond) => {
   console.log('\n[7] Enrollment read: own-data only for students');
   r = await request(app).get(`/api/courses/enrolled/${student.id}`).set(auth(student.token));
   check('student reads OWN enrollments -> 200 raw array', r.status === 200 && Array.isArray(r.body) && r.body.length === 1);
-  check('enrolled list is populated (courseId.title present)', r.body[0].courseId && r.body[0].courseId.title === 'Phase 2 Test Course');
+  check('enrolled list is populated (courseId.title present)', r.body[0].courseId && r.body[0].courseId.title === 'Phase 2 Free Course');
   r = await request(app).get(`/api/courses/enrolled/${student.id}`).set(auth(other.token));
   check('student reads ANOTHER user enrollments -> 403', r.status === 403);
   r = await request(app).get(`/api/courses/enrolled/${student.id}`).set(auth(admin.token));

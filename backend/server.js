@@ -5,6 +5,7 @@ require('dotenv').config();
 const connectDB = require('./config/db');
 const authRouter = require('./routes/auth');
 const coursesRouter = require('./routes/courses');
+const paymentsRouter = require('./routes/payments');
 
 const app = express();
 
@@ -47,6 +48,7 @@ const health = (req, res) => {
       jwtConfigured: Boolean(process.env.JWT_SECRET),
       resendConfigured: Boolean(process.env.RESEND_API_KEY),
       resendFromConfigured: Boolean(process.env.RESEND_FROM_EMAIL),
+      razorpayConfigured: Boolean(process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET),
       frontendUrl: process.env.FRONTEND_URL || null,
       otpExpiryMinutes: process.env.OTP_EXPIRY_MINUTES || null,
     },
@@ -70,6 +72,7 @@ const ensureDb = async (req, res, next) => {
 // ---- Routes ----
 app.use('/api/auth', ensureDb, authRouter);
 app.use('/api/courses', ensureDb, coursesRouter);
+app.use('/api/payments', ensureDb, paymentsRouter);
 
 // ---- 404 for unknown API routes ----
 app.use((req, res) => {
