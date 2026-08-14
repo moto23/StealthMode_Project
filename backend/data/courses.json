@@ -1,199 +1,349 @@
 [
   {
-      "title": "Data Science With Generative AI Course",
-      "description": "Job Assistance | Ticket to fast-tracked career growth in Data Science",
-      "registrationDate": "2024-06-29T00:00:00.000Z",
-      "category": "Paid",
-      "imageUrl": "https://cdn.analyticsvidhya.com/wp-content/uploads/2024/03/Generative-AI-course.jpg",
-      "label": "Bestseller",
-      "featureImage":"https://pat.eu/wp-content/uploads/2023/05/Enterprise-Service-Management.png",
-      "features": [
-          {
-              "title": "Live Classes",
-              "description": "One-on-One Interactive Learning."
-          },
-          {
-              "title": "Industry Ready Curriculum",
-              "description": "Updated industry integrated modules"
-          },
-          {
-              "title": "Industry Mentors",
-              "description": "Experienced AI Professionals"
-          },
-          {
-              "title": "Soft Skills Training",
-              "description": "Holistic Personality Development Classes"
-          },
-          {
-              "title": "Interview Preparation",
-              "description": "Mock Interviews & Resume Building Activities"
-          }
-      ]
+    "slug": "modern-react-architecture",
+    "title": "Modern React Architecture & Frontend Engineering",
+    "description": "Design maintainable React applications with component patterns, hooks, state management, and performance-first rendering used in production frontends.",
+    "category": "React",
+    "level": "Advanced",
+    "duration": "46 hours",
+    "instructor": "Aarav Mehta",
+    "price": 2999,
+    "imageUrl": "https://picsum.photos/seed/modern-react-architecture/800/450",
+    "featureImage": "https://picsum.photos/seed/modern-react-architecture-feature/1200/600",
+    "label": "Bestseller",
+    "registrationDate": "2026-01-15T00:00:00.000Z",
+    "features": [
+      { "title": "Component Architecture", "description": "Composable, reusable UI patterns" },
+      { "title": "Hands-on Projects", "description": "Build a production-grade dashboard" },
+      { "title": "Performance Tuning", "description": "Memoization, code-splitting, profiling" },
+      { "title": "Certificate of Completion", "description": "Shareable verified certificate" }
+    ]
   },
   {
-      "title": "Post Graduate Certification in Banking, Financial Services & Insurance",
-      "description": "Program for individuals who wish to kickstart their career in the Private Banking Industry.",
-      "registrationDate": "2024-07-01T00:00:00.000Z",
-      "category": "Paid",
-      "imageUrl": "https://img.freepik.com/premium-photo/group-professional-asian-businesspeople-discussing-their-business-financial-strategy_67155-28979.jpg",
-      "label": "Bestseller",
-      "featureImage":"https://pat.eu/wp-content/uploads/2023/05/Enterprise-Service-Management.png",
-      "features": [
-          {
-              "title": "Live Classes",
-              "description": "One-on-One Interactive Learning."
-          },
-          {
-              "title": "Industry Ready Curriculum",
-              "description": "BFSI industry integrated modules"
-          },
-          {
-              "title": "Industry Mentors",
-              "description": "Experienced Ex-Banking Professionals"
-          },
-          {
-              "title": "Soft Skills Training",
-              "description": "Holistic Personality Development Classes"
-          },
-          {
-              "title": "Interview Preparation",
-              "description": "Mock Interviews & Resume Building Activities"
-          }
-      ]
+    "slug": "production-nodejs-api-development",
+    "title": "Production Node.js API Development",
+    "description": "Build secure, scalable REST APIs with Express, layered architecture, authentication, validation, and clean error handling ready for real deployments.",
+    "category": "Node.js",
+    "level": "Intermediate",
+    "duration": "38 hours",
+    "instructor": "Priya Nair",
+    "price": 2499,
+    "imageUrl": "https://picsum.photos/seed/production-nodejs-api-development/800/450",
+    "featureImage": "https://picsum.photos/seed/production-nodejs-api-development-feature/1200/600",
+    "label": "Bestseller",
+    "registrationDate": "2026-02-03T00:00:00.000Z",
+    "features": [
+      { "title": "REST API Design", "description": "Resource modeling and versioning" },
+      { "title": "Auth & Security", "description": "JWT, hashing, and middleware" },
+      { "title": "Testing", "description": "Integration tests with real databases" },
+      { "title": "Lifetime Access", "description": "Learn at your own pace" }
+    ]
   },
   {
-      "title": "Full Stack Development Course",
-      "description": "Job Assistance | Gain Full Stack Development Expertise",
-      "registrationDate": "2024-06-29T00:00:00.000Z",
-      "category": "Paid",
-      "imageUrl": "https://oilab.in/public/img/courses/full-stack-web-developer.jpg",
-      "label": "Popular",
-      "featureImage":"https://pat.eu/wp-content/uploads/2023/05/Enterprise-Service-Management.png",
-      "features": [
-          {
-              "title": "Live Classes",
-              "description": "One-on-One Interactive Learning."
-          },
-          {
-              "title": "Industry Ready Curriculum",
-              "description": "Full-Stack integrated modules"
-          },
-          {
-              "title": "Industry Mentors",
-              "description": "Experienced Ex-Amazon,Google Professionals"
-          },
-          {
-              "title": "Soft Skills Training",
-              "description": "Holistic Personality Development Classes"
-          },
-          {
-              "title": "Interview Preparation",
-              "description": "Mock Interviews & Resume Building Activities"
-          }
-      ]
+    "slug": "sql-database-design-backend",
+    "title": "SQL & Database Design for Backend Engineers",
+    "description": "Master relational modeling, normalization, indexing, and query optimization to design databases that stay fast as your application grows.",
+    "category": "Databases",
+    "level": "Intermediate",
+    "duration": "32 hours",
+    "instructor": "Rohan Deshpande",
+    "price": 1999,
+    "imageUrl": "https://picsum.photos/seed/sql-database-design-backend/800/450",
+    "featureImage": "https://picsum.photos/seed/sql-database-design-backend-feature/1200/600",
+    "label": "Popular",
+    "registrationDate": "2026-01-28T00:00:00.000Z",
+    "features": [
+      { "title": "Schema Design", "description": "Normalization and relationships" },
+      { "title": "Query Optimization", "description": "Indexes and execution plans" },
+      { "title": "Real Datasets", "description": "Practice on realistic data" }
+    ]
   },
-
-
   {
-    "title": "Product Management with Gen AI",
-    "description": "Master Product Management skills with the power of Generative AI. Get in-depth training in agile methodologies, market analysis.",
-    "registrationDate": "2024-07-29T00:00:00.000Z",
-    "category": "Paid",
-    "imageUrl": "https://www.productleadership.com/wp-content/uploads/2024/06/product-management-powered-by-gen-ai.jpg",
-    "label": "Bestseller",
-    "featureImage":"https://pat.eu/wp-content/uploads/2023/05/Enterprise-Service-Management.png",
+    "slug": "dsa-for-software-engineers",
+    "title": "Data Structures & Algorithms for Software Engineers",
+    "description": "Strengthen problem-solving with core data structures, algorithmic techniques, and complexity analysis through interview-style coding challenges.",
+    "category": "Data Structures & Algorithms",
+    "level": "Advanced",
+    "duration": "54 hours",
+    "instructor": "Ananya Iyer",
+    "price": 3499,
+    "imageUrl": "https://picsum.photos/seed/dsa-for-software-engineers/800/450",
+    "featureImage": "https://picsum.photos/seed/dsa-for-software-engineers-feature/1200/600",
+    "label": "Trending",
+    "registrationDate": "2026-03-10T00:00:00.000Z",
     "features": [
-        {
-            "title": "Live Classes",
-            "description": "One-on-One Interactive Learning."
-        },
-        {
-            "title": "Industry Ready Curriculum",
-            "description": "Updated industry integrated modules"
-        },
-        {
-            "title": "Industry Mentors",
-            "description": "Expert Mentorship: Train with Product Leader"
-        },
-        {
-            "title": "Capstone Project",
-            "description": "Apply your skills through capstone projects."
-        },
-        {
-            "title": "Interview Preparation",
-            "description": "Mock Interviews & Resume Building Activities"
-        }
+      { "title": "Pattern-based Learning", "description": "Recognize and reuse solutions" },
+      { "title": "200+ Problems", "description": "Curated practice set" },
+      { "title": "Complexity Analysis", "description": "Reason about time and space" },
+      { "title": "Interview Prep", "description": "Mock coding rounds" }
     ]
-},
-
-
-
-{
-    "title": "C++ with DSA",
-    "description": "Gain Expertise in C++ Syntax and DSA Principles for robust coding skills",
-    "registrationDate": "2024-06-26T00:00:00.000Z",
-    "category": "Paid",
-    "imageUrl": "https://www.shutterstock.com/image-illustration/c-code-on-dark-background-600nw-1896170293.jpg",
+  },
+  {
+    "slug": "fullstack-mern-web-development",
+    "title": "Full-Stack Web Development with the MERN Stack",
+    "description": "Build complete web applications end to end with MongoDB, Express, React, and Node.js, connecting a modern frontend to a real API and database.",
+    "category": "Web Development",
+    "level": "Intermediate",
+    "duration": "60 hours",
+    "instructor": "Karthik Rao",
+    "price": 3299,
+    "imageUrl": "https://picsum.photos/seed/fullstack-mern-web-development/800/450",
+    "featureImage": "https://picsum.photos/seed/fullstack-mern-web-development-feature/1200/600",
     "label": "Bestseller",
-    "featureImage":"https://pat.eu/wp-content/uploads/2023/05/Enterprise-Service-Management.png",
+    "registrationDate": "2026-02-18T00:00:00.000Z",
     "features": [
-        {
-            "title": "Live Classes",
-            "description": "One-on-One Interactive Learning."
-        },
-        {
-            "title": "Industry Ready Curriculum",
-            "description": "Updated industry integrated modules"
-        },
-        {
-            "title": "Project Portfolio",
-            "description": "Build job-ready profile with dynamic project portfolio"
-        },
-        {
-            "title": "Capstone Project",
-            "description": "Apply your skills through capstone projects."
-        },
-        {
-            "title": "Interview Preparation",
-            "description": "Mock Interviews & Resume Building Activities"
-        }
+      { "title": "End-to-End Build", "description": "From database to deployment" },
+      { "title": "Authentication", "description": "Sessions, tokens, and roles" },
+      { "title": "Capstone Project", "description": "Ship a full application" },
+      { "title": "Certificate of Completion", "description": "Shareable verified certificate" }
     ]
-},
-
-
-{
-    "title": "DevOps and Cloud Computing Course",
-    "description": "Master the art of streamlining software development with out DevOps Course",
-    "registrationDate": "2024-08-27T00:00:00.000Z",
-    "category": "Paid",
-    "imageUrl": "https://www.whizlabs.com/blog/wp-content/uploads/2020/02/DevOps_and_Cloud.png",
+  },
+  {
+    "slug": "javascript-deep-dive",
+    "title": "JavaScript Deep Dive: From Fundamentals to Mastery",
+    "description": "Understand how JavaScript really works, from closures and the event loop to asynchronous patterns and modern ES features, with practical examples throughout.",
+    "category": "JavaScript",
+    "level": "Beginner",
+    "duration": "40 hours",
+    "instructor": "Sneha Kulkarni",
+    "price": 1499,
+    "imageUrl": "https://picsum.photos/seed/javascript-deep-dive/800/450",
+    "featureImage": "https://picsum.photos/seed/javascript-deep-dive-feature/1200/600",
+    "label": "New",
+    "registrationDate": "2026-04-05T00:00:00.000Z",
+    "features": [
+      { "title": "Core Language", "description": "Scopes, closures, prototypes" },
+      { "title": "Async JavaScript", "description": "Promises and async/await" },
+      { "title": "Hands-on Exercises", "description": "Reinforce every concept" }
+    ]
+  },
+  {
+    "slug": "cloud-engineering-fundamentals-aws",
+    "title": "Cloud Engineering Fundamentals on AWS",
+    "description": "Get started with cloud computing on AWS, covering core compute, storage, networking, and identity services with a hands-on, cost-aware approach.",
+    "category": "Cloud / AWS",
+    "level": "Beginner",
+    "duration": "36 hours",
+    "instructor": "Vikram Sethi",
+    "price": 2199,
+    "imageUrl": "https://picsum.photos/seed/cloud-engineering-fundamentals-aws/800/450",
+    "featureImage": "https://picsum.photos/seed/cloud-engineering-fundamentals-aws-feature/1200/600",
+    "label": "Popular",
+    "registrationDate": "2026-03-22T00:00:00.000Z",
+    "features": [
+      { "title": "Core AWS Services", "description": "Compute, storage, and networking" },
+      { "title": "Cost Awareness", "description": "Build within free-tier limits" },
+      { "title": "Hands-on Labs", "description": "Practice in a real console" }
+    ]
+  },
+  {
+    "slug": "docker-kubernetes-devops",
+    "title": "Docker & Kubernetes for DevOps Engineers",
+    "description": "Containerize applications with Docker and orchestrate them with Kubernetes, learning deployments, scaling, and service networking for modern infrastructure.",
+    "category": "DevOps",
+    "level": "Intermediate",
+    "duration": "44 hours",
+    "instructor": "Neha Gupta",
+    "price": 2799,
+    "imageUrl": "https://picsum.photos/seed/docker-kubernetes-devops/800/450",
+    "featureImage": "https://picsum.photos/seed/docker-kubernetes-devops-feature/1200/600",
+    "label": "Trending",
+    "registrationDate": "2026-04-19T00:00:00.000Z",
+    "features": [
+      { "title": "Containers in Depth", "description": "Images, layers, and volumes" },
+      { "title": "Orchestration", "description": "Deployments and scaling" },
+      { "title": "Real Clusters", "description": "Hands-on with kubectl" }
+    ]
+  },
+  {
+    "slug": "typescript-scalable-applications",
+    "title": "TypeScript for Scalable Applications",
+    "description": "Add static typing to JavaScript projects with TypeScript, using generics, advanced types, and tooling to build safer, more maintainable codebases.",
+    "category": "JavaScript",
+    "level": "Intermediate",
+    "duration": "30 hours",
+    "instructor": "Arjun Menon",
+    "price": 1799,
+    "imageUrl": "https://picsum.photos/seed/typescript-scalable-applications/800/450",
+    "featureImage": "https://picsum.photos/seed/typescript-scalable-applications-feature/1200/600",
+    "label": "New",
+    "registrationDate": "2026-05-02T00:00:00.000Z",
+    "features": [
+      { "title": "Type System", "description": "Generics and utility types" },
+      { "title": "Tooling", "description": "Config, linting, and builds" },
+      { "title": "Refactoring", "description": "Migrate JS to TS safely" }
+    ]
+  },
+  {
+    "slug": "python-for-backend-developers",
+    "title": "Python Programming for Backend Developers",
+    "description": "Learn Python with a backend focus, covering clean syntax, data handling, and building simple services that connect to databases and external APIs.",
+    "category": "Python",
+    "level": "Beginner",
+    "duration": "34 hours",
+    "instructor": "Ishita Verma",
+    "price": 1299,
+    "imageUrl": "https://picsum.photos/seed/python-for-backend-developers/800/450",
+    "featureImage": "https://picsum.photos/seed/python-for-backend-developers-feature/1200/600",
+    "label": "Popular",
+    "registrationDate": "2026-01-09T00:00:00.000Z",
+    "features": [
+      { "title": "Pythonic Code", "description": "Idioms and best practices" },
+      { "title": "Data Handling", "description": "Files, JSON, and collections" },
+      { "title": "Mini Projects", "description": "Practical backend scripts" }
+    ]
+  },
+  {
+    "slug": "rest-graphql-api-design-patterns",
+    "title": "RESTful & GraphQL API Design Patterns",
+    "description": "Compare and apply REST and GraphQL to design clean, well-documented APIs, weighing trade-offs in schema design, versioning, and client experience.",
+    "category": "Backend Development",
+    "level": "Advanced",
+    "duration": "28 hours",
+    "instructor": "Rahul Bose",
+    "price": 2599,
+    "imageUrl": "https://picsum.photos/seed/rest-graphql-api-design-patterns/800/450",
+    "featureImage": "https://picsum.photos/seed/rest-graphql-api-design-patterns-feature/1200/600",
+    "label": "Advanced",
+    "registrationDate": "2026-05-16T00:00:00.000Z",
+    "features": [
+      { "title": "REST vs GraphQL", "description": "Choose the right approach" },
+      { "title": "Schema Design", "description": "Contracts and documentation" },
+      { "title": "Case Studies", "description": "Design decisions explained" }
+    ]
+  },
+  {
+    "slug": "system-design-scalable-architecture",
+    "title": "System Design & Scalable Architecture",
+    "description": "Learn to design systems that scale, covering load balancing, caching, data partitioning, and reliability trade-offs through practical architecture scenarios.",
+    "category": "Software Engineering",
+    "level": "Advanced",
+    "duration": "50 hours",
+    "instructor": "Meera Krishnan",
+    "price": 3999,
+    "imageUrl": "https://picsum.photos/seed/system-design-scalable-architecture/800/450",
+    "featureImage": "https://picsum.photos/seed/system-design-scalable-architecture-feature/1200/600",
     "label": "Bestseller",
-    "featureImage":"https://pat.eu/wp-content/uploads/2023/05/Enterprise-Service-Management.png",
+    "registrationDate": "2026-03-01T00:00:00.000Z",
     "features": [
-        {
-            "title": "Live Classes",
-            "description": "One-on-One Interactive Learning."
-        },
-        {
-            "title": "Industry Ready Curriculum",
-            "description": "Updated industry integrated modules"
-        },
-        {
-            "title": "Project Portfolio",
-            "description": "Build job-ready profile with dynamic project portfolio"
-        },
-        {
-            "title": "Capstone Project",
-            "description": "Apply your skills through capstone projects."
-        },
-        {
-            "title": "Career Growth",
-            "description": "Get opportunities to elevate and fast track your career"
-        }
+      { "title": "Scalability Patterns", "description": "Caching, sharding, queues" },
+      { "title": "Reliability", "description": "Trade-offs and failure modes" },
+      { "title": "Design Interviews", "description": "Structured problem walkthroughs" },
+      { "title": "Certificate of Completion", "description": "Shareable verified certificate" }
     ]
-}
-
-
-
-
+  },
+  {
+    "slug": "git-cicd-developer-workflows",
+    "title": "Git, CI/CD & Modern Developer Workflows",
+    "description": "Work confidently with Git and automate builds, tests, and deployments using CI/CD pipelines that reflect how professional engineering teams ship software.",
+    "category": "DevOps",
+    "level": "Beginner",
+    "duration": "24 hours",
+    "instructor": "Sanjay Pillai",
+    "price": 999,
+    "imageUrl": "https://picsum.photos/seed/git-cicd-developer-workflows/800/450",
+    "featureImage": "https://picsum.photos/seed/git-cicd-developer-workflows-feature/1200/600",
+    "label": "New",
+    "registrationDate": "2026-04-27T00:00:00.000Z",
+    "features": [
+      { "title": "Git Mastery", "description": "Branching and collaboration" },
+      { "title": "CI/CD Pipelines", "description": "Automated build and deploy" },
+      { "title": "Team Workflows", "description": "Reviews and releases" }
+    ]
+  },
+  {
+    "slug": "mongodb-nosql-data-modeling",
+    "title": "MongoDB & NoSQL Data Modeling",
+    "description": "Design effective document schemas in MongoDB, learning when to embed or reference data and how to model for real query and write patterns.",
+    "category": "Databases",
+    "level": "Intermediate",
+    "duration": "26 hours",
+    "instructor": "Divya Reddy",
+    "price": 1699,
+    "imageUrl": "https://picsum.photos/seed/mongodb-nosql-data-modeling/800/450",
+    "featureImage": "https://picsum.photos/seed/mongodb-nosql-data-modeling-feature/1200/600",
+    "label": "Popular",
+    "registrationDate": "2026-02-25T00:00:00.000Z",
+    "features": [
+      { "title": "Document Modeling", "description": "Embed vs reference decisions" },
+      { "title": "Indexing", "description": "Design for query patterns" },
+      { "title": "Aggregation", "description": "Transform data in the database" }
+    ]
+  },
+  {
+    "slug": "building-secure-web-applications",
+    "title": "Building Secure Web Applications",
+    "description": "Protect web applications against common vulnerabilities, applying secure authentication, input validation, and defensive practices from the OWASP mindset.",
+    "category": "Web Development",
+    "level": "Advanced",
+    "duration": "33 hours",
+    "instructor": "Farhan Qureshi",
+    "price": 2899,
+    "imageUrl": "https://picsum.photos/seed/building-secure-web-applications/800/450",
+    "featureImage": "https://picsum.photos/seed/building-secure-web-applications-feature/1200/600",
+    "label": "Trending",
+    "registrationDate": "2026-05-30T00:00:00.000Z",
+    "features": [
+      { "title": "Threat Modeling", "description": "Think like an attacker" },
+      { "title": "Secure Auth", "description": "Sessions, tokens, and hashing" },
+      { "title": "Hardening", "description": "Validation and safe defaults" }
+    ]
+  },
+  {
+    "slug": "microsoft-azure-cloud-foundations",
+    "title": "Microsoft Azure Cloud Foundations",
+    "description": "Build a solid foundation in Microsoft Azure, exploring core services for compute, storage, and identity while learning cloud concepts that transfer anywhere.",
+    "category": "Cloud / Azure",
+    "level": "Beginner",
+    "duration": "35 hours",
+    "instructor": "Pooja Shah",
+    "price": 2099,
+    "imageUrl": "https://picsum.photos/seed/microsoft-azure-cloud-foundations/800/450",
+    "featureImage": "https://picsum.photos/seed/microsoft-azure-cloud-foundations-feature/1200/600",
+    "label": "New",
+    "registrationDate": "2026-06-11T00:00:00.000Z",
+    "features": [
+      { "title": "Azure Core Services", "description": "Compute, storage, identity" },
+      { "title": "Cloud Concepts", "description": "Portable fundamentals" },
+      { "title": "Guided Labs", "description": "Practice in the portal" }
+    ]
+  },
+  {
+    "slug": "advanced-css-responsive-ui",
+    "title": "Advanced CSS & Responsive UI Engineering",
+    "description": "Craft responsive, accessible interfaces with modern CSS layout, design tokens, and component styling techniques that scale across real product screens.",
+    "category": "Web Development",
+    "level": "Intermediate",
+    "duration": "29 hours",
+    "instructor": "Nikhil Joshi",
+    "price": 1599,
+    "imageUrl": "https://picsum.photos/seed/advanced-css-responsive-ui/800/450",
+    "featureImage": "https://picsum.photos/seed/advanced-css-responsive-ui-feature/1200/600",
+    "label": "Popular",
+    "registrationDate": "2026-06-24T00:00:00.000Z",
+    "features": [
+      { "title": "Modern Layout", "description": "Flexbox and grid in practice" },
+      { "title": "Responsive Design", "description": "Fluid, mobile-first UIs" },
+      { "title": "Accessibility", "description": "Inclusive interface patterns" }
+    ]
+  },
+  {
+    "slug": "test-driven-development-quality",
+    "title": "Test-Driven Development & Software Quality",
+    "description": "Adopt a test-first mindset to write reliable software, covering unit and integration testing, refactoring, and quality practices that reduce regressions.",
+    "category": "Software Engineering",
+    "level": "Intermediate",
+    "duration": "27 hours",
+    "instructor": "Kavya Menon",
+    "price": 1899,
+    "imageUrl": "https://picsum.photos/seed/test-driven-development-quality/800/450",
+    "featureImage": "https://picsum.photos/seed/test-driven-development-quality-feature/1200/600",
+    "label": "Updated 2026",
+    "registrationDate": "2026-07-08T00:00:00.000Z",
+    "features": [
+      { "title": "Test-First Workflow", "description": "Red, green, refactor" },
+      { "title": "Coverage That Matters", "description": "Meaningful, maintainable tests" },
+      { "title": "Refactoring", "description": "Improve code with confidence" }
+    ]
+  }
 ]
