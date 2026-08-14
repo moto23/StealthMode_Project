@@ -263,3 +263,79 @@ body {
 .close-button:hover {
   background-color: #6a0dad;
 }
+
+/* ---- Phase 4 additions: meta, pricing, cart/buy actions ---- */
+.enroll-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  margin-bottom: 18px;
+  font-size: 15px;
+  color: #d7d2e0;
+}
+
+.enroll-meta strong {
+  color: #ffeb3b;
+  font-weight: 600;
+}
+
+.enroll-price {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.enroll-price-current {
+  font-size: 30px;
+  font-weight: 800;
+  color: #fff;
+}
+
+.enroll-price-free {
+  color: #4caf50;
+}
+
+.enroll-price-original {
+  font-size: 18px;
+  color: #b7b1c4;
+  text-decoration: line-through;
+}
+
+.enroll-price-off {
+  font-size: 14px;
+  font-weight: 700;
+  color: #ff6b6b;
+}
+
+.enroll-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.cart-button {
+  background-color: transparent;
+  color: #fff;
+  padding: 10px 20px;
+  border: 2px solid #6a0dad;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 18px;
+  transition: background-color 0.3s;
+}
+
+.cart-button:hover {
+  background-color: #2a1a3a;
+}
+
+.purchased-button {
+  background-color: #28a745;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: not-allowed;
+  font-size: 18px;
+}

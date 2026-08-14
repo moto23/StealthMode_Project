@@ -1,31 +1,25 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import { UserContext } from '../../context/UserContext';
+import { CartContext } from '../../context/CartContext';
+import { buyNowSingle } from '../../services/checkout';
+import { formatINR, hasDiscount, discountPercent, isPaid } from '../../services/price';
 import '../css/Enroll.css';
 // Reviews are out of scope for this project and intentionally disabled.
 
 const greenTickIcon = 'https://cdn-icons-png.flaticon.com/128/190/190411.png';
 
-// Load the Razorpay checkout script on demand (not bundled/global).
-const loadRazorpayScript = () =>
-  new Promise((resolve) => {
-    if (window.Razorpay) return resolve(true);
-    const script = document.createElement('script');
-    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-    script.onload = () => resolve(true);
-    script.onerror = () => resolve(false);
-    document.body.appendChild(script);
-  });
-
 function Enroll() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [course, setCourse] = useState(null);
   const [hasAccess, setHasAccess] = useState(false); // enrolled (free) or purchased (paid)
   const [featureImage, setFeatureImage] = useState('');
   const [showPopup, setShowPopup] = useState(false);
   const [processing, setProcessing] = useState(false);
   const { user } = useContext(UserContext);
+  const { addToCart, inCart } = useContext(CartContext);
 
   useEffect(() => {
     let active = true;
@@ -70,7 +64,7 @@ function Enroll() {
   // Free enrollment (price === 0 only; the backend also enforces this).
   const handleEnroll = async () => {
     if (!user) {
-      alert('Please register or log in to enroll in the course.');
+      navigate('/login');
       return;
     }
     if (processing) return;
@@ -86,69 +80,36 @@ function Enroll() {
     }
   };
 
-  // Paid purchase via Razorpay. Order + amount + key all come from the server;
-  // no key or amount is hardcoded here.
+  // Paid single-course Buy Now (unchanged Phase 3 flow, via shared service).
   const handleBuyNow = async () => {
     if (!user) {
-      alert('Please register or log in to buy the course.');
+      navigate('/login');
       return;
     }
     if (processing) return;
     setProcessing(true);
-    try {
-      const loaded = await loadRazorpayScript();
-      if (!loaded || !window.Razorpay) {
-        alert('Failed to load the payment gateway. Please try again.');
+    await buyNowSingle({
+      course,
+      user,
+      onSuccess: () => {
+        setHasAccess(true);
+        setShowPopup(true);
         setProcessing(false);
-        return;
-      }
-
-      const orderResponse = await api.post('/api/payments/create-order', {
-        courseId: course._id,
-      });
-      const { orderId, amount, currency, key } = orderResponse.data.data;
-
-      const options = {
-        key, // server-provided test key id (never a secret)
-        amount: String(amount), // paise, computed server-side from the DB price
-        currency,
-        name: 'StealthMode',
-        description: course.title,
-        order_id: orderId,
-        handler: async (response) => {
-          try {
-            const verify = await api.post('/api/payments/verify', {
-              orderId,
-              paymentId: response.razorpay_payment_id,
-              signature: response.razorpay_signature,
-            });
-            if (verify.data.success) {
-              setHasAccess(true);
-              setShowPopup(true);
-            } else {
-              alert('Payment verification failed. Please contact support.');
-            }
-          } catch (err) {
-            alert(err.response?.data?.error || 'Payment verification failed.');
-          } finally {
-            setProcessing(false);
-          }
-        },
-        prefill: { name: user.fullName, email: user.email },
-        theme: { color: '#5a3d2c' },
-        modal: { ondismiss: () => setProcessing(false) },
-      };
-
-      const rzp = new window.Razorpay(options);
-      rzp.on('payment.failed', () => {
-        alert('Payment failed. Please try again.');
+      },
+      onError: (msg) => {
+        alert(msg);
         setProcessing(false);
-      });
-      rzp.open();
-    } catch (error) {
-      alert(error.response?.data?.error || 'Failed to initiate payment. Please try again.');
-      setProcessing(false);
+      },
+      onDismiss: () => setProcessing(false),
+    });
+  };
+
+  const handleAddToCart = () => {
+    if (inCart(course._id)) {
+      navigate('/cart');
+      return;
     }
+    addToCart(course);
   };
 
   const Popup = () => (
@@ -170,7 +131,8 @@ function Enroll() {
     return <div>Loading...</div>;
   }
 
-  const isPaid = Number(course.price) > 0;
+  const paid = isPaid(course);
+  const discounted = hasDiscount(course);
 
   return (
     <div className="enroll-container">
@@ -183,18 +145,48 @@ function Enroll() {
           <span className="label">{course.label}</span>
           <h1>{course.title}</h1>
           <p>{course.description}</p>
-          <p className="price">Price: {isPaid ? `₹${course.price}` : 'Free'}</p>
+
+          <div className="enroll-meta">
+            {course.instructor && <span><strong>Instructor:</strong> {course.instructor}</span>}
+            {course.category && <span><strong>Category:</strong> {course.category}</span>}
+            {course.level && <span><strong>Level:</strong> {course.level}</span>}
+            {course.duration && <span><strong>Duration:</strong> {course.duration}</span>}
+            {course.registrationDate && (
+              <span><strong>Registration:</strong> {new Date(course.registrationDate).toLocaleDateString()}</span>
+            )}
+          </div>
+
+          <div className="enroll-price">
+            {paid ? (
+              <>
+                <span className="enroll-price-current">{formatINR(course.price)}</span>
+                {discounted && (
+                  <>
+                    <span className="enroll-price-original">{formatINR(course.originalPrice)}</span>
+                    <span className="enroll-price-off">{discountPercent(course)}% off</span>
+                  </>
+                )}
+              </>
+            ) : (
+              <span className="enroll-price-current enroll-price-free">Free</span>
+            )}
+          </div>
 
           <p className="enroll-now">Admission Closing Soon! ENROLL NOW!</p>
 
           {hasAccess ? (
             <button className="purchased-button" disabled>
-              {isPaid ? 'Purchased' : 'Enrolled'}
+              {paid ? 'Purchased' : 'Enrolled'}
             </button>
-          ) : isPaid ? (
-            <button className="enroll-button" onClick={handleBuyNow} disabled={processing}>
-              {processing ? 'Processing…' : `Buy now — ₹${course.price}`}
-            </button>
+          ) : paid ? (
+            <div className="enroll-actions">
+              <button className="cart-button" onClick={handleAddToCart} disabled={processing}>
+                {inCart(course._id) ? 'Go to Cart' : 'Add to Cart'}
+              </button>
+              <button className="enroll-button" onClick={handleBuyNow} disabled={processing}>
+                {processing ? 'Processing…' : `Buy now — ${formatINR(course.price)}`}
+              </button>
+            </div>
           ) : (
             <button className="enroll-button" onClick={handleEnroll} disabled={processing}>
               {processing ? 'Enrolling…' : 'Enroll for free'}

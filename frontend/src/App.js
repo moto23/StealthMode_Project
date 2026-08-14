@@ -12,39 +12,44 @@ import ResetPassword from './components/home/ResetPassword';
 import VerifyOtp from './components/home/VerifyOtp';
 import AdminRoute from './components/admin/AdminRoute';
 import AdminCourses from './components/admin/AdminCourses';
+import Cart from './components/home/Cart';
 
 
 import { UserProvider } from './context/UserContext';
+import { CartProvider } from './context/CartContext';
 import './App.css';
 
 function App() {
   return (
     <UserProvider>
-      <Router>
-        <div className="App">
-          <Navbar />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/verify-otp" element={<VerifyOtp />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/enroll/:id" element={<Enroll />} />
-            <Route path="/profile" element={<Profile />} /> {/* Add this line */}
+      <CartProvider>
+        <Router>
+          <div className="App">
+            <Navbar />
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/verify-otp" element={<VerifyOtp />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/enroll/:id" element={<Enroll />} />
+              <Route path="/cart" element={<Cart />} />
+              <Route path="/profile" element={<Profile />} /> {/* Add this line */}
 
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password/:token" element={<ResetPassword />} />
-            <Route
-              path="/admin/courses"
-              element={
-                <AdminRoute>
-                  <AdminCourses />
-                </AdminRoute>
-              }
-            />
-          </Routes>
-        </div>
-      </Router>
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password/:token" element={<ResetPassword />} />
+              <Route
+                path="/admin/courses"
+                element={
+                  <AdminRoute>
+                    <AdminCourses />
+                  </AdminRoute>
+                }
+              />
+            </Routes>
+          </div>
+        </Router>
+      </CartProvider>
     </UserProvider>
   );
 }

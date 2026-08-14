@@ -24,6 +24,28 @@ const getClient = () => {
   });
 };
 
+// Shared HMAC-SHA256 signature verification (timing-safe). Reused by both the
+// single-course (Payment) and multi-course cart (Order) verification flows so
+// there is exactly one implementation. Returns true iff the signature matches
+// `${orderId}|${paymentId}` signed with RAZORPAY_KEY_SECRET.
+const verifySignature = (orderId, paymentId, signature) => {
+  const expected = crypto
+    .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
+    .update(`${orderId}|${paymentId}`)
+    .digest('hex');
+
+  const expectedBuf = Buffer.from(expected, 'utf8');
+  const providedBuf = Buffer.from(String(signature), 'utf8');
+  return (
+    expectedBuf.length === providedBuf.length &&
+    crypto.timingSafeEqual(expectedBuf, providedBuf)
+  );
+};
+
+// Build a compact, unique Razorpay receipt that stays within the 40-char limit.
+const buildReceipt = () =>
+  `rcpt_${Date.now().toString(36)}_${crypto.randomBytes(6).toString('hex')}`;
+
 // Create a Razorpay order. The amount is ALWAYS derived from the DB course
 // price (never from the client). Returns only the public key id to the client.
 const createOrder = async (userId, courseId) => {
@@ -42,7 +64,7 @@ const createOrder = async (userId, courseId) => {
 
   // Razorpay caps `receipt` at 40 chars. Keep it compact & unique; the full
   // userId/courseId live on the Payment record and in `notes` below.
-  const receipt = `rcpt_${Date.now().toString(36)}_${crypto.randomBytes(6).toString('hex')}`;
+  const receipt = buildReceipt();
 
   const order = await getClient().orders.create({
     amount: amountPaise,
@@ -89,18 +111,7 @@ const verifyPayment = async (userId, { orderId, paymentId, signature }) => {
     return { payment, alreadyProcessed: true };
   }
 
-  const expected = crypto
-    .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
-    .update(`${orderId}|${paymentId}`)
-    .digest('hex');
-
-  const expectedBuf = Buffer.from(expected, 'utf8');
-  const providedBuf = Buffer.from(String(signature), 'utf8');
-  const valid =
-    expectedBuf.length === providedBuf.length &&
-    crypto.timingSafeEqual(expectedBuf, providedBuf);
-
-  if (!valid) {
+  if (!verifySignature(orderId, paymentId, signature)) {
     payment.status = 'failed';
     await payment.save();
     throw ApiError.badRequest('Payment signature verification failed');
@@ -121,4 +132,13 @@ const getStatus = async (userId, courseId) => {
   return { purchased: Boolean(paid) };
 };
 
-module.exports = { createOrder, verifyPayment, getStatus, isConfigured };
+module.exports = {
+  createOrder,
+  verifyPayment,
+  getStatus,
+  isConfigured,
+  requireConfig,
+  getClient,
+  verifySignature,
+  buildReceipt,
+};

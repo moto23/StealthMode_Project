@@ -28,6 +28,15 @@ const validatePrice = (price) => {
   }
 };
 
+// originalPrice is optional; when present it must be a non-negative number.
+// It is a display-only compare-at price and never affects the charged amount.
+const validateOriginalPrice = (originalPrice) => {
+  if (originalPrice == null) return;
+  if (typeof originalPrice !== 'number' || Number.isNaN(originalPrice) || originalPrice < 0) {
+    throw ApiError.badRequest('originalPrice must be a non-negative number');
+  }
+};
+
 // Public read (backward-compatible raw array).
 const listCourses = () => Course.find();
 
@@ -45,6 +54,7 @@ const createCourse = async (payload = {}) => {
     throw ApiError.badRequest('title is required');
   }
   validatePrice(data.price);
+  validateOriginalPrice(data.originalPrice);
 
   data.slug = data.slug ? slugify(data.slug) : await generateUniqueSlug(data.title);
   const exists = await Course.findOne({ slug: data.slug });
@@ -57,6 +67,7 @@ const updateCourse = async (id, payload = {}) => {
   assertValidObjectId(id, 'course id');
   const data = { ...payload };
   validatePrice(data.price);
+  validateOriginalPrice(data.originalPrice);
   if (data.slug) {
     data.slug = slugify(data.slug);
     const clash = await Course.findOne({ slug: data.slug, _id: { $ne: id } });

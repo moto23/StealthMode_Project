@@ -1,11 +1,13 @@
 import React, { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
-import { FaUser, FaSignOutAlt, FaChevronDown, FaBars, FaTimes, FaUserShield } from 'react-icons/fa';
+import { CartContext } from '../../context/CartContext';
+import { FaUser, FaSignOutAlt, FaChevronDown, FaBars, FaTimes, FaUserShield, FaShoppingCart } from 'react-icons/fa';
 import '../css/Navbar.css';
 
 function Navbar() {
   const { user, logout } = useContext(UserContext);
+  const { count } = useContext(CartContext);
   const navigate = useNavigate();
   const [sidebar, setSidebar] = useState(false);
 
@@ -34,6 +36,12 @@ function Navbar() {
           </li>
           <li className="nav-item">
             <a href="#contact" className="nav-links" onClick={toggleSidebar}>Contact</a>
+          </li>
+          <li className="nav-item">
+            <Link to="/cart" className="nav-links nav-cart" onClick={toggleSidebar}>
+              <FaShoppingCart /> Cart
+              {count > 0 && <span className="cart-badge">{count}</span>}
+            </Link>
           </li>
           {user ? (
             <li className="nav-item dropdown">

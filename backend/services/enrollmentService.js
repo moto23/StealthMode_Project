@@ -68,4 +68,11 @@ const listForUser = async (userId) => {
   return Enrolled.find({ userId }).populate('courseId');
 };
 
-module.exports = { enroll, grantAccess, listForUser };
+// Authoritative ownership: the set of courseIds the user has access to (free
+// enrollment OR a verified paid purchase both create an Enrolled record).
+const listOwnedCourseIds = async (userId) => {
+  const rows = await Enrolled.find({ userId }).select('courseId').lean();
+  return rows.map((r) => String(r.courseId));
+};
+
+module.exports = { enroll, grantAccess, listForUser, listOwnedCourseIds };

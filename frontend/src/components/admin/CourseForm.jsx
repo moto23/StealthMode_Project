@@ -12,6 +12,7 @@ const emptyForm = {
   duration: '',
   instructor: '',
   price: '',
+  originalPrice: '',
   imageUrl: '',
   featureImage: '',
   label: '',
@@ -33,6 +34,7 @@ function CourseForm({ course, onClose, onSaved }) {
           duration: course.duration || '',
           instructor: course.instructor || '',
           price: course.price != null ? String(course.price) : '',
+          originalPrice: course.originalPrice != null ? String(course.originalPrice) : '',
           imageUrl: course.imageUrl || '',
           featureImage: course.featureImage || '',
           label: course.label || '',
@@ -73,6 +75,13 @@ function CourseForm({ course, onClose, onSaved }) {
       setError('Price must be a non-negative number');
       return;
     }
+    if (
+      form.originalPrice !== '' &&
+      (Number.isNaN(Number(form.originalPrice)) || Number(form.originalPrice) < 0)
+    ) {
+      setError('Original price must be a non-negative number');
+      return;
+    }
 
     // Build the payload from non-empty fields only.
     const payload = {};
@@ -81,6 +90,7 @@ function CourseForm({ course, onClose, onSaved }) {
       if (val !== '' && val != null) payload[key] = val;
     });
     if (form.price !== '') payload.price = Number(form.price);
+    if (form.originalPrice !== '') payload.originalPrice = Number(form.originalPrice);
     const cleanFeatures = features.filter((f) => f.title.trim() || f.description.trim());
     if (cleanFeatures.length) payload.features = cleanFeatures;
 
@@ -145,6 +155,17 @@ function CourseForm({ course, onClose, onSaved }) {
             <label className="admin-field">
               <span>Price (INR)</span>
               <input name="price" type="number" min="0" value={form.price} onChange={handleChange} />
+            </label>
+            <label className="admin-field">
+              <span>Original Price (optional, for discount)</span>
+              <input
+                name="originalPrice"
+                type="number"
+                min="0"
+                value={form.originalPrice}
+                onChange={handleChange}
+                placeholder="compare-at price"
+              />
             </label>
             <label className="admin-field">
               <span>Label</span>

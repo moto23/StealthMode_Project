@@ -2,12 +2,14 @@ const path = require('path');
 const mongoose = require('mongoose');
 const Enrolled = require('../models/Enrolled');
 const Payment = require('../models/Payment');
+const Order = require('../models/Order');
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 
 /**
  * Safely create the required indexes:
  *  - Enrolled: unique (userId, courseId)
  *  - Payment:  unique (orderId), plus (userId, courseId)
+ *  - Order:    unique (orderId), plus (userId)
  *
  * SAFETY: checks for existing duplicates first for each unique index. If any
  * exist, it STOPS for that collection and reports them — it never deletes or
@@ -61,6 +63,26 @@ const run = async () => {
     const pIdx = await Payment.collection.indexes();
     console.log('Payment indexes:', pIdx.map((i) => i.name).join(', '));
     console.log('Payment documents:', await Payment.countDocuments(), '(none modified)');
+
+    // ---- Order (cart checkout): unique (orderId) + (userId) ----
+    const orderOrderDups = await Order.aggregate([
+      { $group: { _id: '$orderId', count: { $sum: 1 } } },
+      { $match: { count: { $gt: 1 } } },
+    ]);
+
+    if (orderOrderDups.length > 0) {
+      console.error('STOP: duplicate order orderIds found. Unique index NOT created.');
+      orderOrderDups.forEach((d) => console.error(`  orderId=${d._id} count=${d.count}`));
+      process.exitCode = 1;
+      return;
+    }
+
+    await Order.collection.createIndex({ orderId: 1 }, { unique: true });
+    await Order.collection.createIndex({ userId: 1 });
+    console.log('Order: unique index (orderId) + (userId) are in place.');
+    const oIdx = await Order.collection.indexes();
+    console.log('Order indexes:', oIdx.map((i) => i.name).join(', '));
+    console.log('Order documents:', await Order.countDocuments(), '(none modified)');
   } catch (error) {
     console.error('ensureIndexes error:', error.message);
     process.exitCode = 1;
