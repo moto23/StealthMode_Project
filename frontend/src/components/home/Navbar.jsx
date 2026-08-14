@@ -5,12 +5,12 @@ import { FaUser, FaSignOutAlt, FaChevronDown, FaBars, FaTimes } from 'react-icon
 import '../css/Navbar.css';
 
 function Navbar() {
-  const { user, setUser } = useContext(UserContext);
+  const { user, logout } = useContext(UserContext);
   const navigate = useNavigate();
   const [sidebar, setSidebar] = useState(false);
 
   const handleLogout = () => {
-    setUser(null); // Clear the user context
+    logout(); // Clear token + user context
     navigate('/'); // Redirect to the Main page
   };
 

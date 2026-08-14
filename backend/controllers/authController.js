@@ -1,104 +1,178 @@
-const User = require('../models/User');
+const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const nodemailer = require('nodemailer');
-const crypto = require('crypto');
 
-// Transport configuration for nodemailer
-const transporter = nodemailer.createTransport({
-  service: 'Gmail',
-  auth: {
-    user: 'prasadnathe2018@gmail.com',
-    pass: 'oivn kfto fmde dhzv'
-  }
+const User = require('../models/User');
+const { sendOtpEmail, sendPasswordResetEmail } = require('../services/emailService');
+const { generateOtp, hashOtp, compareOtp, otpExpiryDate } = require('../utils/otp');
+
+// ---- helpers ----
+const signToken = (user) =>
+  jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRES_IN || '7d',
+  });
+
+const sanitize = (user) => ({
+  _id: user._id,
+  id: user._id,
+  fullName: user.fullName,
+  email: user.email,
+  role: user.role,
+  isVerified: user.isVerified,
+  enrolledCourses: user.enrolledCourses,
 });
 
-// Route to request password reset
-const requestPasswordReset = async (req, res) => {
-  const { email } = req.body;
-  const user = await User.findOne({ email });
-
-  if (!user) {
-    return res.status(400).send({ error: 'User with this email does not exist' });
-  }
-
-  const token = crypto.randomBytes(32).toString('hex');
-  user.resetPasswordToken = token;
-  user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+// Issue a fresh OTP on the user document and email it.
+const issueOtp = async (user) => {
+  const otp = generateOtp();
+  user.otpHash = await hashOtp(otp);
+  user.otpExpires = otpExpiryDate();
   await user.save();
-
-  const mailOptions = {
-    to: user.email,
-    from: 'your-email@gmail.com',
-    subject: 'Password Reset',
-    text: `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n
-           Please click on the following link, or paste this into your browser to complete the process within one hour of receiving it:\n\n
-           https://sleath-frontend.vercel.app/reset-password/${token}\n\n
-           If you did not request this, please ignore this email and your password will remain unchanged.\n`
-  };
-
-  transporter.sendMail(mailOptions, (err) => {
-    if (err) {
-      return res.status(500).send({ error: 'Error sending email' });
-    }
-    res.send({ message: 'Password reset email sent' });
-  });
+  await sendOtpEmail(user.email, user.fullName, otp); // otp is never logged
 };
 
-// Route to reset password
-const resetPassword = async (req, res) => {
-  const { token } = req.params;
-  const { password } = req.body;
-
-  const user = await User.findOne({
-    resetPasswordToken: token,
-    resetPasswordExpires: { $gt: Date.now() }
-  });
-
-  if (!user) {
-    return res.status(400).send({ error: 'Password reset token is invalid or has expired' });
+const handleEmailError = (res, err) => {
+  if (err.message === 'EMAIL_NOT_CONFIGURED') {
+    return res.status(503).json({
+      success: false,
+      error: 'Email service is not configured. Set RESEND_API_KEY on the server.',
+    });
   }
-
-  user.password = await bcrypt.hash(password, 10); // Make sure to hash the password before saving
-  user.resetPasswordToken = undefined;
-  user.resetPasswordExpires = undefined;
-  await user.save();
-
-  res.send({ message: 'Password has been reset' });
+  return res.status(502).json({ success: false, error: 'Failed to send email' });
 };
 
+// ---- REGISTER: create pending (unverified) user + send OTP ----
 const registerUser = async (req, res) => {
   const { fullName, email, password } = req.body;
 
+  if (!fullName || !email || !password) {
+    return res
+      .status(400)
+      .json({ success: false, error: 'fullName, email and password are required' });
+  }
+  if (password.length < 6) {
+    return res
+      .status(400)
+      .json({ success: false, error: 'Password must be at least 6 characters' });
+  }
+
   try {
-    let user = await User.findOne({ email });
-    if (user) {
+    const normalizedEmail = email.toLowerCase().trim();
+    let user = await User.findOne({ email: normalizedEmail });
+
+    if (user && user.isVerified) {
       return res.status(400).json({ success: false, error: 'User already exists' });
     }
 
-    user = new User({
-      fullName,
-      email,
-      password,
-    });
-
     const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(password, salt);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
-    await user.save();
+    if (user && !user.isVerified) {
+      // Re-registration of an unverified account: refresh details + OTP.
+      user.fullName = fullName;
+      user.password = hashedPassword;
+    } else {
+      user = new User({
+        fullName,
+        email: normalizedEmail,
+        password: hashedPassword,
+        role: 'student',
+        isVerified: false,
+      });
+    }
 
-    res.status(201).json({ success: true, data: user });
+    try {
+      await issueOtp(user);
+    } catch (err) {
+      return handleEmailError(res, err);
+    }
+
+    return res.status(201).json({
+      success: true,
+      message: 'Registration successful. Check your email for the verification code.',
+      email: user.email,
+    });
   } catch (error) {
-    console.error("Error during registration:", error);
-    res.status(500).json({ success: false, error: error.message });
+    console.error('Error during registration:', error.message);
+    return res.status(500).json({ success: false, error: 'Registration failed' });
   }
 };
 
-const loginUser = async (req, res) => {
-  const { email, password } = req.body;
+// ---- VERIFY OTP: confirm email, then issue JWT ----
+const verifyOtp = async (req, res) => {
+  const { email, otp } = req.body;
+  if (!email || !otp) {
+    return res.status(400).json({ success: false, error: 'Email and OTP are required' });
+  }
 
   try {
-    let user = await User.findOne({ email });
+    const user = await User.findOne({ email: email.toLowerCase().trim() });
+    if (!user) {
+      return res.status(400).json({ success: false, error: 'Invalid request' });
+    }
+    if (user.isVerified) {
+      return res.status(400).json({ success: false, error: 'Email already verified. Please log in.' });
+    }
+    if (!user.otpHash || !user.otpExpires || user.otpExpires < new Date()) {
+      return res
+        .status(400)
+        .json({ success: false, error: 'OTP has expired. Please request a new one.' });
+    }
+
+    const match = await compareOtp(otp, user.otpHash);
+    if (!match) {
+      return res.status(400).json({ success: false, error: 'Invalid OTP' });
+    }
+
+    user.isVerified = true;
+    user.otpHash = null;
+    user.otpExpires = null;
+    await user.save();
+
+    const token = signToken(user);
+    return res.json({ success: true, token, data: sanitize(user) });
+  } catch (error) {
+    console.error('Error during OTP verification:', error.message);
+    return res.status(500).json({ success: false, error: 'Verification failed' });
+  }
+};
+
+// ---- RESEND OTP ----
+const resendOtp = async (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    return res.status(400).json({ success: false, error: 'Email is required' });
+  }
+
+  try {
+    const user = await User.findOne({ email: email.toLowerCase().trim() });
+    if (!user || user.isVerified) {
+      // Do not reveal account state.
+      return res.json({ success: true, message: 'If the account exists, a new code was sent.' });
+    }
+
+    try {
+      await issueOtp(user);
+    } catch (err) {
+      return handleEmailError(res, err);
+    }
+
+    return res.json({ success: true, message: 'A new verification code has been sent.' });
+  } catch (error) {
+    console.error('Error resending OTP:', error.message);
+    return res.status(500).json({ success: false, error: 'Could not resend code' });
+  }
+};
+
+// ---- LOGIN ----
+const loginUser = async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).json({ success: false, error: 'Email and password are required' });
+  }
+
+  try {
+    const user = await User.findOne({ email: email.toLowerCase().trim() });
     if (!user) {
       return res.status(400).json({ success: false, error: 'Invalid credentials' });
     }
@@ -108,26 +182,105 @@ const loginUser = async (req, res) => {
       return res.status(400).json({ success: false, error: 'Invalid credentials' });
     }
 
-    const payload = {
-      user: {
-        id: user.id,
-        fullName: user.fullName,
-      },
-    };
+    if (!user.isVerified) {
+      return res.status(403).json({
+        success: false,
+        error: 'Please verify your email before logging in.',
+        needsVerification: true,
+        email: user.email,
+      });
+    }
 
-    jwt.sign(payload, 'yourjwtsecret', { expiresIn: 3600 }, (err, token) => {
-      if (err) throw err;
-      res.json({ success: true, token, data: user });
-    });
+    const token = signToken(user);
+    return res.json({ success: true, token, data: sanitize(user) });
   } catch (error) {
-    console.error("Error during login:", error);
-    res.status(500).json({ success: false, error: error.message });
+    console.error('Error during login:', error.message);
+    return res.status(500).json({ success: false, error: 'Login failed' });
+  }
+};
+
+// ---- GET CURRENT USER ---- (protected)
+const getMe = async (req, res) => {
+  // req.user is attached by the `protect` middleware.
+  return res.json({ success: true, data: sanitize(req.user) });
+};
+
+// ---- PASSWORD RESET REQUEST ----
+const requestPasswordReset = async (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    return res.status(400).json({ success: false, error: 'Email is required' });
+  }
+
+  try {
+    const user = await User.findOne({ email: email.toLowerCase().trim() });
+    // Always respond success to avoid account enumeration.
+    if (!user) {
+      return res.json({ success: true, message: 'If the account exists, a reset link was sent.' });
+    }
+
+    const token = crypto.randomBytes(32).toString('hex');
+    user.resetPasswordToken = token;
+    user.resetPasswordExpires = new Date(Date.now() + 3600000); // 1 hour
+    await user.save();
+
+    const frontendUrl = process.env.FRONTEND_URL || 'https://stealthmode-frontend.vercel.app';
+    const resetUrl = `${frontendUrl}/reset-password/${token}`;
+
+    try {
+      await sendPasswordResetEmail(user.email, resetUrl);
+    } catch (err) {
+      return handleEmailError(res, err);
+    }
+
+    return res.json({ success: true, message: 'If the account exists, a reset link was sent.' });
+  } catch (error) {
+    console.error('Error requesting password reset:', error.message);
+    return res.status(500).json({ success: false, error: 'Could not process request' });
+  }
+};
+
+// ---- PASSWORD RESET ----
+const resetPassword = async (req, res) => {
+  const { token } = req.params;
+  const { password } = req.body;
+
+  if (!password || password.length < 6) {
+    return res
+      .status(400)
+      .json({ success: false, error: 'Password must be at least 6 characters' });
+  }
+
+  try {
+    const user = await User.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: new Date() },
+    });
+
+    if (!user) {
+      return res
+        .status(400)
+        .json({ success: false, error: 'Password reset token is invalid or has expired' });
+    }
+
+    user.password = await bcrypt.hash(password, 10);
+    user.resetPasswordToken = null;
+    user.resetPasswordExpires = null;
+    await user.save();
+
+    return res.json({ success: true, message: 'Password has been reset' });
+  } catch (error) {
+    console.error('Error resetting password:', error.message);
+    return res.status(500).json({ success: false, error: 'Could not reset password' });
   }
 };
 
 module.exports = {
   registerUser,
+  verifyOtp,
+  resendOtp,
   loginUser,
+  getMe,
   requestPasswordReset,
-  resetPassword
+  resetPassword,
 };

@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom'; // Import Link from react-router-dom
 import { UserContext } from '../../context/UserContext';
-import axios from 'axios';
+import api from '../../services/api';
 import '../css/Profile.css';
 
 function Profile() {
@@ -12,7 +12,7 @@ function Profile() {
     const fetchEnrolledCourses = async () => {
       try {
         if (user) {
-          const response = await axios.get(`https://sleath-backend.vercel.app/api/courses/enrolled/${user._id}`);
+          const response = await api.get(`/api/courses/enrolled/${user._id}`);
           console.log('Fetched Enrolled Courses:', response.data); // Add this line to log the fetched courses
           setEnrolledCourses(response.data);
         }

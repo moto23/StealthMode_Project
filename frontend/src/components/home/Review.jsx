@@ -1,6 +1,6 @@
 // src/components/Review.js
 import React, { useState, useContext, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../services/api';
 import { UserContext } from '../../context/UserContext';
 import '../css/Review.css';
 
@@ -13,7 +13,7 @@ function Review({ courseId }) {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const response = await axios.get(`https://sleath-backend.vercel.app/api/courses/${courseId}/reviews`);
+        const response = await api.get(`/api/courses/${courseId}/reviews`);
         setReviews(response.data);
       } catch (error) {
         console.error('Error fetching reviews:', error);
@@ -32,7 +32,7 @@ function Review({ courseId }) {
     }
 
     try {
-      const response = await axios.post(`https://sleath-backend.vercel.app/api/courses/${courseId}/reviews`, {
+      const response = await api.post(`/api/courses/${courseId}/reviews`, {
         userId: user._id,
         userName: user.fullName,
         userEmail: user.email,

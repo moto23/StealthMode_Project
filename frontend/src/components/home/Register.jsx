@@ -1,7 +1,6 @@
-import React, { useState, useContext } from 'react';
-import axios from 'axios';
+import React, { useState } from 'react';
+import api from '../../services/api';
 import { Link, useNavigate } from 'react-router-dom';
-import { UserContext } from '../../context/UserContext';
 import PasswordInput from './PasswordInput';
 import '../css/Register.css';
 
@@ -13,7 +12,6 @@ function Register() {
     confirmPassword: '',
   });
 
-  const { setUser } = useContext(UserContext);
   const navigate = useNavigate();
   const [error, setError] = useState(null);
   const [emailError, setEmailError] = useState('');
@@ -50,16 +48,16 @@ function Register() {
     }
 
     try {
-      const response = await axios.post('https://sleath-backend.vercel.app/api/auth/register', {
+      await api.post('/api/auth/register', {
         fullName: formData.fullName,
         email: formData.email,
         password: formData.password,
       });
 
-      setUser(response.data.data); // Set the user context
-      navigate('/'); // Redirect to the Main page
+      // Registration issues an OTP by email; proceed to verification.
+      navigate('/verify-otp', { state: { email: formData.email } });
     } catch (error) {
-      setError(error.response.data.error || 'Something went wrong');
+      setError(error.response?.data?.error || 'Something went wrong');
     }
   };
 

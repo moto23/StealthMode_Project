@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
+import api from '../../services/api';
 import { UserContext } from '../../context/UserContext';
 import '../css/Enroll.css';
-import Review from './Review';
+// Reviews are out of scope for this project and intentionally disabled.
 
 
 const greenTickIcon = 'https://cdn-icons-png.flaticon.com/128/190/190411.png';
@@ -20,13 +20,13 @@ function Enroll() {
   useEffect(() => {
     const fetchCourse = async () => {
       try {
-        const response = await axios.get(`https://sleath-backend.vercel.app/api/courses/${id}`);
+        const response = await api.get(`/api/courses/${id}`);
         setCourse(response.data);
         setFeatureImage(response.data.featureImage);
 
         // Check if the user has already purchased the course
         if (user) {
-          const purchaseResponse = await axios.get(`https://sleath-backend.vercel.app/api/courses/purchased/${user._id}/${id}`);
+          const purchaseResponse = await api.get(`/api/courses/purchased/${user._id}/${id}`);
           setPurchased(purchaseResponse.data.purchased);
         }
       } catch (error) {
@@ -50,7 +50,7 @@ function Enroll() {
     }
 
     try {
-      const response = await axios.post('https://sleath-backend.vercel.app/api/courses/enroll', {
+      const response = await api.post('/api/courses/enroll', {
         userId: user._id,
         courseId: course._id,
       });
@@ -74,7 +74,7 @@ function Enroll() {
       const exchangeRate = 75; // You can update this value or fetch it dynamically
       const amountInINR = course.price * exchangeRate * 100; // Convert to paise
 
-      const orderResponse = await axios.post('https://sleath-backend.vercel.app/api/courses/create-order', {
+      const orderResponse = await api.post('/api/courses/create-order', {
         amount: amountInINR,
         currency: 'INR',
         receipt: `receipt_order_${id}_${user._id}`,
@@ -91,7 +91,7 @@ function Enroll() {
         order_id: order_id,
         handler: async function (response) {
           try {
-            const paymentVerification = await axios.post('https://sleath-backend.vercel.app/api/courses/verify-payment', {
+            const paymentVerification = await api.post('/api/courses/verify-payment', {
               order_id: order_id,
               payment_id: response.razorpay_payment_id,
               signature: response.razorpay_signature,
@@ -196,7 +196,6 @@ function Enroll() {
           <img src={featureImage} alt="Feature of the course" />
         </div>
       </div>
-      <Review courseId={course._id} /> {/* Add the Review component */}
     </div>
   );
 }

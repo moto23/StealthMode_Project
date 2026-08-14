@@ -9,6 +9,7 @@ import Navbar from './components/home/Navbar';
 import Profile from './components/home/Profile';
 import ForgotPassword from './components/home/ForgotPassword';
 import ResetPassword from './components/home/ResetPassword';
+import VerifyOtp from './components/home/VerifyOtp';
 
 
 import { UserProvider } from './context/UserContext';
@@ -24,6 +25,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/verify-otp" element={<VerifyOtp />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/enroll/:id" element={<Enroll />} />
             <Route path="/profile" element={<Profile />} /> {/* Add this line */}

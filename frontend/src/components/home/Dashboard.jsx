@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../../services/api';
 import CourseCard from './CourseCard';
 import '../css/Dashboard.css';
 
@@ -9,7 +9,7 @@ function Dashboard() {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await axios.get('https://sleath-backend.vercel.app/api/courses');
+        const response = await api.get('/api/courses');
         setCourses(response.data);
       } catch (error) {
         console.error(error);

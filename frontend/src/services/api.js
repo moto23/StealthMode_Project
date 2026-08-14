@@ -1,62 +1,33 @@
-// import axios from 'axios';
+import axios from 'axios';
 
-// const API_URL = 'http://your-api-url-here'; // Replace with your actual API URL
+// Centralized API client. The backend base URL comes from the environment
+// (REACT_APP_API_URL) so it is never hardcoded across components.
+const API_URL =
+  process.env.REACT_APP_API_URL || 'https://sleath-backend.vercel.app';
 
-// // Set up axios instance with default settings
-// const api = axios.create({
-//   baseURL: API_URL,
-//   headers: {
-//     'Content-Type': 'application/json',
-//   },
-// });
+const api = axios.create({
+  baseURL: API_URL,
+  headers: { 'Content-Type': 'application/json' },
+});
 
-// // User registration
-// export const registerUser = async (userData) => {
-//   try {
-//     const response = await api.post('/register', userData);
-//     return response.data;
-//   } catch (error) {
-//     throw error.response.data;
-//   }
-// };
+// Attach the JWT (if present) to every request.
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('authToken');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
-// // User login
-// export const loginUser = async (userData) => {
-//   try {
-//     const response = await api.post('/login', userData);
-//     return response.data;
-//   } catch (error) {
-//     throw error.response.data;
-//   }
-// };
+// Auth token helpers.
+export const setAuthToken = (token) => {
+  if (token) {
+    localStorage.setItem('authToken', token);
+  } else {
+    localStorage.removeItem('authToken');
+  }
+};
 
-// // Fetch all courses
-// export const getCourses = async () => {
-//   try {
-//     const response = await api.get('/courses');
-//     return response.data;
-//   } catch (error) {
-//     throw error.response.data;
-//   }
-// };
+export const getAuthToken = () => localStorage.getItem('authToken');
 
-// // Enroll in a course
-// export const enrollInCourse = async (courseId) => {
-//   try {
-//     const response = await api.post(`/enroll/${courseId}`);
-//     return response.data;
-//   } catch (error) {
-//     throw error.response.data;
-//   }
-// };
-
-// // Set authorization token
-// export const setAuthToken = (token) => {
-//   if (token) {
-//     api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-//   } else {
-//     delete api.defaults.headers.common['Authorization'];
-//   }
-// };
-
-// export default api;
+export default api;

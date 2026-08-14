@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../../services/api';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../css/ResetPassword.css';
 
@@ -24,7 +24,7 @@ function ResetPassword() {
     }
 
     try {
-      const response = await axios.post(`https://sleath-backend.vercel.app/api/auth/reset-password/${token}`, {
+      const response = await api.post(`/api/auth/reset-password/${token}`, {
         password: formData.password,
       });
 
@@ -32,7 +32,7 @@ function ResetPassword() {
       setError('');
       navigate('/login');
     } catch (error) {
-      setError(error.response.data.error || 'Something went wrong');
+      setError(error.response?.data?.error || 'Something went wrong');
       setMessage('');
     }
   };

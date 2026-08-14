@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import axios from 'axios';
+import api from '../../services/api';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
@@ -7,7 +7,7 @@ import '../css/Login.css';
 
 function Login() {
   const [formData, setFormData] = useState({ email: '', password: '' });
-  const { setUser } = useContext(UserContext);
+  const { login } = useContext(UserContext);
   const navigate = useNavigate();
   const [error, setError] = useState(null);
   const [emailError, setEmailError] = useState('');
@@ -34,15 +34,21 @@ function Login() {
     }
 
     try {
-      const response = await axios.post('https://sleath-backend.vercel.app/api/auth/login', {
+      const response = await api.post('/api/auth/login', {
         email: formData.email,
         password: formData.password,
       });
 
-      setUser(response.data.data); // Set the user context
+      login(response.data.token, response.data.data); // store token + set user
       navigate('/'); // Redirect to the Main page
     } catch (error) {
-      setError(error.response.data.error || 'Something went wrong');
+      const data = error.response?.data;
+      // Unverified account: send the user to OTP verification.
+      if (data?.needsVerification) {
+        navigate('/verify-otp', { state: { email: data.email || formData.email } });
+        return;
+      }
+      setError(data?.error || 'Something went wrong');
     }
   };
 
