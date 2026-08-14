@@ -17,6 +17,7 @@ function Register() {
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [confirmPasswordMessage, setConfirmPasswordMessage] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -38,6 +39,9 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Prevent duplicate submissions (which would issue multiple OTPs).
+    if (submitting) return;
+
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
       return;
@@ -47,6 +51,7 @@ function Register() {
       return;
     }
 
+    setSubmitting(true);
     try {
       await api.post('/api/auth/register', {
         fullName: formData.fullName,
@@ -58,6 +63,8 @@ function Register() {
       navigate('/verify-otp', { state: { email: formData.email } });
     } catch (error) {
       setError(error.response?.data?.error || 'Something went wrong');
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -110,7 +117,9 @@ function Register() {
             {confirmPasswordMessage && <p className="success">{confirmPasswordMessage}</p>}
           </div>
           {error && <p className="error">{error}</p>}
-          <button type="submit" className="register-button">SIGN UP</button>
+          <button type="submit" className="register-button" disabled={submitting}>
+            {submitting ? 'SIGNING UP...' : 'SIGN UP'}
+          </button>
         </form>
       </div>
     </div>
