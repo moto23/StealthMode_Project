@@ -111,6 +111,9 @@
 .admin-table th,
 .admin-table td {
   text-align: left;
+  /* Explicit dark text: overrides the app-global `body { color:#fff }`
+     (from Enroll.css) that body cells would otherwise inherit as white. */
+  color: #2b2b2b;
   padding: 12px 14px;
   border-bottom: 1px solid #eee6dd;
   font-size: 0.92rem;
