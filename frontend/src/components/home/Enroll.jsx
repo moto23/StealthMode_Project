@@ -176,7 +176,7 @@ function Enroll() {
           {purchased && <button className="purchased-button" disabled>Purchased</button>}
         </div>
         <div className="enroll-image">
-          <img src={course.imageUrl} alt={`Image of ${course.title}`} />
+          <img src={course.imageUrl} alt={course.title} />
         </div>
       </div>
       <div className="features-section">
