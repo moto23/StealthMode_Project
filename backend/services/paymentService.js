@@ -40,10 +40,14 @@ const createOrder = async (userId, courseId) => {
 
   const amountPaise = Math.round(price * 100); // INR -> paise (server-authoritative)
 
+  // Razorpay caps `receipt` at 40 chars. Keep it compact & unique; the full
+  // userId/courseId live on the Payment record and in `notes` below.
+  const receipt = `rcpt_${Date.now().toString(36)}_${crypto.randomBytes(6).toString('hex')}`;
+
   const order = await getClient().orders.create({
     amount: amountPaise,
     currency: 'INR',
-    receipt: `rcpt_${courseId}_${userId}_${Date.now()}`,
+    receipt,
     notes: { userId: String(userId), courseId: String(courseId) },
   });
 

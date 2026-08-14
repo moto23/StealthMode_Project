@@ -17,6 +17,9 @@ const { MongoMemoryServer } = require('mongodb-memory-server');
 const mongoose = require('mongoose');
 
 // ---- Mock the Razorpay SDK (order creation only) BEFORE the app requires it.
+// The mock ENFORCES Razorpay's real 40-char `receipt` limit so a regression to
+// an over-long receipt fails the suite (mirrors the production BAD_REQUEST_ERROR).
+const capturedReceipts = [];
 const rzpPath = require.resolve('razorpay');
 require.cache[rzpPath] = {
   id: rzpPath,
@@ -25,13 +28,21 @@ require.cache[rzpPath] = {
   exports: class MockRazorpay {
     constructor() {
       this.orders = {
-        create: async (opts) => ({
-          id: 'order_' + crypto.randomBytes(8).toString('hex'),
-          amount: opts.amount,
-          currency: opts.currency,
-          receipt: opts.receipt,
-          status: 'created',
-        }),
+        create: async (opts) => {
+          capturedReceipts.push(opts.receipt);
+          if (typeof opts.receipt === 'string' && opts.receipt.length > 40) {
+            const err = new Error('receipt: the length must be between 1 and 40.');
+            err.statusCode = 400; // Razorpay returns HTTP 400 BAD_REQUEST_ERROR
+            throw err;
+          }
+          return {
+            id: 'order_' + crypto.randomBytes(8).toString('hex'),
+            amount: opts.amount,
+            currency: opts.currency,
+            receipt: opts.receipt,
+            status: 'created',
+          };
+        },
       };
     }
   },
@@ -111,6 +122,10 @@ const sign = (orderId, paymentId) =>
 
   const created = await Payment.findOne({ orderId: orderA });
   check('Payment record created with status "created"', created && created.status === 'created' && created.amount === 129900);
+
+  // Razorpay caps `receipt` at 40 chars; ensure every generated receipt fits.
+  check('generated receipt(s) <= 40 chars (Razorpay limit)',
+    capturedReceipts.length > 0 && capturedReceipts.every((r) => typeof r === 'string' && r.length <= 40));
 
   console.log('\n[2] verify (valid signature) -> paid + access granted');
   r = await request(app).post('/api/payments/verify').set(auth(studentA.token))
