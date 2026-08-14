@@ -1,0 +1,268 @@
+.admin-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 20px 64px;
+}
+
+.admin-loading {
+  padding: 48px 20px;
+  text-align: center;
+  color: #555;
+}
+
+.admin-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.admin-header h1 {
+  margin: 0 0 4px;
+  font-size: 1.6rem;
+}
+
+.admin-subtitle {
+  margin: 0;
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.admin-muted {
+  color: #777;
+}
+
+.admin-error {
+  color: #b3261e;
+  margin: 8px 0;
+}
+
+.admin-error-block {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ---- Buttons ---- */
+.admin-btn {
+  border: 1px solid #cfc7bf;
+  background: #f6f3ef;
+  color: #2f2a24;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+}
+
+.admin-btn:hover {
+  background: #ece7e0;
+}
+
+.admin-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.admin-btn-small {
+  padding: 5px 10px;
+  font-size: 0.82rem;
+}
+
+.admin-btn-primary {
+  background: #5a3d2c;
+  border-color: #5a3d2c;
+  color: #fff;
+}
+
+.admin-btn-primary:hover {
+  background: #4a3220;
+}
+
+.admin-btn-ghost {
+  background: transparent;
+}
+
+.admin-btn-danger {
+  background: #fbeceb;
+  border-color: #e6b4b0;
+  color: #b3261e;
+}
+
+.admin-btn-danger:hover {
+  background: #f7dcd9;
+}
+
+/* ---- Table ---- */
+.admin-table-wrap {
+  overflow-x: auto;
+  border: 1px solid #e7e1da;
+  border-radius: 10px;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 640px;
+}
+
+.admin-table th,
+.admin-table td {
+  text-align: left;
+  padding: 12px 14px;
+  border-bottom: 1px solid #eee6dd;
+  font-size: 0.92rem;
+  vertical-align: middle;
+}
+
+.admin-table thead th {
+  background: #f6f3ef;
+  color: #4a4038;
+  font-weight: 600;
+}
+
+.admin-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-actions-col {
+  white-space: nowrap;
+}
+
+.admin-actions-col .admin-btn + .admin-btn {
+  margin-left: 8px;
+}
+
+/* ---- Modal ---- */
+.admin-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(30, 24, 18, 0.5);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 16px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.admin-modal {
+  background: #fff;
+  width: 100%;
+  max-width: 720px;
+  border-radius: 12px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+}
+
+.admin-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px;
+  border-bottom: 1px solid #eee6dd;
+}
+
+.admin-modal-header h3 {
+  margin: 0;
+}
+
+.admin-modal-close {
+  border: none;
+  background: transparent;
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+  color: #6b6157;
+}
+
+/* ---- Form ---- */
+.admin-form {
+  padding: 20px 22px 24px;
+}
+
+.admin-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.admin-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: #4a4038;
+}
+
+.admin-field-wide {
+  grid-column: 1 / -1;
+}
+
+.admin-field input,
+.admin-field select,
+.admin-field textarea {
+  padding: 9px 10px;
+  border: 1px solid #d6cec5;
+  border-radius: 8px;
+  font-size: 0.92rem;
+  font-family: inherit;
+}
+
+.admin-field input:focus,
+.admin-field select:focus,
+.admin-field textarea:focus {
+  outline: none;
+  border-color: #5a3d2c;
+  box-shadow: 0 0 0 2px rgba(90, 61, 44, 0.15);
+}
+
+/* ---- Features editor ---- */
+.admin-features {
+  margin-top: 18px;
+  border-top: 1px solid #eee6dd;
+  padding-top: 16px;
+}
+
+.admin-features-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: #4a4038;
+}
+
+.admin-feature-row {
+  display: grid;
+  grid-template-columns: 1fr 2fr auto;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.admin-feature-row input {
+  padding: 8px 10px;
+  border: 1px solid #d6cec5;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-family: inherit;
+}
+
+/* ---- Modal actions ---- */
+.admin-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 640px) {
+  .admin-form-grid {
+    grid-template-columns: 1fr;
+  }
+  .admin-feature-row {
+    grid-template-columns: 1fr;
+  }
+}

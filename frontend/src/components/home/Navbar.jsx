@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
-import { FaUser, FaSignOutAlt, FaChevronDown, FaBars, FaTimes } from 'react-icons/fa';
+import { FaUser, FaSignOutAlt, FaChevronDown, FaBars, FaTimes, FaUserShield } from 'react-icons/fa';
 import '../css/Navbar.css';
 
 function Navbar() {
@@ -40,6 +40,9 @@ function Navbar() {
               <span className="nav-links">{user.fullName} <FaChevronDown /></span>
               <div className="dropdown-content">
                 <Link to="/profile"><FaUser /> Profile</Link>
+                {user.role === 'admin' && (
+                  <Link to="/admin/courses"><FaUserShield /> Admin</Link>
+                )}
                 <span className="logout-link" onClick={handleLogout}><FaSignOutAlt /> Logout</span>
               </div>
             </li>

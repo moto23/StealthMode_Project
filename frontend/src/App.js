@@ -10,6 +10,8 @@ import Profile from './components/home/Profile';
 import ForgotPassword from './components/home/ForgotPassword';
 import ResetPassword from './components/home/ResetPassword';
 import VerifyOtp from './components/home/VerifyOtp';
+import AdminRoute from './components/admin/AdminRoute';
+import AdminCourses from './components/admin/AdminCourses';
 
 
 import { UserProvider } from './context/UserContext';
@@ -32,6 +34,14 @@ function App() {
 
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password/:token" element={<ResetPassword />} />
+            <Route
+              path="/admin/courses"
+              element={
+                <AdminRoute>
+                  <AdminCourses />
+                </AdminRoute>
+              }
+            />
           </Routes>
         </div>
       </Router>
