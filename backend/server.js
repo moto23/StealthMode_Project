@@ -76,11 +76,33 @@ app.use((req, res) => {
   res.status(404).json({ success: false, error: 'Route not found' });
 });
 
-// ---- Error handler ----
+// ---- Central error handler ----
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
-  console.error('Unhandled error:', err.message);
-  res.status(500).json({ success: false, error: 'Internal server error' });
+  let status = err.statusCode || 500;
+  let message = err.message || 'Internal server error';
+
+  // Normalize common Mongoose/Mongo errors to clean client responses.
+  if (err.name === 'CastError') {
+    status = 400;
+    message = 'Invalid identifier';
+  } else if (err.name === 'ValidationError') {
+    status = 400;
+    message = Object.values(err.errors)
+      .map((e) => e.message)
+      .join(', ');
+  } else if (err.code === 11000) {
+    status = 409;
+    message = 'Duplicate resource';
+  }
+
+  // Never leak internal details on unexpected 500s.
+  if (status >= 500) {
+    console.error('Unhandled error:', err.message);
+    message = 'Internal server error';
+  }
+
+  res.status(status).json({ success: false, error: message });
 });
 
 // Only listen when run directly (local dev). On Vercel the app is exported
