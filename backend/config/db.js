@@ -21,7 +21,12 @@ const connectDB = async () => {
   if (!cached.promise) {
     cached.promise = mongoose
       .connect(process.env.MONGODB_URI, {
-        serverSelectionTimeoutMS: 10000,
+        // Keep these well below Vercel's serverless function limit so a
+        // failed/blocked connection returns a controlled 503 instead of
+        // hanging until Vercel emits a 504 FUNCTION_INVOCATION_TIMEOUT.
+        serverSelectionTimeoutMS: 5000,
+        connectTimeoutMS: 5000,
+        socketTimeoutMS: 20000,
       })
       .then((m) => {
         console.log('MongoDB connected');
