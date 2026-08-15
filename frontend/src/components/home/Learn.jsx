@@ -11,7 +11,7 @@ import {
 } from 'react-icons/fa';
 import { UserContext } from '../../context/UserContext';
 import { useToast } from '../../context/ToastContext';
-import { getLearnData, markLessonComplete, setCurrentLesson } from '../../services/learn';
+import { getLearnData, markLessonComplete, setCurrentLesson, getLessonTranscript } from '../../services/learn';
 import EmptyState from '../ui/EmptyState';
 import ErrorState from '../ui/ErrorState';
 import LessonPlayer from '../ui/LessonPlayer';
@@ -29,6 +29,8 @@ function Learn() {
   const [status, setStatus] = useState('loading'); // loading | ready | error | forbidden
   const [reloadKey, setReloadKey] = useState(0);
   const [drawerOpen, setDrawerOpen] = useState(false); // mobile playlist drawer (UI only)
+  const [transcript, setTranscript] = useState(null); // { available, language, text } | null
+  const [showTranscript, setShowTranscript] = useState(false);
 
   const activeBtnRef = useRef(null);
   const drawerToggleRef = useRef(null);
@@ -150,6 +152,22 @@ function Learn() {
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
   }, [drawerOpen, activeIndex, flatLessons, selectLesson]);
+
+  // Fetch the transcript for the active lesson (hidden unless Mux has one).
+  useEffect(() => {
+    let live = true;
+    setTranscript(null);
+    setShowTranscript(false);
+    if (!activeId) return undefined;
+    getLessonTranscript(courseId, activeId)
+      .then((t) => {
+        if (live && t && t.available && t.text) setTranscript(t);
+      })
+      .catch(() => {}); // 404 → no transcript for this lesson; leave hidden
+    return () => {
+      live = false;
+    };
+  }, [courseId, activeId]);
 
   // Keep the active lesson visible in the playlist when it changes.
   useEffect(() => {
@@ -439,6 +457,34 @@ function Learn() {
                   <FaPlayCircle aria-hidden="true" /> {nextLesson.title}
                 </span>
               </button>
+            )}
+
+            {transcript && (
+              <section className="learn-transcript">
+                <button
+                  type="button"
+                  className="learn-transcript-toggle"
+                  onClick={() => setShowTranscript((v) => !v)}
+                  aria-expanded={showTranscript}
+                  aria-controls="learn-transcript-body"
+                >
+                  <span>
+                    Transcript
+                    {transcript.language ? ` · ${String(transcript.language).toUpperCase()}` : ''}
+                  </span>
+                  <span aria-hidden="true">{showTranscript ? '–' : '+'}</span>
+                </button>
+                {showTranscript && (
+                  <div id="learn-transcript-body" className="learn-transcript-body">
+                    {transcript.text
+                      .split('\n')
+                      .filter((line) => line.trim())
+                      .map((line, i) => (
+                        <p key={i}>{line}</p>
+                      ))}
+                  </div>
+                )}
+              </section>
             )}
           </>
         )}

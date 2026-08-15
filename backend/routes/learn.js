@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { summary, getLearn, complete, setCurrent, playback } = require('../controllers/learnController');
+const { summary, getLearn, complete, setCurrent, playback, transcript } = require('../controllers/learnController');
 const { protect } = require('../middleware/auth');
 
 // All learn routes require an authenticated user; the service additionally
@@ -14,6 +14,9 @@ router.get('/progress/summary', protect, summary);
 // Signed video playback token (Slice 4). Distinct multi-segment path, so it
 // never collides with the single-segment '/:courseId' read.
 router.get('/:courseId/lessons/:lessonId/playback', protect, playback);
+
+// Lesson transcript (Phase 8) — only returned when Mux has a ready caption track.
+router.get('/:courseId/lessons/:lessonId/transcript', protect, transcript);
 
 router.get('/:courseId', protect, getLearn);
 router.post('/:courseId/progress/complete', protect, complete);

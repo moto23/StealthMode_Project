@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import api from '../../services/api';
 import CourseForm from './CourseForm';
+import { getManagedCourses, publishCourse, unpublishCourse } from '../../services/adminVideo';
 import '../css/Admin.css';
 
 function AdminCourses() {
@@ -12,6 +13,7 @@ function AdminCourses() {
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState(null); // course being edited, or null for create
   const [deletingId, setDeletingId] = useState(null);
+  const [publishingId, setPublishingId] = useState(null);
   const [confirmTarget, setConfirmTarget] = useState(null); // course pending delete confirmation
   const cancelRef = useRef(null);
 
@@ -19,14 +21,38 @@ function AdminCourses() {
     setLoading(true);
     setError('');
     try {
-      const response = await api.get('/api/courses');
-      setCourses(Array.isArray(response.data) ? response.data : []);
+      // Admin management list — includes drafts (the public catalog does not).
+      const data = await getManagedCourses();
+      setCourses(Array.isArray(data) ? data : []);
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to load courses');
     } finally {
       setLoading(false);
     }
   }, []);
+
+  // Publish a draft (validated server-side) or return a published course to draft.
+  const togglePublish = async (course) => {
+    setActionError('');
+    setPublishingId(course._id);
+    try {
+      if (course.status === 'draft') {
+        await publishCourse(course._id);
+      } else {
+        await unpublishCourse(course._id);
+      }
+      await loadCourses();
+    } catch (err) {
+      const issues = err.response?.data?.issues;
+      setActionError(
+        issues && issues.length
+          ? `Can’t publish “${course.title}”: ${issues.join(' ')}`
+          : err.response?.data?.error || 'Failed to update publish status'
+      );
+    } finally {
+      setPublishingId(null);
+    }
+  };
 
   useEffect(() => {
     loadCourses();
@@ -118,6 +144,7 @@ function AdminCourses() {
                 <th>Level</th>
                 <th>Instructor</th>
                 <th>Price</th>
+                <th>Status</th>
                 <th className="admin-actions-col">Actions</th>
               </tr>
             </thead>
@@ -129,8 +156,24 @@ function AdminCourses() {
                   <td>{course.level || '—'}</td>
                   <td>{course.instructor || '—'}</td>
                   <td>{formatPrice(course.price)}</td>
+                  <td>
+                    <span className={`admin-status-badge ${course.status === 'draft' ? 'draft' : 'published'}`}>
+                      {course.status === 'draft' ? 'Draft' : 'Published'}
+                    </span>
+                  </td>
                   <td className="admin-actions-col">
                     <div className="admin-row-actions">
+                      <button
+                        className="admin-btn admin-btn-small"
+                        onClick={() => togglePublish(course)}
+                        disabled={publishingId === course._id}
+                      >
+                        {publishingId === course._id
+                          ? '…'
+                          : course.status === 'draft'
+                          ? 'Publish'
+                          : 'Unpublish'}
+                      </button>
                       <button className="admin-btn admin-btn-small" onClick={() => openEdit(course)}>
                         Edit
                       </button>

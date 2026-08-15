@@ -27,3 +27,10 @@ export const getLessonPlayback = (courseId, lessonId) =>
   api
     .get(`/api/learn/${courseId}/lessons/${lessonId}/playback`)
     .then((r) => r.data.data);
+
+// Phase 8: plain-text transcript for a lesson. Resolves only when Mux actually
+// has a ready caption track (404 otherwise → caller hides the panel).
+export const getLessonTranscript = (courseId, lessonId) =>
+  api
+    .get(`/api/learn/${courseId}/lessons/${lessonId}/transcript`)
+    .then((r) => r.data.data);

@@ -9,6 +9,12 @@ const {
   deleteCourse,
   getCurriculum,
   updateCurriculum,
+  getManagedCourses,
+  createVideoUpload,
+  getVideoUploadStatus,
+  requestVideoCaptions,
+  publishCourse,
+  unpublishCourse,
 } = require('../controllers/courseController');
 const { enroll, getUserEnrollments } = require('../controllers/enrollmentController');
 const reviewController = require('../controllers/reviewController');
@@ -22,10 +28,21 @@ router.get('/', getCourses);
 router.post('/enroll', protect, enroll);
 router.get('/enrolled/:userId', protect, getUserEnrollments);
 
+// ---- Admin course management list (Phase 8) ----
+// Distinct literal path (two segments) — declared before the generic '/:id'.
+router.get('/manage', protect, requireRole('admin'), getManagedCourses);
+
 // ---- Admin curriculum management (Phase 7, Slice 1) ----
 // Full curriculum read (incl. protected video handles) + bulk replace.
 router.get('/:id/curriculum', protect, requireRole('admin'), getCurriculum);
 router.put('/:id/curriculum', protect, requireRole('admin'), updateCurriculum);
+
+// ---- Admin video (Mux Direct Uploads) + publishing (Phase 8) ----
+router.post('/:id/video/uploads', protect, requireRole('admin'), createVideoUpload);
+router.get('/:id/video/uploads/:uploadId', protect, requireRole('admin'), getVideoUploadStatus);
+router.post('/:id/video/assets/:assetId/captions', protect, requireRole('admin'), requestVideoCaptions);
+router.post('/:id/publish', protect, requireRole('admin'), publishCourse);
+router.post('/:id/unpublish', protect, requireRole('admin'), unpublishCourse);
 
 // ---- Reviews & ratings (Phase 7, Slice 3) ----
 // Declared before the generic '/:id' read. '/reviews/me' is more specific than

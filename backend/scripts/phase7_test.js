@@ -115,6 +115,9 @@ const check = (name, cond) => {
   check('lesson titles/duration still present publicly', protectedLesson.title === 'Protected Lesson' && protectedLesson.duration === '9:00');
 
   console.log('\n[5] PUBLIC list also strips protected video');
+  // Phase 8: new courses default to draft; publish so it appears in the public
+  // catalog (curriculum stripping behaviour is what this section verifies).
+  await request(app).post(`/api/courses/${courseId}/publish`).set(auth(admin.token));
   r = await request(app).get('/api/courses');
   const listed = r.body.find((c) => String(c._id) === String(courseId));
   check('GET /api/courses -> 200 raw array', r.status === 200 && Array.isArray(r.body));

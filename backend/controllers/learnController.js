@@ -49,3 +49,15 @@ exports.playback = asyncHandler(async (req, res) => {
   );
   res.json({ success: true, data });
 });
+
+// GET /api/learn/:courseId/lessons/:lessonId/transcript  (protected)
+// Plain-text transcript, returned only when Mux has a ready caption track.
+// Same authorization as playback (preview open; protected requires enrollment).
+exports.transcript = asyncHandler(async (req, res) => {
+  const data = await learnService.getLessonTranscript(
+    req.user.id,
+    req.params.courseId,
+    req.params.lessonId
+  );
+  res.json({ success: true, data });
+});

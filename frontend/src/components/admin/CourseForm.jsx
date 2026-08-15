@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
+import LessonVideoManager from './LessonVideoManager';
 
 const LEVELS = ['Beginner', 'Intermediate', 'Advanced'];
 
@@ -7,7 +8,7 @@ const emptyLesson = () => ({
   title: '',
   duration: '',
   isPreview: false,
-  video: { provider: '', assetId: '', playbackId: '' },
+  video: null,
 });
 const emptySection = () => ({ title: '', lessons: [] });
 
@@ -88,11 +89,19 @@ function CourseForm({ course, onClose, onSaved }) {
             title: l.title || '',
             duration: l.duration || '',
             isPreview: Boolean(l.isPreview),
-            video: {
-              provider: l.video?.provider || '',
-              assetId: l.video?.assetId || '',
-              playbackId: l.video?.playbackId || '',
-            },
+            video:
+              l.video && (l.video.playbackId || l.video.assetId)
+                ? {
+                    provider: l.video.provider || 'mux',
+                    assetId: l.video.assetId,
+                    playbackId: l.video.playbackId,
+                    uploadId: l.video.uploadId,
+                    status: l.video.status,
+                    policy: l.video.policy || 'signed',
+                    duration: l.video.duration,
+                    captions: l.video.captions,
+                  }
+                : null,
           })),
         }));
         setSections(loaded);
@@ -140,15 +149,14 @@ function CourseForm({ course, onClose, onSaved }) {
           : s
       )
     );
-  const updateLessonVideo = (si, li, field, value) =>
+  // Replace the whole video object for a lesson (managed by LessonVideoManager).
+  const updateLessonVideoObject = (si, li, videoObj) =>
     setSections((prev) =>
       prev.map((s, i) =>
         i === si
           ? {
               ...s,
-              lessons: s.lessons.map((l, j) =>
-                j === li ? { ...l, video: { ...l.video, [field]: value } } : l
-              ),
+              lessons: s.lessons.map((l, j) => (j === li ? { ...l, video: videoObj || null } : l)),
             }
           : s
       )
@@ -167,20 +175,30 @@ function CourseForm({ course, onClose, onSaved }) {
     setSavingCurriculum(true);
     setCurriculumMsg('');
     try {
-      // Strip empty video sub-fields so we never send blank handles.
+      // Send the full video metadata (Mux handles + status/policy/captions)
+      // only when a real video is attached; omit it entirely otherwise.
       const payloadSections = sections.map((s) => ({
         title: s.title.trim(),
         lessons: s.lessons.map((l) => {
-          const video = {};
-          if (l.video.provider.trim()) video.provider = l.video.provider.trim();
-          if (l.video.assetId.trim()) video.assetId = l.video.assetId.trim();
-          if (l.video.playbackId.trim()) video.playbackId = l.video.playbackId.trim();
-          return {
+          const lesson = {
             title: l.title.trim(),
             duration: l.duration.trim() || undefined,
             isPreview: Boolean(l.isPreview),
-            ...(Object.keys(video).length ? { video } : {}),
           };
+          const v = l.video;
+          if (v && (v.playbackId || v.assetId)) {
+            lesson.video = {
+              provider: v.provider || 'mux',
+              assetId: v.assetId || undefined,
+              playbackId: v.playbackId || undefined,
+              uploadId: v.uploadId || undefined,
+              status: v.status || undefined,
+              policy: v.policy || undefined,
+              duration: v.duration != null ? v.duration : undefined,
+              captions: Array.isArray(v.captions) && v.captions.length ? v.captions : undefined,
+            };
+          }
+          return lesson;
         }),
       }));
       await api.put(`/api/courses/${course._id}/curriculum`, { sections: payloadSections });
@@ -413,15 +431,10 @@ function CourseForm({ course, onClose, onSaved }) {
                           </div>
                         </div>
                         <div className="admin-lesson-video">
-                          <input
-                            placeholder="Video provider (optional)"
-                            value={lesson.video.provider}
-                            onChange={(e) => updateLessonVideo(si, li, 'provider', e.target.value)}
-                          />
-                          <input
-                            placeholder="Playback ID (optional)"
-                            value={lesson.video.playbackId}
-                            onChange={(e) => updateLessonVideo(si, li, 'playbackId', e.target.value)}
+                          <LessonVideoManager
+                            courseId={course._id}
+                            video={lesson.video}
+                            onChange={(v) => updateLessonVideoObject(si, li, v)}
                           />
                         </div>
                       </div>

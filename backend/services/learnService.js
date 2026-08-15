@@ -4,6 +4,7 @@ const Progress = require('../models/Progress');
 const ApiError = require('../utils/ApiError');
 const { assertValidObjectId } = require('../utils/validate');
 const muxService = require('./muxService');
+const muxAssetService = require('./muxAssetService');
 
 const byOrder = (a, b) => (Number(a.order) || 0) - (Number(b.order) || 0);
 
@@ -173,6 +174,15 @@ const getLessonPlayback = async (userId, courseId, lessonId) => {
     contentDuration: lesson.duration,
   });
 
+  // Caption availability (safe subset — no internal track ids leaked here).
+  const captions = Array.isArray(lesson.video.captions)
+    ? lesson.video.captions.map((c) => ({
+        languageCode: c.languageCode,
+        name: c.name,
+        status: c.status,
+      }))
+    : [];
+
   return {
     provider: 'mux',
     playbackId,          // signed-policy id: safe to expose, useless without token
@@ -181,6 +191,48 @@ const getLessonPlayback = async (userId, courseId, lessonId) => {
     isPreview: Boolean(lesson.isPreview),
     lessonId: String(lesson._id),
     title: lesson.title,
+    captions,            // [{ languageCode, name, status }] — CC handled by the player
+    hasTranscript: captions.some((c) => c.status === 'ready'),
+  };
+};
+
+// Plain-text transcript for a lesson, fetched from Mux ONLY when a caption
+// track is actually ready (never fabricated). Same authorization as playback:
+// preview lessons are open to any logged-in user; protected lessons require
+// enrollment. Returns { available, language, name, text }.
+const getLessonTranscript = async (userId, courseId, lessonId) => {
+  assertValidObjectId(courseId, 'course id');
+  assertValidObjectId(lessonId, 'lesson id');
+
+  const course = await Course.findById(courseId);
+  if (!course) throw ApiError.notFound('Course not found');
+
+  const lesson = findLessonInCourse(course, lessonId);
+  if (!lesson) throw ApiError.notFound('Lesson not found in this course');
+  if (!lesson.isPreview) await assertEnrolled(userId, courseId);
+
+  const video = lesson.video || {};
+  const track = (video.captions || []).find((c) => c.status === 'ready' && c.trackId);
+  if (!video.playbackId || !track) {
+    throw ApiError.notFound('No transcript available for this lesson');
+  }
+
+  // Signed playback needs a token to fetch the transcript; public does not.
+  const policy = video.policy || 'signed';
+  let token;
+  if (policy !== 'public') {
+    token = muxService.signPlaybackToken(video.playbackId, {
+      type: 'video',
+      contentDuration: lesson.duration,
+    }).token;
+  }
+
+  const text = await muxAssetService.getTranscriptText(video.playbackId, track.trackId, token);
+  return {
+    available: true,
+    language: track.languageCode || null,
+    name: track.name || null,
+    text,
   };
 };
 
@@ -216,4 +268,5 @@ module.exports = {
   setCurrentLesson,
   getProgressSummary,
   getLessonPlayback,
+  getLessonTranscript,
 };

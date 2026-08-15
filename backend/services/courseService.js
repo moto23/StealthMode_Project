@@ -37,9 +37,39 @@ const validateOriginalPrice = (originalPrice) => {
   }
 };
 
-// ---- Curriculum helpers (Phase 7, Slice 1) ----
+// ---- Curriculum helpers (Phase 7, Slice 1; extended Phase 8) ----
 
 const byOrder = (a, b) => (Number(a.order) || 0) - (Number(b.order) || 0);
+
+// Normalize an incoming lesson video object, keeping only recognized fields and
+// only when present. Backward compatible with Slice 1 (provider/assetId/
+// playbackId) and additive for Phase 8 (uploadId/status/policy/duration/
+// captions). Returns undefined when there is nothing to store.
+const normalizeVideo = (video) => {
+  if (!video || typeof video !== 'object') return undefined;
+  const out = {};
+  if (video.provider != null) out.provider = String(video.provider);
+  if (video.assetId != null) out.assetId = String(video.assetId);
+  if (video.playbackId != null) out.playbackId = String(video.playbackId);
+  if (video.uploadId != null) out.uploadId = String(video.uploadId);
+  if (video.status != null) out.status = String(video.status);
+  if (video.policy != null) out.policy = String(video.policy);
+  if (video.duration != null && !Number.isNaN(Number(video.duration))) {
+    out.duration = Number(video.duration);
+  }
+  if (Array.isArray(video.captions)) {
+    const caps = video.captions
+      .filter((c) => c && typeof c === 'object')
+      .map((c) => ({
+        trackId: c.trackId != null ? String(c.trackId) : undefined,
+        languageCode: c.languageCode != null ? String(c.languageCode) : undefined,
+        name: c.name != null ? String(c.name) : undefined,
+        status: c.status != null ? String(c.status) : undefined,
+      }));
+    if (caps.length) out.captions = caps;
+  }
+  return Object.keys(out).length ? out : undefined;
+};
 
 // Serialize a course for PUBLIC consumption: sort curriculum by order and
 // STRIP protected video handles (assetId/playbackId) from every non-preview
@@ -55,8 +85,21 @@ const toPublicCourse = (course) => {
       .sort(byOrder)
       .map((lesson) => {
         const safe = { ...lesson };
-        if (!lesson.isPreview) {
-          // Remove protected handles; keep title/order/duration/isPreview.
+        if (lesson.isPreview && lesson.video) {
+          // Preview: expose ONLY what a client needs to play (inert without a
+          // signed token). Strip protected handles (assetId/uploadId) and
+          // internal caption ids; surface caption availability as a boolean.
+          const v = lesson.video;
+          safe.video = {
+            provider: v.provider,
+            playbackId: v.playbackId,
+            policy: v.policy,
+          };
+          if (Array.isArray(v.captions)) {
+            safe.video.hasCaptions = v.captions.some((c) => c.status === 'ready');
+          }
+        } else {
+          // Protected lessons never expose any video handle.
           delete safe.video;
         }
         return safe;
@@ -88,28 +131,32 @@ const validateCurriculum = (sections) => {
       if (!lesson.title || !String(lesson.title).trim()) {
         throw ApiError.badRequest('each lesson requires a title');
       }
-      const video = lesson.video && typeof lesson.video === 'object' ? lesson.video : undefined;
       return {
         title: String(lesson.title).trim(),
         order: li,
         duration: lesson.duration != null ? String(lesson.duration) : undefined,
         isPreview: Boolean(lesson.isPreview),
-        video: video
-          ? {
-              provider: video.provider != null ? String(video.provider) : undefined,
-              assetId: video.assetId != null ? String(video.assetId) : undefined,
-              playbackId: video.playbackId != null ? String(video.playbackId) : undefined,
-            }
-          : undefined,
+        video: normalizeVideo(lesson.video),
       };
     });
     return { title: String(section.title).trim(), order: si, lessons };
   });
 };
 
-// Public read (backward-compatible raw array), with protected video stripped.
+// Public catalog (backward-compatible raw array), with protected video stripped.
+// Hides ONLY explicit drafts: `status !== 'draft'` also matches legacy courses
+// that predate the publishing field (they have no `status`), so existing
+// published courses remain visible.
 const listCourses = async () => {
-  const courses = await Course.find();
+  const courses = await Course.find({ status: { $ne: 'draft' } });
+  return courses.map(toPublicCourse);
+};
+
+// Admin management list — ALL courses (incl. drafts) with full editable fields
+// + status. Protected video handles are still stripped from the returned
+// sections (the editor loads the full curriculum via its own admin endpoint).
+const listAllCourses = async () => {
+  const courses = await Course.find().sort({ _id: -1 });
   return courses.map(toPublicCourse);
 };
 
@@ -160,12 +207,72 @@ const createCourse = async (payload = {}) => {
   const exists = await Course.findOne({ slug: data.slug });
   if (exists) throw ApiError.conflict('A course with this slug already exists');
 
+  // New courses always start as drafts and are published only via the gated
+  // publish endpoint (never directly from client input).
+  data.status = 'draft';
+
   return Course.create(data);
+};
+
+// Reasons a course cannot be published (empty ⇒ publishable). Enforces:
+// curriculum present, price set, every lesson titled, and no lesson video that
+// is still processing / errored / missing its playback id.
+const getPublishIssues = (course) => {
+  const issues = [];
+  const sections = course.sections || [];
+  const lessons = sections.flatMap((s) => s.lessons || []);
+  if (lessons.length === 0) issues.push('Add at least one lesson before publishing.');
+  if (course.price == null) issues.push('Set a course price before publishing.');
+  lessons.forEach((l, i) => {
+    const label = l.title && String(l.title).trim() ? `"${l.title}"` : `Lesson ${i + 1}`;
+    if (!l.title || !String(l.title).trim()) {
+      issues.push(`Lesson ${i + 1} is missing a title.`);
+    }
+    const v = l.video;
+    if (v && (v.assetId || v.uploadId || v.playbackId)) {
+      if (v.status && v.status !== 'ready') {
+        issues.push(
+          v.status === 'errored'
+            ? `${label} video is in an error state.`
+            : `${label} video is still processing.`
+        );
+      }
+      if (!v.playbackId) {
+        issues.push(`${label} video configuration is incomplete (no playback id).`);
+      }
+    }
+  });
+  return issues;
+};
+
+// Load a course and return its publish issues (used by the publish controller
+// before flipping status). Returns { course, issues }.
+const evaluatePublish = async (id) => {
+  assertValidObjectId(id, 'course id');
+  const course = await Course.findById(id);
+  if (!course) throw ApiError.notFound('Course not found');
+  return { course, issues: getPublishIssues(course) };
+};
+
+// Set a course's publishing status. Publishing is only reached after the caller
+// has confirmed there are no publish issues; unpublishing is always allowed.
+const setStatus = async (id, status) => {
+  assertValidObjectId(id, 'course id');
+  if (!['draft', 'published'].includes(status)) {
+    throw ApiError.badRequest('status must be draft or published');
+  }
+  const course = await Course.findById(id);
+  if (!course) throw ApiError.notFound('Course not found');
+  course.status = status;
+  await course.save();
+  return toPublicCourse(course);
 };
 
 const updateCourse = async (id, payload = {}) => {
   assertValidObjectId(id, 'course id');
   const data = { ...payload };
+  // Publishing status is managed only through the gated publish endpoint.
+  delete data.status;
   validatePrice(data.price);
   validateOriginalPrice(data.originalPrice);
   if (data.slug) {
@@ -191,6 +298,7 @@ const deleteCourse = async (id) => {
 
 module.exports = {
   listCourses,
+  listAllCourses,
   getCourseById,
   createCourse,
   updateCourse,
@@ -199,4 +307,7 @@ module.exports = {
   replaceCurriculum,
   toPublicCourse,
   validateCurriculum,
+  getPublishIssues,
+  evaluatePublish,
+  setStatus,
 };

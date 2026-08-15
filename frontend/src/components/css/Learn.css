@@ -418,3 +418,43 @@ body.learn-drawer-locked { overflow: hidden; }
   .learn-skeleton-line { animation: none; }
   .learn-sidebar { transition: none; }
 }
+
+/* ---- Phase 8: transcript panel (below the player) ---- */
+.learn-transcript {
+  margin-top: 16px;
+  border: 1px solid var(--sm-glass-border);
+  border-radius: var(--sm-radius-sm);
+  background: var(--sm-glass-bg);
+  -webkit-backdrop-filter: blur(var(--sm-blur));
+  backdrop-filter: blur(var(--sm-blur));
+  overflow: hidden;
+}
+@supports not ((backdrop-filter: blur(2px)) or (-webkit-backdrop-filter: blur(2px))) {
+  .learn-transcript { background: var(--sm-glass-strong); }
+}
+.learn-transcript-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 13px 16px;
+  border: none;
+  background: none;
+  color: var(--sm-ink);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.learn-transcript-toggle:hover { background: rgba(227, 169, 74, 0.08); }
+.learn-transcript-body {
+  padding: 4px 16px 16px;
+  max-height: 340px;
+  overflow-y: auto;
+  border-top: 1px solid var(--sm-glass-border);
+}
+.learn-transcript-body p {
+  margin: 10px 0 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--sm-ink-2);
+}
