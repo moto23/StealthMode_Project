@@ -56,8 +56,9 @@ function Cart() {
     await checkoutCart({
       items: payable,
       user,
-      onSuccess: (data) => {
-        const purchased = new Set((data.courseIds || []).map(String));
+      onSuccess: (body) => {
+        // cart/verify returns { success, message, data: { purchased, courseIds } }.
+        const purchased = new Set((body?.data?.courseIds || []).map(String));
         // Remove purchased items from the cart; keep anything else.
         purchased.forEach((id) => removeFromCart(id));
         setOwned((prev) => new Set([...prev, ...purchased]));

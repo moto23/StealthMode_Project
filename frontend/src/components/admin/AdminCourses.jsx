@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import api from '../../services/api';
 import CourseForm from './CourseForm';
 import '../css/Admin.css';
@@ -12,6 +12,8 @@ function AdminCourses() {
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState(null); // course being edited, or null for create
   const [deletingId, setDeletingId] = useState(null);
+  const [confirmTarget, setConfirmTarget] = useState(null); // course pending delete confirmation
+  const cancelRef = useRef(null);
 
   const loadCourses = useCallback(async () => {
     setLoading(true);
@@ -30,6 +32,14 @@ function AdminCourses() {
     loadCourses();
   }, [loadCourses]);
 
+  // When the delete-confirmation modal opens, focus the safe (Cancel) button so
+  // a reflexive Enter/Space does NOT trigger the destructive action.
+  useEffect(() => {
+    if (confirmTarget && cancelRef.current) {
+      cancelRef.current.focus();
+    }
+  }, [confirmTarget]);
+
   const openCreate = () => {
     setEditing(null);
     setShowForm(true);
@@ -45,16 +55,27 @@ function AdminCourses() {
     loadCourses();
   };
 
-  const handleDelete = async (course) => {
-    // eslint-disable-next-line no-alert
-    if (!window.confirm(`Delete "${course.title}"? This cannot be undone.`)) return;
+  // Step 1: request deletion — opens an explicit confirmation modal (no native confirm).
+  const requestDelete = (course) => {
+    setActionError('');
+    setConfirmTarget(course);
+  };
+
+  const cancelDelete = () => setConfirmTarget(null);
+
+  // Step 2: perform deletion only on an explicit click of the destructive button.
+  const confirmDelete = async () => {
+    if (!confirmTarget) return;
+    const course = confirmTarget;
     setActionError('');
     setDeletingId(course._id);
     try {
       await api.delete(`/api/courses/${course._id}`);
+      setConfirmTarget(null);
       await loadCourses();
     } catch (err) {
       setActionError(err.response?.data?.error || 'Failed to delete course');
+      setConfirmTarget(null);
     } finally {
       setDeletingId(null);
     }
@@ -109,16 +130,19 @@ function AdminCourses() {
                   <td>{course.instructor || '—'}</td>
                   <td>{formatPrice(course.price)}</td>
                   <td className="admin-actions-col">
-                    <button className="admin-btn admin-btn-small" onClick={() => openEdit(course)}>
-                      Edit
-                    </button>
-                    <button
-                      className="admin-btn admin-btn-danger admin-btn-small"
-                      onClick={() => handleDelete(course)}
-                      disabled={deletingId === course._id}
-                    >
-                      {deletingId === course._id ? 'Deleting…' : 'Delete'}
-                    </button>
+                    <div className="admin-row-actions">
+                      <button className="admin-btn admin-btn-small" onClick={() => openEdit(course)}>
+                        Edit
+                      </button>
+                      <span className="admin-actions-divider" aria-hidden="true" />
+                      <button
+                        className="admin-btn admin-btn-danger admin-btn-small admin-btn-delete"
+                        onClick={() => requestDelete(course)}
+                        disabled={deletingId === course._id}
+                      >
+                        {deletingId === course._id ? 'Deleting…' : 'Delete'}
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -129,6 +153,56 @@ function AdminCourses() {
 
       {showForm && (
         <CourseForm course={editing} onClose={() => setShowForm(false)} onSaved={handleSaved} />
+      )}
+
+      {confirmTarget && (
+        <div
+          className="admin-modal-overlay"
+          onClick={cancelDelete}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="admin-delete-title"
+        >
+          <div
+            className="admin-modal admin-modal-confirm"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="admin-modal-header">
+              <h3 id="admin-delete-title">Delete course</h3>
+              <button
+                type="button"
+                className="admin-modal-close"
+                onClick={cancelDelete}
+                aria-label="Close"
+              >
+                ×
+              </button>
+            </div>
+            <div className="admin-modal-body">
+              <p>You are about to permanently delete:</p>
+              <p className="admin-confirm-course">“{confirmTarget.title}”</p>
+              <p className="admin-confirm-warning">This action cannot be undone.</p>
+            </div>
+            <div className="admin-modal-actions">
+              <button
+                type="button"
+                className="admin-btn admin-btn-ghost"
+                onClick={cancelDelete}
+                ref={cancelRef}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="admin-btn admin-btn-danger"
+                onClick={confirmDelete}
+                disabled={deletingId === confirmTarget._id}
+              >
+                {deletingId === confirmTarget._id ? 'Deleting…' : 'Yes, Delete Course'}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

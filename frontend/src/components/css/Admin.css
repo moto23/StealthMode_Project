@@ -138,6 +138,49 @@
   margin-left: 8px;
 }
 
+/* Separate Edit from the destructive Delete so they are harder to mis-click. */
+.admin-row-actions {
+  display: inline-flex;
+  align-items: center;
+}
+
+.admin-actions-divider {
+  display: inline-block;
+  width: 1px;
+  height: 20px;
+  background: #e0d8ce;
+  margin: 0 14px;
+}
+
+.admin-btn-delete {
+  margin-left: 0;
+}
+
+/* ---- Delete confirmation modal ---- */
+.admin-modal-confirm {
+  max-width: 440px;
+}
+
+.admin-modal-body {
+  padding: 18px 22px 4px;
+}
+
+.admin-modal-body p {
+  margin: 0 0 10px;
+  color: #4a4038;
+}
+
+.admin-confirm-course {
+  font-weight: 700;
+  font-size: 18px;
+  color: #1f1147 !important;
+}
+
+.admin-confirm-warning {
+  color: #b3261e !important;
+  font-weight: 600;
+}
+
 /* ---- Modal ---- */
 .admin-modal-overlay {
   position: fixed;
