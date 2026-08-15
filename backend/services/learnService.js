@@ -3,6 +3,7 @@ const Enrolled = require('../models/Enrolled');
 const Progress = require('../models/Progress');
 const ApiError = require('../utils/ApiError');
 const { assertValidObjectId } = require('../utils/validate');
+const muxService = require('./muxService');
 
 const byOrder = (a, b) => (Number(a.order) || 0) - (Number(b.order) || 0);
 
@@ -125,6 +126,64 @@ const setCurrentLesson = async (userId, courseId, lessonId) => {
   return { currentLessonId: String(lessonId) };
 };
 
+// Locate a lesson within a course's curriculum. Returns the lesson subdoc (with
+// its protected `video`) or null. This is also how we prove a lesson BELONGS to
+// the requested course — a lesson id from another course yields null → 404.
+const findLessonInCourse = (course, lessonId) => {
+  for (const section of course.sections || []) {
+    for (const lesson of section.lessons || []) {
+      if (String(lesson._id) === String(lessonId)) return lesson;
+    }
+  }
+  return null;
+};
+
+// Issue a short-lived Mux signed playback token for a single lesson.
+// Authorization ladder (the route is already behind `protect` → 401 if no JWT):
+//   1. Validate ids (400) and that the course + lesson exist and the lesson
+//      belongs to THIS course (404).
+//   2. Preview lessons (isPreview) are playable by any authenticated user.
+//   3. Non-preview (protected) lessons require enrollment (403 otherwise).
+//   4. Only then mint a token from the server-held signing key. The Mux ASSET
+//      id and signing key NEVER leave the server — the client receives only the
+//      playbackId (inert without a token) + the temporary token.
+const getLessonPlayback = async (userId, courseId, lessonId) => {
+  assertValidObjectId(courseId, 'course id');
+  assertValidObjectId(lessonId, 'lesson id');
+
+  const course = await Course.findById(courseId);
+  if (!course) throw ApiError.notFound('Course not found');
+
+  const lesson = findLessonInCourse(course, lessonId);
+  if (!lesson) throw ApiError.notFound('Lesson not found in this course');
+
+  // Preview lessons bypass the enrollment gate; protected lessons do not.
+  if (!lesson.isPreview) {
+    await assertEnrolled(userId, courseId);
+  }
+
+  const playbackId = lesson.video && lesson.video.playbackId;
+  if (!playbackId) {
+    throw ApiError.notFound('This lesson has no video yet');
+  }
+
+  // Size the token to outlive the lesson (Mux: exp > now + duration).
+  const { token, expiresIn } = muxService.signPlaybackToken(playbackId, {
+    type: 'video',
+    contentDuration: lesson.duration,
+  });
+
+  return {
+    provider: 'mux',
+    playbackId,          // signed-policy id: safe to expose, useless without token
+    token,               // short-lived JWT (client refreshes; never persisted)
+    expiresIn,           // seconds until the token expires
+    isPreview: Boolean(lesson.isPreview),
+    lessonId: String(lesson._id),
+    title: lesson.title,
+  };
+};
+
 // Progress summary for My Learning: { [courseId]: percent } across the user's
 // enrolled courses. Percentages computed server-side from real lessons.
 const getProgressSummary = async (userId) => {
@@ -156,4 +215,5 @@ module.exports = {
   setLessonComplete,
   setCurrentLesson,
   getProgressSummary,
+  getLessonPlayback,
 };

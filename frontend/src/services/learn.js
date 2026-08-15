@@ -18,3 +18,12 @@ export const setCurrentLesson = (courseId, lessonId) =>
 
 export const getProgressSummary = () =>
   api.get('/api/learn/progress/summary').then((r) => r.data.progress || {});
+
+// Slice 4: fetch a short-lived Mux signed playback token for one lesson. The
+// server authorizes (enrollment / preview) and returns only { playbackId,
+// token, expiresIn, ... } — never the Mux asset id or signing key. The token is
+// held in component state and refreshed on demand; it is never persisted.
+export const getLessonPlayback = (courseId, lessonId) =>
+  api
+    .get(`/api/learn/${courseId}/lessons/${lessonId}/playback`)
+    .then((r) => r.data.data);

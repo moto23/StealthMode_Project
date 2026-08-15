@@ -36,3 +36,16 @@ exports.setCurrent = asyncHandler(async (req, res) => {
   const data = await learnService.setCurrentLesson(req.user.id, req.params.courseId, lessonId);
   res.json({ success: true, data });
 });
+
+// GET /api/learn/:courseId/lessons/:lessonId/playback  (protected)
+// Returns a short-lived Mux signed playback token for the lesson. Enrollment is
+// enforced for protected lessons; preview lessons are open to any logged-in
+// user. Never returns the Mux asset id or any signing credential.
+exports.playback = asyncHandler(async (req, res) => {
+  const data = await learnService.getLessonPlayback(
+    req.user.id,
+    req.params.courseId,
+    req.params.lessonId
+  );
+  res.json({ success: true, data });
+});

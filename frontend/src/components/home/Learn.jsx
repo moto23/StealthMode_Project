@@ -1,11 +1,12 @@
 import React, { useContext, useEffect, useMemo, useState, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { FaCheckCircle, FaRegCircle, FaPlay, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { FaCheckCircle, FaRegCircle, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { UserContext } from '../../context/UserContext';
 import { useToast } from '../../context/ToastContext';
 import { getLearnData, markLessonComplete, setCurrentLesson } from '../../services/learn';
 import EmptyState from '../ui/EmptyState';
 import ErrorState from '../ui/ErrorState';
+import LessonPlayer from '../ui/LessonPlayer';
 import '../css/Learn.css';
 
 function Learn() {
@@ -208,12 +209,12 @@ function Learn() {
       <main className="learn-main">
         {activeLesson && (
           <>
-            <div className="learn-video" role="img" aria-label="Lesson video placeholder">
-              <div className="learn-video-inner">
-                <FaPlay aria-hidden="true" />
-                <p>Video for this lesson will play here.</p>
-              </div>
-            </div>
+            <LessonPlayer
+              key={String(activeId)}
+              courseId={courseId}
+              lessonId={activeId}
+              title={activeLesson.title}
+            />
 
             <div className="learn-lesson-head">
               <span className="learn-lesson-eyebrow">{activeLesson.sectionTitle}</span>
