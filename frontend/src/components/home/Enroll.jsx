@@ -8,8 +8,8 @@ import { buyNowSingle } from '../../services/checkout';
 import { formatINR, hasDiscount, discountPercent, isPaid } from '../../services/price';
 import { CardSkeleton } from '../ui/Skeleton';
 import ErrorState from '../ui/ErrorState';
+import CourseReviews from './CourseReviews';
 import '../css/Enroll.css';
-// Reviews are out of scope for this project and intentionally disabled.
 
 const greenTickIcon = 'https://cdn-icons-png.flaticon.com/128/190/190411.png';
 
@@ -233,6 +233,8 @@ function Enroll() {
               <img src={featureImage} alt="Course preview" />
             </div>
           )}
+
+          <CourseReviews courseId={course._id} canReview={hasAccess} />
         </div>
 
         <aside className="cd-purchase">
@@ -254,9 +256,14 @@ function Enroll() {
             </div>
 
             {hasAccess ? (
-              <button className="cd-btn cd-btn-owned" disabled>
-                {paid ? '✓ Purchased' : '✓ Enrolled'}
-              </button>
+              <div className="cd-actions">
+                <button className="cd-btn cd-btn-owned" disabled>
+                  {paid ? '✓ Purchased' : '✓ Enrolled'}
+                </button>
+                <Link to={`/learn/${course._id}`} className="cd-btn cd-btn-primary cd-btn-block">
+                  Go to Learning
+                </Link>
+              </div>
             ) : paid ? (
               <div className="cd-actions">
                 <button className="cd-btn cd-btn-primary" onClick={handleBuyNow} disabled={processing}>

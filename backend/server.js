@@ -6,6 +6,7 @@ const connectDB = require('./config/db');
 const authRouter = require('./routes/auth');
 const coursesRouter = require('./routes/courses');
 const paymentsRouter = require('./routes/payments');
+const learnRouter = require('./routes/learn');
 
 const app = express();
 
@@ -73,6 +74,7 @@ const ensureDb = async (req, res, next) => {
 app.use('/api/auth', ensureDb, authRouter);
 app.use('/api/courses', ensureDb, coursesRouter);
 app.use('/api/payments', ensureDb, paymentsRouter);
+app.use('/api/learn', ensureDb, learnRouter);
 
 // ---- 404 for unknown API routes ----
 app.use((req, res) => {

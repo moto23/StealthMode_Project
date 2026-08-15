@@ -73,6 +73,22 @@
 .learning-card-body { display: flex; flex-direction: column; gap: 8px; padding: 14px 16px 16px; flex: 1; }
 .learning-card-title { margin: 0; font-size: 16px; color: var(--sm-ink); line-height: 1.3; }
 .learning-card-instructor { margin: 0; font-size: 13px; color: var(--sm-muted); }
+.learning-card-progress { display: flex; align-items: center; gap: 8px; margin: 2px 0 4px; }
+.learning-card-progress-bar {
+  flex: 1;
+  height: 6px;
+  border-radius: var(--sm-radius-pill);
+  background: rgba(20, 11, 7, 0.55);
+  overflow: hidden;
+}
+.learning-card-progress-bar span {
+  display: block;
+  height: 100%;
+  background: var(--sm-gradient-accent);
+  transition: width 0.3s ease;
+}
+.learning-card-progress-label { font-size: 11px; font-weight: 700; color: var(--sm-amber-2); white-space: nowrap; }
+
 .learning-card-cta { margin-top: auto; width: 100%; }
 
 /* The .sm-btn used inside cards should center its label like a block button. */

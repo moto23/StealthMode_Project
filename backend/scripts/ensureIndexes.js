@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const Enrolled = require('../models/Enrolled');
 const Payment = require('../models/Payment');
 const Order = require('../models/Order');
+const Progress = require('../models/Progress');
+const Review = require('../models/Review');
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 
 /**
@@ -10,6 +12,8 @@ require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
  *  - Enrolled: unique (userId, courseId)
  *  - Payment:  unique (orderId), plus (userId, courseId)
  *  - Order:    unique (orderId), plus (userId)
+ *  - Progress: unique (userId, courseId)
+ *  - Review:   unique (userId, courseId)
  *
  * SAFETY: checks for existing duplicates first for each unique index. If any
  * exist, it STOPS for that collection and reports them — it never deletes or
@@ -83,6 +87,48 @@ const run = async () => {
     const oIdx = await Order.collection.indexes();
     console.log('Order indexes:', oIdx.map((i) => i.name).join(', '));
     console.log('Order documents:', await Order.countDocuments(), '(none modified)');
+
+    // ---- Progress (Phase 7, Slice 2): unique (userId, courseId) ----
+    const progressDups = await Progress.aggregate([
+      { $group: { _id: { userId: '$userId', courseId: '$courseId' }, count: { $sum: 1 } } },
+      { $match: { count: { $gt: 1 } } },
+    ]);
+
+    if (progressDups.length > 0) {
+      console.error('STOP: duplicate progress records found. Unique index NOT created.');
+      progressDups.forEach((d) =>
+        console.error(`  userId=${d._id.userId} courseId=${d._id.courseId} count=${d.count}`)
+      );
+      process.exitCode = 1;
+      return;
+    }
+
+    await Progress.collection.createIndex({ userId: 1, courseId: 1 }, { unique: true });
+    console.log('Progress: unique index (userId, courseId) is in place.');
+    const prIdx = await Progress.collection.indexes();
+    console.log('Progress indexes:', prIdx.map((i) => i.name).join(', '));
+    console.log('Progress documents:', await Progress.countDocuments(), '(none modified)');
+
+    // ---- Review (Phase 7, Slice 3): unique (userId, courseId) ----
+    const reviewDups = await Review.aggregate([
+      { $group: { _id: { userId: '$userId', courseId: '$courseId' }, count: { $sum: 1 } } },
+      { $match: { count: { $gt: 1 } } },
+    ]);
+
+    if (reviewDups.length > 0) {
+      console.error('STOP: duplicate review records found. Unique index NOT created.');
+      reviewDups.forEach((d) =>
+        console.error(`  userId=${d._id.userId} courseId=${d._id.courseId} count=${d.count}`)
+      );
+      process.exitCode = 1;
+      return;
+    }
+
+    await Review.collection.createIndex({ userId: 1, courseId: 1 }, { unique: true });
+    console.log('Review: unique index (userId, courseId) is in place.');
+    const rvIdx = await Review.collection.indexes();
+    console.log('Review indexes:', rvIdx.map((i) => i.name).join(', '));
+    console.log('Review documents:', await Review.countDocuments(), '(none modified)');
   } catch (error) {
     console.error('ensureIndexes error:', error.message);
     process.exitCode = 1;

@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
 import api from '../../services/api';
+import { getProgressSummary } from '../../services/learn';
 import { CardSkeletonGrid } from '../ui/Skeleton';
 import EmptyState from '../ui/EmptyState';
 import ErrorState from '../ui/ErrorState';
@@ -10,6 +11,7 @@ import '../css/Profile.css';
 function Profile() {
   const { user } = useContext(UserContext);
   const [enrollments, setEnrollments] = useState([]);
+  const [progress, setProgress] = useState({}); // { courseId: percent }
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -20,6 +22,10 @@ function Profile() {
     try {
       const response = await api.get(`/api/courses/enrolled/${user._id}`);
       setEnrollments(Array.isArray(response.data) ? response.data : []);
+      // Progress summary is best-effort — never blocks the course list.
+      getProgressSummary()
+        .then((p) => setProgress(p || {}))
+        .catch(() => {});
     } catch (err) {
       console.error('Error fetching enrolled courses:', err.response?.data || err.message);
       setError('We couldn’t load your courses. Please try again.');
@@ -86,22 +92,33 @@ function Profile() {
           />
         ) : (
           <div className="profile-grid">
-            {courses.map((course) => (
-              <article key={course._id} className="learning-card">
-                <div className="learning-card-media">
-                  <img src={course.imageUrl} alt={course.title} loading="lazy" />
-                </div>
-                <div className="learning-card-body">
-                  <h3 className="learning-card-title">{course.title}</h3>
-                  {course.instructor && (
-                    <p className="learning-card-instructor">{course.instructor}</p>
-                  )}
-                  <Link to={`/enroll/${course._id}`} className="sm-btn sm-btn-primary learning-card-cta">
-                    Continue Learning
-                  </Link>
-                </div>
-              </article>
-            ))}
+            {courses.map((course) => {
+              const pct = progress[String(course._id)];
+              return (
+                <article key={course._id} className="learning-card">
+                  <div className="learning-card-media">
+                    <img src={course.imageUrl} alt={course.title} loading="lazy" />
+                  </div>
+                  <div className="learning-card-body">
+                    <h3 className="learning-card-title">{course.title}</h3>
+                    {course.instructor && (
+                      <p className="learning-card-instructor">{course.instructor}</p>
+                    )}
+                    {typeof pct === 'number' && (
+                      <div className="learning-card-progress">
+                        <div className="learning-card-progress-bar">
+                          <span style={{ width: `${pct}%` }} />
+                        </div>
+                        <span className="learning-card-progress-label">{pct}% complete</span>
+                      </div>
+                    )}
+                    <Link to={`/learn/${course._id}`} className="sm-btn sm-btn-primary learning-card-cta">
+                      {pct > 0 ? 'Continue Learning' : 'Start Learning'}
+                    </Link>
+                  </div>
+                </article>
+              );
+            })}
           </div>
         )}
       </section>

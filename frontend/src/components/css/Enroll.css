@@ -138,6 +138,65 @@
 }
 .cd-lesson-duration { flex: 0 0 auto; font-size: 12px; color: var(--sm-muted-2); white-space: nowrap; }
 
+/* ---- Reviews (Phase 7 Slice 3) ---- */
+.star-rating { display: inline-flex; gap: 2px; color: var(--sm-amber); line-height: 1; }
+.star-rating .star { display: inline-flex; }
+.star-rating-interactive .star-button {
+  background: none;
+  border: none;
+  padding: 2px;
+  cursor: pointer;
+  color: var(--sm-amber);
+}
+.star-rating-interactive .star-button:hover { transform: scale(1.08); }
+@media (prefers-reduced-motion: reduce) {
+  .star-rating-interactive .star-button:hover { transform: none; }
+}
+
+.cd-reviews { margin-top: 28px; }
+.cd-reviews h2 { font-size: 22px; color: var(--sm-ink); margin: 0 0 12px; }
+.cd-reviews-summary { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
+.cd-reviews-avg { font-size: 30px; font-weight: 800; color: var(--sm-amber); letter-spacing: -0.5px; }
+.cd-reviews-count { font-size: 14px; color: var(--sm-muted); }
+.cd-reviews-note { font-size: 14px; color: var(--sm-muted); margin: 0 0 18px; }
+
+.cd-review-form {
+  background: var(--sm-glass-bg);
+  border: 1px solid var(--sm-glass-border);
+  border-radius: var(--sm-radius);
+  padding: 18px;
+  margin-bottom: 22px;
+  -webkit-backdrop-filter: blur(var(--sm-blur));
+  backdrop-filter: blur(var(--sm-blur));
+}
+@supports not ((backdrop-filter: blur(2px)) or (-webkit-backdrop-filter: blur(2px))) {
+  .cd-review-form { background: var(--sm-glass-strong); }
+}
+.cd-review-form h3 { margin: 0 0 12px; font-size: 16px; color: var(--sm-ink); }
+.cd-review-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--sm-border);
+  border-radius: var(--sm-radius-sm);
+  background: rgba(20, 11, 7, 0.72);
+  color: var(--sm-ink);
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+}
+.cd-review-textarea::placeholder { color: var(--sm-muted-2); }
+.cd-review-textarea:focus { outline: none; border-color: var(--sm-amber); box-shadow: 0 0 0 3px rgba(227, 169, 74, 0.22); }
+.cd-review-actions { display: flex; gap: 10px; margin-top: 12px; }
+
+.cd-review-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+.cd-review-item { border-top: 1px solid var(--sm-glass-border); padding-top: 14px; }
+.cd-review-item-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.cd-review-author { font-weight: 700; color: var(--sm-ink); font-size: 14px; }
+.cd-review-date { font-size: 12px; color: var(--sm-muted-2); }
+.cd-review-comment { margin: 8px 0 0; font-size: 14px; color: var(--sm-ink-2); line-height: 1.55; }
+
 /* ---- Sticky purchase panel ---- */
 .cd-purchase { position: sticky; top: 84px; }
 .cd-purchase-card {

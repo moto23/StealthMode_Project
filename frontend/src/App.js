@@ -14,6 +14,7 @@ import AdminRoute from './components/admin/AdminRoute';
 import AdminCourses from './components/admin/AdminCourses';
 import Cart from './components/home/Cart';
 import Wishlist from './components/home/Wishlist';
+import Learn from './components/home/Learn';
 
 
 import { UserProvider } from './context/UserContext';
@@ -39,6 +40,7 @@ function App() {
               <Route path="/verify-otp" element={<VerifyOtp />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/enroll/:id" element={<Enroll />} />
+              <Route path="/learn/:courseId" element={<Learn />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/wishlist" element={<Wishlist />} />
               <Route path="/profile" element={<Profile />} /> {/* Add this line */}

@@ -11,6 +11,7 @@ const {
   updateCurriculum,
 } = require('../controllers/courseController');
 const { enroll, getUserEnrollments } = require('../controllers/enrollmentController');
+const reviewController = require('../controllers/reviewController');
 const { protect, requireRole } = require('../middleware/auth');
 
 // ---- Public reads (backward compatible with existing frontend) ----
@@ -25,6 +26,14 @@ router.get('/enrolled/:userId', protect, getUserEnrollments);
 // Full curriculum read (incl. protected video handles) + bulk replace.
 router.get('/:id/curriculum', protect, requireRole('admin'), getCurriculum);
 router.put('/:id/curriculum', protect, requireRole('admin'), updateCurriculum);
+
+// ---- Reviews & ratings (Phase 7, Slice 3) ----
+// Declared before the generic '/:id' read. '/reviews/me' is more specific than
+// '/reviews' but both are distinct paths, so ordering here is safe.
+router.get('/:id/reviews', reviewController.list);                       // public
+router.get('/:id/reviews/me', protect, reviewController.mine);           // own review
+router.post('/:id/reviews', protect, reviewController.upsert);           // enrolled only
+router.delete('/:id/reviews/me', protect, reviewController.remove);      // own review
 
 // ---- Admin course management ----
 router.post('/', protect, requireRole('admin'), createCourse);
