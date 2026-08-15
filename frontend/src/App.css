@@ -24,13 +24,14 @@ body {
   display: inline-block;
   padding: 10px 20px;
   margin: 10px;
-  background-color: #007bff;
-  color: #fff;
+  background: var(--sm-gradient-accent);
+  color: #2a190f;
+  font-weight: 700;
   text-decoration: none;
-  border-radius: 5px;
-  transition: background-color 0.3s;
+  border-radius: var(--sm-radius-sm);
+  transition: opacity 0.3s;
 }
 
 .btn:hover {
-  background-color: #0056b3;
+  opacity: 0.92;
 }

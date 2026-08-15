@@ -1,67 +1,101 @@
+/* Contact — espresso section with a premium glass form panel.
+   Presentation only; fields, submit and emailjs logic are untouched. */
 .contact {
-  background-color: #fff;
-  color: #333;
+  position: relative;
+  color: var(--sm-ink);
   text-align: center;
-  padding: 50px 20px;
+  padding: 88px 20px;
+  overflow: hidden;
+  background:
+    radial-gradient(680px 420px at 16% 20%, rgba(150, 92, 40, 0.20), transparent 62%),
+    linear-gradient(180deg, #170d08 0%, #1a0f0a 50%, #140b07 100%);
+}
+.contact::before {
+  content: "";
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(230, 190, 120, 0.22), transparent);
 }
 
 .contact-container {
-  max-width: 400px;
+  position: relative;
+  z-index: 1;
+  max-width: 460px;
+  height: auto;
   margin: 0 auto;
-  height:400px;
+  padding: 36px 32px 34px;
+  border-radius: var(--sm-radius);
+  background: var(--sm-glass-bg);
+  border: 1px solid var(--sm-glass-border);
+  box-shadow: var(--sm-shadow-lg), inset 0 1px 0 var(--sm-glass-highlight);
+  -webkit-backdrop-filter: blur(var(--sm-blur));
+  backdrop-filter: blur(var(--sm-blur));
+}
+@supports not ((backdrop-filter: blur(2px)) or (-webkit-backdrop-filter: blur(2px))) {
+  .contact-container { background: var(--sm-glass-strong); }
 }
 
-.contact-container h2{
-  align-items:center;
-  margin-right: 60px;
+.contact-container h2 {
+  margin: 0 0 22px;
+  font-size: 28px;
+  color: var(--sm-ink);
+  letter-spacing: -0.4px;
 }
 
 .contact form {
   display: flex;
   flex-direction: column;
-}
-
-.contact input, .contact textarea {
-  margin: 10px 0;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  width: 100%;
-}
-
-.contact button {
-  padding: 10px;
-  background-color: #4b0082;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.contact button:hover {
-  background-color: #4b0082;
-}
-
-.contact-options {
-  margin-top: 20px;
+  gap: 14px;
   text-align: left;
 }
 
-.contact-options h3 {
-  margin-bottom: 10px;
+/* Inputs stay high-opacity so text/borders remain readable over glass. */
+.contact input,
+.contact textarea {
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid var(--sm-border);
+  border-radius: var(--sm-radius-sm);
+  width: 100%;
+  box-sizing: border-box;
+  background: rgba(20, 11, 7, 0.72);
+  color: var(--sm-ink);
+  font-size: 15px;
+  font-family: inherit;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.contact input::placeholder,
+.contact textarea::placeholder { color: var(--sm-muted-2); }
+.contact textarea { min-height: 130px; resize: vertical; }
+
+.contact input:focus,
+.contact textarea:focus {
+  outline: none;
+  border-color: var(--sm-amber);
+  box-shadow: 0 0 0 3px rgba(227, 169, 74, 0.22);
 }
 
-.contact-options p {
-  margin: 5px 0;
+.contact button {
+  margin-top: 4px;
+  padding: 13px;
+  background: var(--sm-gradient-accent);
+  color: #2a190f;
+  font-weight: 800;
+  border: none;
+  border-radius: var(--sm-radius-sm);
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(200, 145, 47, 0.3);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
 }
+.contact button:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(200, 145, 47, 0.42); }
 
-.contact-options a {
-  color: #4b0082;
-  text-decoration: none;
+/* Retained (commented block in JSX) — themed in case it is re-enabled. */
+.contact-options { margin-top: 20px; text-align: left; }
+.contact-options h3 { margin-bottom: 10px; color: var(--sm-ink); }
+.contact-options p { margin: 5px 0; color: var(--sm-ink-2); }
+.contact-options a { color: var(--sm-amber-2); text-decoration: none; }
+.contact-options a:hover { text-decoration: underline; }
+
+@media (max-width: 480px) {
+  .contact { padding: 64px 16px; }
+  .contact-container { padding: 28px 20px 26px; }
 }
-
-.contact-options a:hover {
-  text-decoration: underline;
-}
-

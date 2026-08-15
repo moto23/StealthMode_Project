@@ -1,67 +1,97 @@
+/* About — continuation of the espresso world. Balanced image + content,
+   refined glass surface (not one giant rectangle). */
 .about {
-  background-color: #f9f9f9;
-  color: #333;
+  position: relative;
+  color: var(--sm-ink);
   text-align: center;
-  padding: 90px 20px; /* Adjust padding for the overall section */
-  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1); /* Add box shadow to the section */
+  padding: 96px 20px;
+  overflow: hidden;
+  background:
+    radial-gradient(760px 420px at 84% 12%, rgba(150, 92, 40, 0.22), transparent 62%),
+    linear-gradient(180deg, #120a06 0%, #1a0f0a 40%, #170d08 100%);
+}
+/* Subtle warm separator from the hero above. */
+.about::before {
+  content: "";
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(230, 190, 120, 0.25), transparent);
 }
 
 .about-container {
-  max-width: 1100px; /* Increase max-width to enlarge the container */
-  height: 450px; /* Increase height to make the container taller */
+  max-width: 1100px;
+  height: auto;
   margin: 0 auto;
   display: flex;
   align-items: center;
-  justify-content: center; /* Center content horizontally */
+  justify-content: center;
 }
 
 .about-content {
   display: flex;
   align-items: center;
-  justify-content: space-around; /* Ensure content is spaced between image and text */
-  gap: 80px; /* Adjust gap between image and text */
+  justify-content: space-between;
+  gap: 56px;
   width: 100%;
+  padding: 36px;
+  border-radius: var(--sm-radius);
+  background: var(--sm-glass-bg);
+  border: 1px solid var(--sm-glass-border);
+  box-shadow: var(--sm-shadow-lg), inset 0 1px 0 var(--sm-glass-highlight);
+  -webkit-backdrop-filter: blur(var(--sm-blur));
+  backdrop-filter: blur(var(--sm-blur));
+}
+@supports not ((backdrop-filter: blur(2px)) or (-webkit-backdrop-filter: blur(2px))) {
+  .about-content { background: var(--sm-glass-strong); }
 }
 
-.about-image {
-  flex: 1; /* Adjust flex to increase the size of the image container */
-}
-
+.about-image { flex: 1; min-width: 0; }
 .about-image img {
   max-width: 100%;
-  height: 100%; /* Use height instead of fixed height to scale with the container */
-  object-fit: cover; /* Maintain aspect ratio and cover container */
-  border-radius: 10px; /* Add rounded corners to the image */
-  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2); /* Add box shadow to the image */
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--sm-radius);
+  border: 1px solid var(--sm-glass-border);
+  box-shadow: var(--sm-shadow);
 }
 
 .about-text {
   flex: 1.5;
-  text-align: left; /* Align text to the left */
-  padding: 20px; /* Add padding to the text container */
+  text-align: left;
+  padding: 8px 12px;
 }
 
-h2 {
-  margin-bottom: 40px; /* Add margin bottom to separate heading from text */
-  margin-right: 90px;
-  text-align: center;
+/* Scoped so these do not leak to other pages. */
+.about-text h2 {
+  margin: 0 0 20px;
+  text-align: left;
+  font-size: 30px;
+  color: var(--sm-ink);
+  letter-spacing: -0.4px;
 }
-
-p {
-  font-size: 18px; /* Increase font size for better readability */
+.about-text p {
+  font-size: 17px;
+  line-height: 1.7;
+  color: var(--sm-ink-2);
+  margin: 0 0 8px;
 }
 
 .bt {
   display: inline-block;
-  margin-top: 20px;
-  padding: 12px 24px; /* Increase padding for larger button */
-  background-color: #4b0082; /* Set button background color */
-  color: white;
+  margin-top: 24px;
+  padding: 13px 26px;
+  background: var(--sm-gradient-accent);
+  color: #2a190f;
+  font-weight: 700;
   text-decoration: none;
-  border-radius: 5px;
-  transition: background-color 0.3s ease; /* Add transition for smoother hover effect */
+  border-radius: var(--sm-radius-sm);
+  box-shadow: 0 10px 24px rgba(200, 145, 47, 0.28);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
+.bt:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(200, 145, 47, 0.4); }
 
-.bt:hover {
-  background-color: #6a0dad; /* Darken hover background color */
+@media (max-width: 820px) {
+  .about { padding: 72px 18px; }
+  .about-content { flex-direction: column; gap: 28px; padding: 28px; text-align: center; }
+  .about-text { text-align: center; }
+  .about-text h2 { text-align: center; }
 }

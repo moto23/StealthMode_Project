@@ -1,33 +1,21 @@
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-  background: #f6f3f8;
-}
-
-h1 {
-  text-align: center;
-  margin-top: 70px;
-}
-
 .storefront {
   padding-top: 60px;
 }
 
 .storefront-hero {
   text-align: center;
-  padding: 26px 16px 6px;
+  padding: 30px 16px 6px;
 }
 
 .storefront-hero h1 {
   margin: 0;
-  color: #1f1147;
+  color: var(--sm-ink);
   font-size: 30px;
 }
 
 .storefront-hero p {
   margin: 8px 0 0;
-  color: #6b6580;
+  color: var(--sm-muted);
   font-size: 15px;
 }
 
@@ -80,7 +68,7 @@ h1 {
 .catalog-search input:focus {
   outline: none;
   border-color: var(--sm-purple);
-  box-shadow: 0 0 0 3px rgba(75, 0, 130, 0.12);
+  box-shadow: 0 0 0 3px rgba(227, 169, 74, 0.20);
 }
 
 .catalog-filters { display: flex; gap: 12px; flex-wrap: wrap; }
@@ -99,7 +87,7 @@ h1 {
 .catalog-field select:focus {
   outline: none;
   border-color: var(--sm-purple);
-  box-shadow: 0 0 0 3px rgba(75, 0, 130, 0.12);
+  box-shadow: 0 0 0 3px rgba(227, 169, 74, 0.20);
 }
 
 .catalog-meta {

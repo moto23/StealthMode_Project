@@ -1,14 +1,13 @@
+/* Admin — espresso theme. Content-heavy, so surfaces stay high-opacity for
+   readability (glass used sparingly on the modal). */
 .admin-page {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 32px 20px 64px;
+  padding: 92px 20px 64px;
+  color: var(--sm-ink);
 }
 
-.admin-loading {
-  padding: 48px 20px;
-  text-align: center;
-  color: #555;
-}
+.admin-loading { padding: 48px 20px; text-align: center; color: var(--sm-muted); }
 
 .admin-header {
   display: flex;
@@ -18,174 +17,91 @@
   flex-wrap: wrap;
   margin-bottom: 24px;
 }
-
-.admin-header h1 {
-  margin: 0 0 4px;
-  font-size: 1.6rem;
-}
-
-.admin-subtitle {
-  margin: 0;
-  color: #666;
-  font-size: 0.95rem;
-}
-
-.admin-muted {
-  color: #777;
-}
-
-.admin-error {
-  color: #b3261e;
-  margin: 8px 0;
-}
-
-.admin-error-block {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
+.admin-header h1 { margin: 0 0 4px; font-size: 1.6rem; color: var(--sm-ink); }
+.admin-subtitle { margin: 0; color: var(--sm-muted); font-size: 0.95rem; }
+.admin-muted { color: var(--sm-muted); }
+.admin-error { color: var(--sm-danger); margin: 8px 0; }
+.admin-error-block { display: flex; align-items: center; gap: 12px; }
 
 /* ---- Buttons ---- */
 .admin-btn {
-  border: 1px solid #cfc7bf;
-  background: #f6f3ef;
-  color: #2f2a24;
+  border: 1px solid var(--sm-border);
+  background: rgba(255, 240, 210, 0.05);
+  color: var(--sm-ink);
   padding: 8px 14px;
-  border-radius: 8px;
+  border-radius: var(--sm-radius-sm);
   cursor: pointer;
   font-size: 0.9rem;
   transition: background 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
 }
-
-.admin-btn:hover {
-  background: #ece7e0;
-}
-
-.admin-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.admin-btn-small {
-  padding: 5px 10px;
-  font-size: 0.82rem;
-}
+.admin-btn:hover { background: rgba(227, 169, 74, 0.14); }
+.admin-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.admin-btn-small { padding: 5px 10px; font-size: 0.82rem; }
 
 .admin-btn-primary {
-  background: #5a3d2c;
-  border-color: #5a3d2c;
-  color: #fff;
+  background: var(--sm-gradient-accent);
+  border-color: rgba(230, 190, 120, 0.3);
+  color: #2a190f;
+  font-weight: 700;
 }
+.admin-btn-primary:hover { opacity: 0.94; background: var(--sm-gradient-accent); }
 
-.admin-btn-primary:hover {
-  background: #4a3220;
-}
-
-.admin-btn-ghost {
-  background: transparent;
-}
+.admin-btn-ghost { background: transparent; }
 
 .admin-btn-danger {
-  background: #fbeceb;
-  border-color: #e6b4b0;
-  color: #b3261e;
+  background: rgba(232, 118, 95, 0.14);
+  border-color: rgba(232, 118, 95, 0.4);
+  color: #f0a595;
 }
-
-.admin-btn-danger:hover {
-  background: #f7dcd9;
-}
+.admin-btn-danger:hover { background: rgba(232, 118, 95, 0.24); }
 
 /* ---- Table ---- */
 .admin-table-wrap {
   overflow-x: auto;
-  border: 1px solid #e7e1da;
-  border-radius: 10px;
+  border: 1px solid var(--sm-glass-border);
+  border-radius: var(--sm-radius);
+  background: var(--sm-glass-strong);
 }
 
-.admin-table {
-  width: 100%;
-  border-collapse: collapse;
-  min-width: 640px;
-}
-
+.admin-table { width: 100%; border-collapse: collapse; min-width: 640px; }
 .admin-table th,
 .admin-table td {
   text-align: left;
-  /* Explicit dark text: overrides the app-global `body { color:#fff }`
-     (from Enroll.css) that body cells would otherwise inherit as white. */
-  color: #2b2b2b;
+  color: var(--sm-ink);
   padding: 12px 14px;
-  border-bottom: 1px solid #eee6dd;
+  border-bottom: 1px solid var(--sm-border);
   font-size: 0.92rem;
   vertical-align: middle;
 }
-
 .admin-table thead th {
-  background: #f6f3ef;
-  color: #4a4038;
+  background: rgba(255, 240, 210, 0.05);
+  color: var(--sm-amber-2);
   font-weight: 600;
 }
+.admin-table tbody tr:last-child td { border-bottom: none; }
+.admin-table tbody tr:hover td { background: rgba(227, 169, 74, 0.06); }
 
-.admin-table tbody tr:last-child td {
-  border-bottom: none;
-}
+.admin-actions-col { white-space: nowrap; }
+.admin-actions-col .admin-btn + .admin-btn { margin-left: 8px; }
 
-.admin-actions-col {
-  white-space: nowrap;
-}
-
-.admin-actions-col .admin-btn + .admin-btn {
-  margin-left: 8px;
-}
-
-/* Separate Edit from the destructive Delete so they are harder to mis-click. */
-.admin-row-actions {
-  display: inline-flex;
-  align-items: center;
-}
-
-.admin-actions-divider {
-  display: inline-block;
-  width: 1px;
-  height: 20px;
-  background: #e0d8ce;
-  margin: 0 14px;
-}
-
-.admin-btn-delete {
-  margin-left: 0;
-}
+.admin-row-actions { display: inline-flex; align-items: center; }
+.admin-actions-divider { display: inline-block; width: 1px; height: 20px; background: var(--sm-border); margin: 0 14px; }
+.admin-btn-delete { margin-left: 0; }
 
 /* ---- Delete confirmation modal ---- */
-.admin-modal-confirm {
-  max-width: 440px;
-}
-
-.admin-modal-body {
-  padding: 18px 22px 4px;
-}
-
-.admin-modal-body p {
-  margin: 0 0 10px;
-  color: #4a4038;
-}
-
-.admin-confirm-course {
-  font-weight: 700;
-  font-size: 18px;
-  color: #1f1147 !important;
-}
-
-.admin-confirm-warning {
-  color: #b3261e !important;
-  font-weight: 600;
-}
+.admin-modal-confirm { max-width: 440px; }
+.admin-modal-body { padding: 18px 22px 4px; }
+.admin-modal-body p { margin: 0 0 10px; color: var(--sm-ink-2); }
+.admin-confirm-course { font-weight: 700; font-size: 18px; color: var(--sm-ink) !important; }
+.admin-confirm-warning { color: var(--sm-danger) !important; font-weight: 600; }
 
 /* ---- Modal ---- */
 .admin-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(30, 24, 18, 0.5);
+  background: rgba(10, 6, 3, 0.6);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: flex-start;
   justify-content: center;
@@ -193,122 +109,68 @@
   overflow-y: auto;
   z-index: 1000;
 }
-
 .admin-modal {
-  background: #fff;
+  background: var(--sm-glass-strong);
+  border: 1px solid var(--sm-glass-border);
   width: 100%;
   max-width: 720px;
-  border-radius: 12px;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+  border-radius: var(--sm-radius);
+  box-shadow: var(--sm-shadow-lg);
+  color: var(--sm-ink);
 }
-
 .admin-modal-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 18px 22px;
-  border-bottom: 1px solid #eee6dd;
+  border-bottom: 1px solid var(--sm-border);
 }
-
-.admin-modal-header h3 {
-  margin: 0;
-}
-
-.admin-modal-close {
-  border: none;
-  background: transparent;
-  font-size: 1.6rem;
-  line-height: 1;
-  cursor: pointer;
-  color: #6b6157;
-}
+.admin-modal-header h3 { margin: 0; color: var(--sm-ink); }
+.admin-modal-close { border: none; background: transparent; font-size: 1.6rem; line-height: 1; cursor: pointer; color: var(--sm-muted); }
+.admin-modal-close:hover { color: var(--sm-ink); }
 
 /* ---- Form ---- */
-.admin-form {
-  padding: 20px 22px 24px;
-}
-
-.admin-form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-}
-
-.admin-field {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  font-size: 0.85rem;
-  color: #4a4038;
-}
-
-.admin-field-wide {
-  grid-column: 1 / -1;
-}
-
+.admin-form { padding: 20px 22px 24px; }
+.admin-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.admin-field { display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem; color: var(--sm-ink-2); }
+.admin-field-wide { grid-column: 1 / -1; }
 .admin-field input,
 .admin-field select,
 .admin-field textarea {
   padding: 9px 10px;
-  border: 1px solid #d6cec5;
-  border-radius: 8px;
+  border: 1px solid var(--sm-border);
+  border-radius: var(--sm-radius-sm);
   font-size: 0.92rem;
   font-family: inherit;
+  background: rgba(20, 11, 7, 0.5);
+  color: var(--sm-ink);
 }
-
+.admin-field input::placeholder, .admin-field textarea::placeholder { color: var(--sm-muted-2); }
 .admin-field input:focus,
 .admin-field select:focus,
 .admin-field textarea:focus {
   outline: none;
-  border-color: #5a3d2c;
-  box-shadow: 0 0 0 2px rgba(90, 61, 44, 0.15);
+  border-color: var(--sm-amber);
+  box-shadow: 0 0 0 2px rgba(227, 169, 74, 0.22);
 }
 
 /* ---- Features editor ---- */
-.admin-features {
-  margin-top: 18px;
-  border-top: 1px solid #eee6dd;
-  padding-top: 16px;
-}
-
-.admin-features-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 10px;
-  font-weight: 600;
-  color: #4a4038;
-}
-
-.admin-feature-row {
-  display: grid;
-  grid-template-columns: 1fr 2fr auto;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-
+.admin-features { margin-top: 18px; border-top: 1px solid var(--sm-border); padding-top: 16px; }
+.admin-features-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; font-weight: 600; color: var(--sm-ink-2); }
+.admin-feature-row { display: grid; grid-template-columns: 1fr 2fr auto; gap: 8px; margin-bottom: 8px; }
 .admin-feature-row input {
   padding: 8px 10px;
-  border: 1px solid #d6cec5;
-  border-radius: 8px;
+  border: 1px solid var(--sm-border);
+  border-radius: var(--sm-radius-sm);
   font-size: 0.9rem;
   font-family: inherit;
+  background: rgba(20, 11, 7, 0.5);
+  color: var(--sm-ink);
 }
 
-/* ---- Modal actions ---- */
-.admin-modal-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 20px;
-}
+.admin-modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
 
-/* ---- Responsive ---- */
 @media (max-width: 640px) {
-  .admin-form-grid {
-    grid-template-columns: 1fr;
-  }
-  .admin-feature-row {
-    grid-template-columns: 1fr;
-  }
+  .admin-form-grid { grid-template-columns: 1fr; }
+  .admin-feature-row { grid-template-columns: 1fr; }
 }

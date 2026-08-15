@@ -3,12 +3,19 @@ html {
 }
 
 .navbar {
-  background: linear-gradient(135deg, #3b4cca, #4b0082);
+  background: rgba(26, 15, 10, 0.72);
+  -webkit-backdrop-filter: blur(14px) saturate(120%);
+  backdrop-filter: blur(14px) saturate(120%);
+  border-bottom: 1px solid var(--sm-glass-border);
   padding: 10px 20px;
   position: fixed;
   top: 0;
   width: 100%;
   z-index: 1000;
+  box-sizing: border-box;
+}
+@supports not ((backdrop-filter: blur(2px)) or (-webkit-backdrop-filter: blur(2px))) {
+  .navbar { background: var(--sm-espresso-950); }
 }
 
 .navbar-container {
@@ -19,14 +26,17 @@ html {
 }
 
 .navbar-logo {
-  color: #fff;
+  color: var(--sm-ink);
   text-decoration: none;
   font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
 }
+.navbar-logo:hover { color: var(--sm-amber-2); }
 
 .menu-icon {
   display: none;
-  color: #fff;
+  color: var(--sm-ink);
   font-size: 24px;
   cursor: pointer;
 }
@@ -36,6 +46,7 @@ html {
   display: flex;
   margin: 0;
   padding: 0;
+  align-items: center;
 }
 
 .nav-item {
@@ -43,53 +54,64 @@ html {
 }
 
 .nav-links {
-  color: #fff;
+  color: var(--sm-ink);
   text-decoration: none;
   font-size: 18px;
-  transition: color 0.3s, border-bottom-color 0.3s; /* Add transition for smooth animation */
-  position: relative; /* Required for absolute positioning of underline */
+  transition: color 0.3s, border-bottom-color 0.3s;
+  position: relative;
 }
 
 .nav-links:hover {
-  color: #ffd700;
+  color: var(--sm-gold);
 }
 
 .nav-links:hover::after {
   content: '';
   position: absolute;
   left: 0;
-  bottom: -3px; /* Adjust the distance from text to bottom */
+  bottom: -3px;
   width: 100%;
   height: 2px;
-  background-color: #ffd700;
+  background-color: var(--sm-gold);
 }
 
 .nav-item.dropdown {
-  position: center;
+  position: relative;
   display: inline-block;
-  
 }
 
 .dropdown-content {
   display: none;
   position: absolute;
-  background-color: #f9f9f9;
-  min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  right: 0;
+  background: var(--sm-glass-strong);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--sm-glass-border);
+  border-radius: var(--sm-radius-sm);
+  min-width: 180px;
+  box-shadow: var(--sm-shadow-lg);
   z-index: 1;
+  overflow: hidden;
+  margin-top: 8px;
 }
 
 .dropdown-content a,
 .dropdown-content span {
-  color: black;
+  color: var(--sm-ink);
   padding: 12px 16px;
   text-decoration: none;
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  cursor: pointer;
 }
 
 .dropdown-content a:hover,
 .dropdown-content span:hover {
-  background-color: #f1f1f1;
+  background: rgba(227, 169, 74, 0.14);
+  color: var(--sm-amber-2);
 }
 
 .nav-item.dropdown:hover .dropdown-content {
@@ -124,9 +146,9 @@ html {
   min-width: 18px;
   height: 18px;
   padding: 0 5px;
-  border-radius: 999px;
-  background: #ffd700;
-  color: #4b0082;
+  border-radius: var(--sm-radius-pill);
+  background: var(--sm-gold);
+  color: var(--sm-espresso-900);
   font-size: 12px;
   font-weight: 800;
   line-height: 1;
@@ -148,7 +170,9 @@ html {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #3b4cca, #4b0082);
+    background: rgba(20, 11, 7, 0.92);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -162,4 +186,6 @@ html {
   .nav-item {
     margin: 20px 0;
   }
+
+  .dropdown-content { position: static; box-shadow: none; margin-top: 4px; background: transparent; border: none; }
 }

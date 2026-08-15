@@ -1,35 +1,60 @@
-/* StealthMode design tokens — the existing indigo/purple brand identity,
-   centralized so components stay visually consistent. Not a redesign. */
+/* StealthMode design tokens — premium BROWN GLASS / espresso aesthetic.
+   Re-skins the app through one token system (no second design system).
+   Base = deep espresso; text = warm cream; accent = muted amber/gold;
+   panels = translucent brown glass with subtle backdrop blur. */
 :root {
-  /* Brand */
-  --sm-indigo: #3b4cca;
-  --sm-purple: #4b0082;
-  --sm-purple-2: #6a0dad;
-  --sm-gradient: linear-gradient(135deg, #3b4cca, #4b0082);
-  --sm-gold: #ffd700;
+  /* Espresso base scale */
+  --sm-espresso-950: #140b07;
+  --sm-espresso-900: #1c110b;
+  --sm-espresso-800: #241610;
+  --sm-espresso-700: #2f1d14;
+  --sm-walnut: #3a2419;
+  --sm-coffee: #4a2f21;
 
-  /* Surfaces & text */
-  --sm-bg: #f6f3f8;
-  --sm-surface: #ffffff;
-  --sm-ink: #1f1147;
-  --sm-ink-2: #38324d;
-  --sm-muted: #6b6580;
-  --sm-muted-2: #9089a6;
-  --sm-border: #e7e2ef;
-  --sm-chip-bg: #efe9f8;
+  /* Warm accent (amber / gold) — used for prices, links, borders, glow. */
+  --sm-amber: #e3a94a;
+  --sm-amber-2: #f0c069;
+  --sm-gold: #ffd27a;
 
-  /* Status */
-  --sm-danger: #d7263d;
-  --sm-success: #1a7f37;
-  --sm-warning: #b26b00;
-  --sm-info: #3b4cca;
+  /* Legacy token names kept so existing components re-skin automatically.
+     purple => amber accent; gradient => premium espresso button. */
+  --sm-purple: #e3a94a;
+  --sm-purple-2: #f0c069;
+  --sm-indigo: #6b4423;
+  --sm-gradient: linear-gradient(135deg, #6b4423, #3a2419);
+  --sm-gradient-accent: linear-gradient(135deg, #e6b45a, #c8912f);
+
+  /* Text on the espresso base (contrast-first). */
+  --sm-ink: #f5ead6;      /* primary text (warm cream) */
+  --sm-ink-2: #e0cfb3;    /* secondary text */
+  --sm-muted: #bda887;    /* muted */
+  --sm-muted-2: #9c8768;  /* faint */
+
+  /* Surfaces */
+  --sm-bg: #1a0f0a;
+  --sm-surface: #241610;       /* solid fallback surface */
+  --sm-border: #4a3526;        /* warm border */
+  --sm-chip-bg: rgba(227, 169, 74, 0.14);
+
+  /* Glass */
+  --sm-glass-bg: rgba(41, 25, 17, 0.60);
+  --sm-glass-strong: rgba(28, 17, 11, 0.90); /* content-heavy / fallback */
+  --sm-glass-border: rgba(230, 190, 120, 0.16);
+  --sm-glass-highlight: rgba(255, 240, 210, 0.05);
+  --sm-blur: 14px;
+
+  /* Status (warm-tuned but still legible) */
+  --sm-danger: #e8765f;
+  --sm-success: #8fd0a0;
+  --sm-warning: #e3b45a;
+  --sm-info: #e3a94a;
 
   /* Radius / shadow / spacing */
-  --sm-radius: 12px;
-  --sm-radius-sm: 8px;
+  --sm-radius: 14px;
+  --sm-radius-sm: 10px;
   --sm-radius-pill: 999px;
-  --sm-shadow: 0 2px 10px rgba(75, 0, 130, 0.06);
-  --sm-shadow-lg: 0 10px 24px rgba(75, 0, 130, 0.14);
+  --sm-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  --sm-shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.48);
   --sm-space-1: 4px;
   --sm-space-2: 8px;
   --sm-space-3: 12px;
@@ -38,7 +63,31 @@
   --sm-space-6: 32px;
 }
 
-/* Shared button primitives (opt-in via class; existing components keep theirs). */
+/* Atmospheric espresso background with soft warm glow (global). */
+body {
+  background-color: var(--sm-bg);
+  background-image:
+    radial-gradient(1200px 620px at 12% -8%, rgba(150, 92, 40, 0.32), transparent 60%),
+    radial-gradient(920px 520px at 112% 6%, rgba(190, 130, 55, 0.16), transparent 55%),
+    radial-gradient(820px 820px at 50% 122%, rgba(70, 40, 22, 0.45), transparent 60%);
+  background-attachment: fixed;
+  color: var(--sm-ink);
+}
+
+/* Reusable frosted brown-glass surface (used by major panels via their own
+   classes; this utility is available too). Opaque fallback when unsupported. */
+.sm-glass {
+  background: var(--sm-glass-bg);
+  border: 1px solid var(--sm-glass-border);
+  -webkit-backdrop-filter: blur(var(--sm-blur));
+  backdrop-filter: blur(var(--sm-blur));
+  box-shadow: var(--sm-shadow);
+}
+@supports not ((backdrop-filter: blur(2px)) or (-webkit-backdrop-filter: blur(2px))) {
+  .sm-glass { background: var(--sm-glass-strong); }
+}
+
+/* Shared button primitives. */
 .sm-btn {
   display: inline-flex;
   align-items: center;
@@ -51,10 +100,41 @@
   font-weight: 700;
   cursor: pointer;
   text-decoration: none;
-  transition: background 0.15s ease, opacity 0.15s ease, color 0.15s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease, opacity 0.15s ease;
 }
-.sm-btn-primary { background: var(--sm-gradient); color: #fff; }
-.sm-btn-primary:hover { opacity: 0.92; }
-.sm-btn-outline { background: var(--sm-surface); color: var(--sm-purple); border: 1.5px solid var(--sm-purple); }
-.sm-btn-outline:hover { background: #f3eefb; }
-.sm-btn:disabled { opacity: 0.65; cursor: not-allowed; }
+.sm-btn-primary {
+  background: var(--sm-gradient);
+  color: #fbf3e4;
+  border: 1px solid rgba(230, 190, 120, 0.22);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+}
+.sm-btn-primary:hover { transform: translateY(-1px); box-shadow: 0 10px 22px rgba(0, 0, 0, 0.45); }
+.sm-btn-outline {
+  background: rgba(255, 240, 210, 0.04);
+  color: var(--sm-amber-2);
+  border: 1.5px solid rgba(230, 190, 120, 0.4);
+}
+.sm-btn-outline:hover { background: rgba(227, 169, 74, 0.14); }
+.sm-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* Accessibility: strong, always-visible keyboard focus ring. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--sm-gold);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Respect reduced-transparency: drop blur, use solid espresso surfaces. */
+@media (prefers-reduced-transparency: reduce) {
+  .sm-glass { background: var(--sm-glass-strong); -webkit-backdrop-filter: none; backdrop-filter: none; }
+}
+
+/* Respect reduced-motion: disable non-essential transitions/animations. */
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+}

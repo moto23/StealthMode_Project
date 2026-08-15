@@ -90,12 +90,19 @@
 /* ---- Sticky purchase panel ---- */
 .cd-purchase { position: sticky; top: 84px; }
 .cd-purchase-card {
-  background: var(--sm-surface);
-  border: 1px solid var(--sm-border);
+  background: var(--sm-glass-bg);
+  border: 1px solid var(--sm-glass-border);
   border-radius: var(--sm-radius);
-  box-shadow: var(--sm-shadow);
-  padding: 20px;
+  box-shadow: var(--sm-shadow), inset 0 1px 0 var(--sm-glass-highlight);
+  -webkit-backdrop-filter: blur(var(--sm-blur));
+  backdrop-filter: blur(var(--sm-blur));
+  padding: 22px;
 }
+@supports not ((backdrop-filter: blur(2px)) or (-webkit-backdrop-filter: blur(2px))) {
+  .cd-purchase-card { background: var(--sm-glass-strong); }
+}
+/* Emphasize the price/purchase area as the dominant element. */
+.cd-purchase-card .cd-price-current { font-size: 34px; }
 
 .cd-price { display: flex; flex-direction: column; gap: 4px; margin-bottom: 16px; }
 .cd-price-current { font-size: 30px; font-weight: 800; color: var(--sm-purple); }
@@ -122,8 +129,8 @@
 .cd-btn-block { width: 100%; }
 .cd-btn-primary { background: var(--sm-gradient); color: #fff; }
 .cd-btn-primary:hover { opacity: 0.92; }
-.cd-btn-outline { background: var(--sm-surface); color: var(--sm-purple); border: 1.5px solid var(--sm-purple); }
-.cd-btn-outline:hover { background: #f3eefb; }
+.cd-btn-outline { background: rgba(255, 240, 210, 0.04); color: var(--sm-amber-2); border: 1.5px solid rgba(230, 190, 120, 0.4); }
+.cd-btn-outline:hover { background: rgba(227, 169, 74, 0.14); }
 .cd-btn-owned { width: 100%; background: var(--sm-chip-bg); color: var(--sm-purple-2); cursor: default; }
 .cd-btn:disabled { opacity: 0.7; cursor: not-allowed; }
 

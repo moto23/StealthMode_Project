@@ -1,73 +1,290 @@
-.container-cg {
-  width: 100%;
-  height: 100vh;
-  background-image: url('../home/images/back.jpg');
-  background-size: cover;
-  background-position: center;
-  background-color: black;
-  position: relative; /* Added to position overlay absolutely */
-}
-
-.overlay {
-  position: absolute; /* Positioned absolutely within container-cg */
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  
-  z-index: 1; /* Ensure the overlay is above the background image */
-}
-
-/* Style your content */
-.content {
-  position: relative; /* Ensures content is above the overlay */
-  z-index: 2; /* Ensure content is above the overlay */
-  text-align: left;
-  padding: 130px 0;
-  color: black;
-  margin-left: 40px;
-  
-}
-
-.black-text {
-  color: black;
-}
-
-h1 {
-  text-align: left;
-  margin-bottom: -10px;
-}
-
-.home-buttons {
-  text-align: center;
-}
-
-.home-buttons .btn {
-  background-color: #4b0082; /* Set the background color to #4b0082 */
-  color: white;
-  padding: 10px 20px;
-  text-decoration: none;
-  border-radius: 5px;
-  transition: background-color 0.3s;
-}
-
-.home-buttons .btn:hover {
-  background-color: #5e009a; /* Slightly lighter shade of the button color on hover */
-}
-
-.col-md-8.content {
-  text-align: left;
-  margin-bottom: 20px;
-}
-
-.container-bg {
-  padding: 70px 0;
-  background-color: #fff;
-  background-attachment: fixed;
-}
-
-.row {
+/* ============================================================================
+   HERO — premium espresso / brown-glass marketplace.
+   Full-viewport atmosphere · balanced two-column composition.
+   Left  = typography on the atmosphere (no giant slab).
+   Right = layered frosted-glass composition (decorative, has glow behind it).
+   ========================================================================== */
+.hero {
+  position: relative;
+  min-height: 100vh;
   display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
+  align-items: center;
+  overflow: hidden;
+  background:
+    radial-gradient(1100px 780px at 82% 18%, rgba(150, 92, 40, 0.50), transparent 62%),
+    radial-gradient(900px 700px at 8% 88%, rgba(90, 52, 26, 0.55), transparent 60%),
+    linear-gradient(155deg, #2a190f 0%, #1a0f0a 52%, #120a06 100%);
+}
+
+/* ---- Ambient lighting (2–3 intentional sources spanning the canvas) ---- */
+.hero-bg { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+.hero-glow { position: absolute; border-radius: 50%; filter: blur(80px); }
+.hero-glow-1 {
+  width: 560px; height: 560px; top: -60px; right: 4%;
+  background: radial-gradient(circle, rgba(227, 169, 74, 0.55), transparent 70%);
+  opacity: 0.6;
+}
+.hero-glow-2 {
+  width: 480px; height: 480px; bottom: -90px; left: -60px;
+  background: radial-gradient(circle, rgba(150, 86, 40, 0.55), transparent 70%);
+  opacity: 0.55;
+}
+.hero-glow-3 {
+  width: 400px; height: 400px; top: 34%; left: 46%;
+  background: radial-gradient(circle, rgba(255, 210, 122, 0.22), transparent 70%);
+  opacity: 0.45;
+}
+/* Soft vignette to guarantee text contrast on the left. */
+.hero-vignette {
+  position: absolute; inset: 0;
+  background: radial-gradient(1200px 900px at 30% 50%, transparent 40%, rgba(10, 6, 3, 0.45) 100%);
+}
+
+/* ---- Layout ---- */
+.hero-inner {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 120px 32px 64px;
+  display: grid;
+  grid-template-columns: 1.02fr 0.98fr;
+  align-items: center;
+  gap: 48px;
+}
+
+/* ---- Left: content on the atmosphere ---- */
+.hero-content { max-width: 620px; }
+
+.hero-eyebrow {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  color: var(--sm-amber);
+  padding: 7px 14px;
+  background: rgba(227, 169, 74, 0.08);
+  border: 1px solid rgba(230, 190, 120, 0.28);
+  border-radius: var(--sm-radius-pill);
+  margin-bottom: 22px;
+}
+
+.hero-headline {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-weight: 800;
+  letter-spacing: -0.6px;
+  line-height: 1.06;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.35);
+}
+.hero-line {
+  font-size: clamp(32px, 4.6vw, 56px);
+  color: var(--sm-ink);
+}
+.hero-line-typing {
+  color: var(--sm-amber-2);
+  white-space: nowrap;
+}
+.hero-line-typing .typing-text,
+.hero-line-typing span { color: var(--sm-amber-2); }
+
+.hero-sub {
+  margin: 22px 0 32px;
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--sm-ink-2);
+  max-width: 500px;
+}
+
+.hero-cta { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+
+.hero-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 30px;
+  border-radius: var(--sm-radius-sm);
+  background: var(--sm-gradient-accent);
+  color: #2a190f;
+  font-size: 16px;
+  font-weight: 800;
+  text-decoration: none;
+  box-shadow: 0 12px 28px rgba(200, 145, 47, 0.35);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.hero-btn:hover { transform: translateY(-2px); box-shadow: 0 16px 34px rgba(200, 145, 47, 0.45); }
+
+.hero-link {
+  color: var(--sm-ink-2);
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(230, 190, 120, 0.35);
+  padding-bottom: 2px;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+.hero-link:hover { color: var(--sm-amber-2); border-color: var(--sm-amber-2); }
+
+/* ============================================================================
+   Right: decorative frosted-glass composition
+   ========================================================================== */
+.hero-visual {
+  position: relative;
+  height: 460px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Warm orbs give the glass something interesting to sit over. */
+.hv-orb { position: absolute; border-radius: 50%; filter: blur(46px); }
+.hv-orb-a {
+  width: 300px; height: 300px; top: 4%; right: 6%;
+  background: radial-gradient(circle, rgba(240, 192, 105, 0.42), transparent 70%);
+}
+.hv-orb-b {
+  width: 240px; height: 240px; bottom: 2%; left: 4%;
+  background: radial-gradient(circle, rgba(160, 96, 46, 0.5), transparent 70%);
+}
+
+/* Thin architectural ring for depth. */
+.hv-ring {
+  position: absolute;
+  width: 360px; height: 360px;
+  border-radius: 50%;
+  border: 1px solid rgba(230, 190, 120, 0.18);
+  box-shadow: inset 0 0 60px rgba(230, 190, 120, 0.06);
+}
+
+.hv-stack { position: relative; width: 340px; height: 400px; }
+
+/* Shared glass surface for the composition tiles. */
+.hv-card {
+  position: absolute;
+  border-radius: 18px;
+  background: rgba(38, 23, 15, 0.55);
+  border: 1px solid var(--sm-glass-border);
+  -webkit-backdrop-filter: blur(16px) saturate(120%);
+  backdrop-filter: blur(16px) saturate(120%);
+  box-shadow: var(--sm-shadow-lg), inset 0 1px 0 var(--sm-glass-highlight);
+}
+@supports not ((backdrop-filter: blur(2px)) or (-webkit-backdrop-filter: blur(2px))) {
+  .hv-card { background: rgba(26, 16, 10, 0.92); }
+  .hv-chip { background: rgba(26, 16, 10, 0.92) !important; }
+}
+
+.hv-card-back {
+  width: 260px; height: 320px;
+  top: 26px; left: 10px;
+  transform: rotate(-7deg);
+  opacity: 0.6;
+}
+
+.hv-card-main {
+  width: 268px; height: 336px;
+  top: 40px; right: 6px;
+  transform: rotate(4deg);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Decorative "media" block with amber sheen + brand monogram. */
+.hv-media {
+  position: relative;
+  height: 150px;
+  border-radius: 12px;
+  background:
+    radial-gradient(120px 90px at 30% 20%, rgba(255, 220, 150, 0.35), transparent 70%),
+    var(--sm-gradient-accent);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hv-monogram {
+  font-size: 64px;
+  font-weight: 800;
+  color: rgba(42, 25, 15, 0.85);
+  letter-spacing: -2px;
+  text-shadow: 0 2px 10px rgba(255, 230, 180, 0.4);
+}
+.hv-sheen {
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.28), transparent 45%);
+}
+
+.hv-body { display: flex; flex-direction: column; gap: 14px; padding: 4px 4px 6px; }
+/* Abstract accent bars (decorative texture — not data). */
+.hv-bar { height: 10px; border-radius: 6px; background: rgba(230, 200, 160, 0.22); }
+.hv-bar-wide { width: 88%; }
+.hv-bar-mid { width: 62%; background: rgba(230, 200, 160, 0.14); }
+.hv-foot { display: flex; align-items: center; gap: 12px; margin-top: 4px; }
+.hv-dot { width: 30px; height: 30px; border-radius: 50%; background: var(--sm-gradient); flex: 0 0 auto; }
+.hv-pill { height: 12px; width: 96px; border-radius: 8px; background: rgba(227, 169, 74, 0.3); }
+
+/* Floating glass chips for extra depth. */
+.hv-chip {
+  position: absolute;
+  border-radius: 14px;
+  background: rgba(44, 27, 17, 0.6);
+  border: 1px solid var(--sm-glass-border);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  box-shadow: var(--sm-shadow);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.hv-chip-1 { top: 8px; right: -14px; padding: 12px 14px; }
+.hv-chip-2 { bottom: 18px; left: -20px; padding: 14px; }
+.hv-chip-dot { width: 14px; height: 14px; border-radius: 50%; background: var(--sm-amber); box-shadow: 0 0 12px rgba(227, 169, 74, 0.7); }
+.hv-chip-bar { width: 52px; height: 9px; border-radius: 6px; background: rgba(230, 200, 160, 0.28); }
+.hv-chip-ring {
+  width: 30px; height: 30px; border-radius: 50%;
+  border: 3px solid var(--sm-amber);
+  border-right-color: rgba(227, 169, 74, 0.25);
+  border-bottom-color: rgba(227, 169, 74, 0.25);
+}
+
+/* ============================================================================
+   Responsive
+   ========================================================================== */
+/* Tablet — content gets more width, visual shrinks. */
+@media (max-width: 980px) {
+  .hero-inner {
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 32px;
+    padding: 110px 24px 56px;
+  }
+  .hero-visual { height: 400px; transform: scale(0.9); }
+}
+
+/* Small tablet / large phone — stack, visual becomes a supporting band. */
+@media (max-width: 760px) {
+  .hero-inner {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 104px 20px 48px;
+  }
+  .hero-content { max-width: 640px; }
+  .hero-visual { height: 320px; order: 2; margin-top: 8px; }
+  .hero-line-typing { white-space: normal; }
+}
+
+@media (max-width: 480px) {
+  .hero-inner { padding: 96px 16px 40px; }
+  .hero-visual { height: 280px; transform: scale(0.8); }
+  .hero-btn { width: 100%; justify-content: center; }
+  .hero-cta { gap: 16px; }
+  .hero-link { width: 100%; text-align: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-btn:hover { transform: none; }
 }

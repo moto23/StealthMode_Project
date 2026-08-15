@@ -2,7 +2,12 @@
 
 /* ---- Skeleton ---- */
 .sk-shimmer {
-  background: linear-gradient(90deg, #eee6f3 25%, #f4eefb 37%, #eee6f3 63%);
+  background: linear-gradient(
+    90deg,
+    rgba(74, 53, 38, 0.35) 25%,
+    rgba(120, 86, 56, 0.55) 37%,
+    rgba(74, 53, 38, 0.35) 63%
+  );
   background-size: 400% 100%;
   animation: sk-shimmer 1.3s ease-in-out infinite;
   border-radius: 6px;
