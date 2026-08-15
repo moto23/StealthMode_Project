@@ -2,12 +2,14 @@ import React, { useContext, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
 import { CartContext } from '../../context/CartContext';
-import { FaUser, FaSignOutAlt, FaChevronDown, FaBars, FaTimes, FaUserShield, FaShoppingCart } from 'react-icons/fa';
+import { useWishlist } from '../../context/WishlistContext';
+import { FaUser, FaSignOutAlt, FaChevronDown, FaBars, FaTimes, FaUserShield, FaShoppingCart, FaHeart } from 'react-icons/fa';
 import '../css/Navbar.css';
 
 function Navbar() {
   const { user, logout } = useContext(UserContext);
   const { count } = useContext(CartContext);
+  const { count: wishlistCount } = useWishlist();
   const navigate = useNavigate();
   const location = useLocation();
   const [sidebar, setSidebar] = useState(false);
@@ -54,6 +56,12 @@ function Navbar() {
           </li>
           <li className="nav-item">
             <a href="/#contact" className="nav-links" onClick={goToSection('contact')}>Contact</a>
+          </li>
+          <li className="nav-item">
+            <Link to="/wishlist" className="nav-links nav-cart" onClick={toggleSidebar}>
+              <FaHeart /> Wishlist
+              {wishlistCount > 0 && <span className="cart-badge">{wishlistCount}</span>}
+            </Link>
           </li>
           <li className="nav-item">
             <Link to="/cart" className="nav-links nav-cart" onClick={toggleSidebar}>

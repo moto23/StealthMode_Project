@@ -1,7 +1,9 @@
 import React, { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { FaHeart, FaRegHeart } from 'react-icons/fa';
 import { CartContext } from '../../context/CartContext';
 import { UserContext } from '../../context/UserContext';
+import { useWishlist } from '../../context/WishlistContext';
 import { useToast } from '../../context/ToastContext';
 import { buyNowSingle } from '../../services/checkout';
 import { formatINR, hasDiscount, discountPercent, isPaid } from '../../services/price';
@@ -11,9 +13,16 @@ function CourseCard({ course, owned = false, onPurchased }) {
   const navigate = useNavigate();
   const { user } = useContext(UserContext);
   const { addToCart, inCart } = useContext(CartContext);
+  const { inWishlist, toggleWishlist } = useWishlist();
   const toast = useToast();
   const [purchased, setPurchased] = useState(owned);
   const [processing, setProcessing] = useState(false);
+  const wished = inWishlist(course._id);
+
+  const handleToggleWishlist = () => {
+    toggleWishlist(course);
+    toast.success(wished ? 'Removed from wishlist' : 'Saved to wishlist');
+  };
 
   const paid = isPaid(course);
   const discounted = hasDiscount(course);
@@ -67,6 +76,16 @@ function CourseCard({ course, owned = false, onPurchased }) {
         {paid && discounted && (
           <span className="ec-badge ec-badge-discount">-{discountPercent(course)}%</span>
         )}
+        <button
+          type="button"
+          className={`ec-wishlist${wished ? ' is-active' : ''}`}
+          onClick={handleToggleWishlist}
+          aria-pressed={wished}
+          aria-label={wished ? 'Remove from wishlist' : 'Save to wishlist'}
+          title={wished ? 'Remove from wishlist' : 'Save to wishlist'}
+        >
+          {wished ? <FaHeart /> : <FaRegHeart />}
+        </button>
       </div>
 
       <div className="ec-card-body">

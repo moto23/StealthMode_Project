@@ -1,0 +1,44 @@
+/* Wishlist page — reuses the storefront card language (brown-glass). */
+.wishlist-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 92px 16px 48px;
+  color: var(--sm-ink);
+}
+
+.wishlist-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+}
+.wishlist-header h1 { margin: 0; font-size: 28px; color: var(--sm-ink); }
+.wishlist-count { color: var(--sm-muted); font-size: 15px; }
+
+.wishlist-clear {
+  background: rgba(255, 240, 210, 0.04);
+  border: 1px solid rgba(230, 190, 120, 0.4);
+  color: var(--sm-amber-2);
+  font-size: 14px;
+  font-weight: 600;
+  padding: 9px 16px;
+  border-radius: var(--sm-radius-sm);
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.wishlist-clear:hover { background: rgba(227, 169, 74, 0.14); }
+
+.wishlist-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 22px;
+  justify-content: center;
+  align-items: stretch;
+}
+
+@media (max-width: 480px) {
+  .wishlist-page { padding: 84px 12px 32px; }
+  .wishlist-header h1 { font-size: 24px; }
+}

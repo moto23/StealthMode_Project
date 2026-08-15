@@ -58,6 +58,36 @@
   color: #2a190f;
 }
 
+/* Wishlist / favorite toggle — glass pill, bottom-right of the media. */
+.ec-wishlist {
+  position: absolute;
+  z-index: 2;
+  bottom: 10px;
+  right: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--sm-radius-pill);
+  background: rgba(20, 11, 7, 0.6);
+  border: 1px solid var(--sm-glass-border);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: var(--sm-ink);
+  font-size: 15px;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+@supports not ((backdrop-filter: blur(2px)) or (-webkit-backdrop-filter: blur(2px))) {
+  .ec-wishlist { background: rgba(20, 11, 7, 0.9); }
+}
+.ec-wishlist:hover { background: rgba(20, 11, 7, 0.78); transform: translateY(-1px); }
+.ec-wishlist.is-active { color: var(--sm-danger); border-color: rgba(232, 118, 95, 0.5); }
+@media (prefers-reduced-motion: reduce) {
+  .ec-wishlist:hover { transform: none; }
+}
+
 .ec-card-body {
   display: flex;
   flex-direction: column;

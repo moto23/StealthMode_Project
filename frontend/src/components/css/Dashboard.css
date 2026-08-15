@@ -4,19 +4,23 @@
 
 .storefront-hero {
   text-align: center;
-  padding: 30px 16px 6px;
+  padding: 40px 16px 10px;
 }
 
 .storefront-hero h1 {
   margin: 0;
   color: var(--sm-ink);
-  font-size: 30px;
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
 }
 
 .storefront-hero p {
-  margin: 8px 0 0;
+  margin: 10px auto 0;
+  max-width: 560px;
   color: var(--sm-muted);
-  font-size: 15px;
+  font-size: 15.5px;
+  line-height: 1.5;
 }
 
 .course-list {
@@ -118,98 +122,11 @@
   .catalog-field select { min-width: 0; width: 100%; }
 }
 
-.course-card {
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 16px;
-  width: 100%;
-  max-width: 300px;
-  text-align: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin: 20px;
-}
-
-.course-card img {
-  width: 100%;
-  height: auto;
-  border-bottom: 1px solid #ddd;
-  margin-bottom: 16px;
-}
-
-.course-card h3 {
-  margin: 16px 0;
-  color:black;
-}
-
-.course-card p {
-  margin: 8px 0;
-  color: black;
-}
-
-.registration-date-container {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 12px;
-  font-size: 14px;
-  color: black;
-}
-
-.registration-date-label {
-  flex-grow: 1;
-  text-align: left;
-}
-
-.registration-date {
-  text-align: right;
-}
-
-.course-card button {
-  margin-top: 8px; /* Adjust margin to create space between registration date and button */
-  padding: 8px 16px;
-  border: none;
-  background-color: #4b0082;
-  color: white;
-  cursor: pointer;
-}
-
-.course-card button:hover {
-  background-color: #6a0dad;
-}
-
+/* Legacy .course-card styles removed — the storefront uses CourseCard's
+   .ec-card classes (see CourseCard.css). Responsive tuning for the grid: */
 @media (max-width: 768px) {
-  .course-card {
-    margin: 10px;
-    padding: 12px;
-    
-  }
-
-  .course-list {
-    gap: 10px;
-    margin: 10px;
-  }
+  .course-list { gap: 14px; }
 }
-
 @media (max-width: 480px) {
-  .course-card {
-    margin: 5px;
-    padding: 10px;
-  }
-
-  .course-list {
-    gap: 5px;
-    margin: 5px;
-  }
-
-  .course-card h3 {
-    font-size: 18px;
-  }
-
-  .course-card p {
-    font-size: 14px;
-  }
-
-  .course-card button {
-    padding: 6px 12px;
-    font-size: 14px;
-  }
+  .course-list { gap: 12px; padding: 0 12px; }
 }

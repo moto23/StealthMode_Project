@@ -13,10 +13,12 @@ import VerifyOtp from './components/home/VerifyOtp';
 import AdminRoute from './components/admin/AdminRoute';
 import AdminCourses from './components/admin/AdminCourses';
 import Cart from './components/home/Cart';
+import Wishlist from './components/home/Wishlist';
 
 
 import { UserProvider } from './context/UserContext';
 import { CartProvider } from './context/CartContext';
+import { WishlistProvider } from './context/WishlistContext';
 import { ToastProvider } from './context/ToastContext';
 import './styles/tokens.css';
 import './App.css';
@@ -25,6 +27,7 @@ function App() {
   return (
     <UserProvider>
       <CartProvider>
+        <WishlistProvider>
         <ToastProvider>
           <Router>
           <div className="App">
@@ -37,6 +40,7 @@ function App() {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/enroll/:id" element={<Enroll />} />
               <Route path="/cart" element={<Cart />} />
+              <Route path="/wishlist" element={<Wishlist />} />
               <Route path="/profile" element={<Profile />} /> {/* Add this line */}
 
               <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -53,6 +57,7 @@ function App() {
             </div>
           </Router>
         </ToastProvider>
+        </WishlistProvider>
       </CartProvider>
     </UserProvider>
   );
