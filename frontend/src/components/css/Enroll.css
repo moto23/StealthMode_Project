@@ -1,341 +1,143 @@
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-  /* background-color: #1e1e1e; */
-  color: #fff;
+/* Course detail page — light theme, consistent with the storefront. */
+.cd-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 80px 16px 48px;
+  color: var(--sm-ink);
 }
 
-.enroll-container {
-  padding: 60px;
-  background-color: #1e1e1e;
-}
-
-.breadcrumb {
+.cd-breadcrumb {
   font-size: 14px;
-  margin-bottom: 20px;
-  background-color: #1e1e1e;
-  padding: 10px;
-  border-radius: 5px;
+  color: var(--sm-muted);
+  margin-bottom: 18px;
+}
+.cd-breadcrumb a { color: var(--sm-purple-2); text-decoration: none; }
+.cd-breadcrumb a:hover { text-decoration: underline; }
+.cd-breadcrumb-current { color: var(--sm-ink); }
+
+.cd-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 28px;
+  align-items: start;
 }
 
-.breadcrumb a {
-  color: whitesmoke;
-  text-decoration: none;
-}
+.cd-main { min-width: 0; }
 
-.breadcrumb a:hover {
-  text-decoration: underline;
-}
-
-.enroll-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.enroll-details {
-  flex: 1;
-  margin-bottom: 20px;
-  text-align: left; /* Align text to the left */
-}
-
-.label {
-  background-color: #4caf50;
-  color: #fff;
-  padding: 5px 10px;
-  border-radius: 5px;
+.cd-label {
   display: inline-block;
-  margin-bottom: 10px;
-}
-
-.enroll-details h1 {
-  font-size: 36px;
-  margin-bottom: 20px;
+  background: var(--sm-gradient);
   color: #fff;
-  text-align: left;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: var(--sm-radius-pill);
+  margin-bottom: 12px;
 }
 
-.enroll-details p {
-  font-size: 18px;
-  margin-bottom: 20px;
+.cd-title {
+  margin: 0 0 12px;
+  font-size: 32px;
+  line-height: 1.2;
+  color: var(--sm-ink);
 }
 
-.enroll-now {
-  font-size: 20px;
-  color: #ffeb3b;
-  font-weight: bold;
-}
-
-.enroll-image {
-  margin-top: 20px; /* Move the image down */
-  text-align: center; /* Center the image */
-}
-
-.enroll-image img {
-  max-width: 100%;
-  border-radius: 10px;
-}
-
-.features-section {
-  margin-top: 40px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.features-left {
-  flex: 1;
-  text-align: center;
-}
-
-.features-left h2 {
-  font-size: 28px;
-  margin-bottom: 20px;
-  color: #ffeb3b;
-}
-
-.features-right {
-  max-width: 800px; /* Adjust max-width as needed */
-  margin-bottom: 90px;
-  align-items: end;
-}
-
-.feature {
-  margin-bottom: 15px;
-  display: flex; /* Align items horizontally */
-  align-items: center; /* Align items vertically */
-  justify-content: center;
-  text-align: center;
-}
-
-.feature .green-tick-icon {
-  width: 20px; /* Adjust width as needed */
-  margin-right: 10px; /* Add margin to separate from text */
-}
-
-.feature h3 {
-  font-size: 20px;
-  margin-bottom: 5px;
-  color: #4caf50;
-}
-
-.feature p {
+.cd-desc {
   font-size: 16px;
-  color: #fff;
+  line-height: 1.6;
+  color: var(--sm-ink-2);
+  margin: 0 0 20px;
 }
 
-.enroll-button {
-  background-color: #4b0082;
-  color: #fff;
-  padding: 10px 20px;
+.cd-meta {
+  list-style: none;
+  margin: 0 0 22px;
+  padding: 16px;
+  background: var(--sm-surface);
+  border: 1px solid var(--sm-border);
+  border-radius: var(--sm-radius);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 20px;
+}
+.cd-meta li { font-size: 14px; color: var(--sm-ink-2); display: flex; flex-direction: column; gap: 2px; }
+.cd-meta li span { font-size: 12px; font-weight: 600; color: var(--sm-muted); }
+
+.cd-hero-img {
+  border-radius: var(--sm-radius);
+  overflow: hidden;
+  border: 1px solid var(--sm-border);
+  margin-bottom: 24px;
+}
+.cd-hero-img img { width: 100%; height: auto; display: block; }
+
+.cd-features { margin-top: 8px; }
+.cd-features h2 { font-size: 22px; color: var(--sm-ink); margin: 0 0 16px; }
+.cd-features-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.cd-feature { display: flex; gap: 10px; align-items: flex-start; }
+.cd-feature-tick { width: 20px; height: 20px; margin-top: 2px; flex: 0 0 20px; }
+.cd-feature h3 { margin: 0 0 4px; font-size: 16px; color: var(--sm-purple); }
+.cd-feature p { margin: 0; font-size: 14px; color: var(--sm-ink-2); line-height: 1.5; }
+
+.cd-feature-banner {
+  margin-top: 24px;
+  border-radius: var(--sm-radius);
+  overflow: hidden;
+  border: 1px solid var(--sm-border);
+}
+.cd-feature-banner img { width: 100%; height: auto; display: block; }
+
+/* ---- Sticky purchase panel ---- */
+.cd-purchase { position: sticky; top: 84px; }
+.cd-purchase-card {
+  background: var(--sm-surface);
+  border: 1px solid var(--sm-border);
+  border-radius: var(--sm-radius);
+  box-shadow: var(--sm-shadow);
+  padding: 20px;
+}
+
+.cd-price { display: flex; flex-direction: column; gap: 4px; margin-bottom: 16px; }
+.cd-price-current { font-size: 30px; font-weight: 800; color: var(--sm-purple); }
+.cd-price-free { color: var(--sm-success); }
+.cd-price-meta { display: flex; align-items: baseline; gap: 10px; }
+.cd-price-original { font-size: 16px; color: var(--sm-muted-2); text-decoration: line-through; }
+.cd-price-off { font-size: 13px; font-weight: 700; color: var(--sm-danger); }
+
+.cd-actions { display: flex; flex-direction: column; gap: 10px; }
+
+.cd-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 12px 16px;
   border: none;
-  border-radius: 5px;
+  border-radius: var(--sm-radius-sm);
+  font-size: 15px;
+  font-weight: 700;
   cursor: pointer;
-  font-size: 18px;
-  transition: background-color 0.3s;
+  transition: background 0.15s ease, opacity 0.15s ease, color 0.15s ease;
 }
+.cd-btn-block { width: 100%; }
+.cd-btn-primary { background: var(--sm-gradient); color: #fff; }
+.cd-btn-primary:hover { opacity: 0.92; }
+.cd-btn-outline { background: var(--sm-surface); color: var(--sm-purple); border: 1.5px solid var(--sm-purple); }
+.cd-btn-outline:hover { background: #f3eefb; }
+.cd-btn-owned { width: 100%; background: var(--sm-chip-bg); color: var(--sm-purple-2); cursor: default; }
+.cd-btn:disabled { opacity: 0.7; cursor: not-allowed; }
 
-.enroll-button:hover {
-  background-color: #6a0dad;
-}
+.cd-purchase-note { margin: 14px 0 0; font-size: 12px; color: var(--sm-muted-2); text-align: center; }
 
-.enroll-button:disabled {
-  background-color: #28a745;
-  cursor: not-allowed;
-}
-
-@media (min-width: 768px) {
-  .enroll-content {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: flex-start;
-  }
-
-  .enroll-details {
-    margin-right: 20px;
-    text-align: left;
-  }
-
-  .features-section {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: flex-start;
-  }
-
-  .features-left {
-    text-align: left;
-    width:100%;
-  }
-
-  .features-left h2 {
-    text-align: left;
-    width:100%;
-    margin-right:130px;
-  }
-
-  .features-right {
-    margin-left: 70px; /* Adjust margin as needed */
-    margin-top: 180px;
-  }
-
-  .feature {
-    justify-content: flex-start;
-    text-align: left;
-  }
+/* ---- Responsive ---- */
+@media (max-width: 860px) {
+  .cd-grid { grid-template-columns: 1fr; }
+  .cd-purchase { position: static; order: -1; } /* purchase panel first on mobile */
+  .cd-features-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 480px) {
-  .enroll-container {
-    padding: 30px;
-  }
-
-  .enroll-details h1 {
-    font-size: 28px;
-  }
-
-  .enroll-details p {
-    font-size: 16px;
-  }
-
-  .features-section {
-    margin-top: 20px;
-  }
-
-  .features-left h2 {
-    font-size: 24px;
-  }
-
-  .feature h3 {
-    font-size: 18px;
-  }
-
-  .feature p {
-    font-size: 14px;
-  }
-
-  .enroll-button {
-    padding: 8px 16px;
-    font-size: 16px;
-  }
-}
-
-
-
-.popup {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: rgba(0, 0, 0, 0.8);
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-}
-
-.popup-content {
-  background-color: #fff;
-  padding: 20px;
-  text-align: center;
-  border-radius: 10px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-}
-
-.popup-content h2 {
-  color: #4b0082;
-  margin-bottom: 20px;
-}
-
-.close-button {
-  background-color: #4b0082;
-  color: #fff;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s;
-}
-
-.close-button:hover {
-  background-color: #6a0dad;
-}
-
-/* ---- Phase 4 additions: meta, pricing, cart/buy actions ---- */
-.enroll-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 22px;
-  margin-bottom: 18px;
-  font-size: 15px;
-  color: #d7d2e0;
-}
-
-.enroll-meta strong {
-  color: #ffeb3b;
-  font-weight: 600;
-}
-
-.enroll-price {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-bottom: 16px;
-}
-
-.enroll-price-current {
-  font-size: 30px;
-  font-weight: 800;
-  color: #fff;
-}
-
-.enroll-price-free {
-  color: #4caf50;
-}
-
-.enroll-price-original {
-  font-size: 18px;
-  color: #b7b1c4;
-  text-decoration: line-through;
-}
-
-.enroll-price-off {
-  font-size: 14px;
-  font-weight: 700;
-  color: #ff6b6b;
-}
-
-.enroll-actions {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.cart-button {
-  background-color: transparent;
-  color: #fff;
-  padding: 10px 20px;
-  border: 2px solid #6a0dad;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 18px;
-  transition: background-color 0.3s;
-}
-
-.cart-button:hover {
-  background-color: #2a1a3a;
-}
-
-.purchased-button {
-  background-color: #28a745;
-  color: #fff;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: not-allowed;
-  font-size: 18px;
+  .cd-page { padding: 72px 12px 32px; }
+  .cd-title { font-size: 26px; }
+  .cd-meta { grid-template-columns: 1fr; }
 }

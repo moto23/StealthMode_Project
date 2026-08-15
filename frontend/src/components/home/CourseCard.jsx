@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { CartContext } from '../../context/CartContext';
 import { UserContext } from '../../context/UserContext';
+import { useToast } from '../../context/ToastContext';
 import { buyNowSingle } from '../../services/checkout';
 import { formatINR, hasDiscount, discountPercent, isPaid } from '../../services/price';
 import '../css/CourseCard.css';
@@ -10,6 +11,7 @@ function CourseCard({ course, owned = false, onPurchased }) {
   const navigate = useNavigate();
   const { user } = useContext(UserContext);
   const { addToCart, inCart } = useContext(CartContext);
+  const toast = useToast();
   const [purchased, setPurchased] = useState(owned);
   const [processing, setProcessing] = useState(false);
 
@@ -32,6 +34,7 @@ function CourseCard({ course, owned = false, onPurchased }) {
       return;
     }
     addToCart(course);
+    toast.success(`Added “${course.title}” to your cart`);
   };
 
   const handleBuyNow = async () => {
@@ -44,9 +47,10 @@ function CourseCard({ course, owned = false, onPurchased }) {
         setPurchased(true);
         setProcessing(false);
         onPurchased && onPurchased(course._id);
+        toast.success(`You now own “${course.title}”. Find it in your profile.`);
       },
       onError: (msg) => {
-        alert(msg);
+        toast.error(msg);
         setProcessing(false);
       },
       onDismiss: () => setProcessing(false),

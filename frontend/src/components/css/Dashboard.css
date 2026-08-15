@@ -42,6 +42,94 @@ h1 {
   align-items: stretch;
 }
 
+/* ---- Catalog discovery controls (search / filter / sort) ---- */
+.catalog-controls {
+  display: flex;
+  gap: 14px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  max-width: 1200px;
+  margin: 8px auto 0;
+  padding: 0 16px;
+}
+
+.catalog-search {
+  position: relative;
+  flex: 1 1 320px;
+  min-width: 220px;
+}
+.catalog-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  opacity: 0.7;
+  pointer-events: none;
+}
+.catalog-search input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 11px 12px 11px 36px;
+  border: 1px solid var(--sm-border);
+  border-radius: var(--sm-radius-sm);
+  background: var(--sm-surface);
+  font-size: 15px;
+  color: var(--sm-ink);
+}
+.catalog-search input:focus {
+  outline: none;
+  border-color: var(--sm-purple);
+  box-shadow: 0 0 0 3px rgba(75, 0, 130, 0.12);
+}
+
+.catalog-filters { display: flex; gap: 12px; flex-wrap: wrap; }
+.catalog-field { display: flex; flex-direction: column; gap: 4px; }
+.catalog-field-label { font-size: 12px; font-weight: 600; color: var(--sm-muted); }
+.catalog-field select {
+  padding: 10px 12px;
+  border: 1px solid var(--sm-border);
+  border-radius: var(--sm-radius-sm);
+  background: var(--sm-surface);
+  font-size: 14px;
+  color: var(--sm-ink);
+  cursor: pointer;
+  min-width: 160px;
+}
+.catalog-field select:focus {
+  outline: none;
+  border-color: var(--sm-purple);
+  box-shadow: 0 0 0 3px rgba(75, 0, 130, 0.12);
+}
+
+.catalog-meta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  max-width: 1200px;
+  margin: 14px auto 0;
+  padding: 0 16px;
+  font-size: 14px;
+  color: var(--sm-muted);
+}
+.catalog-clear {
+  background: none;
+  border: none;
+  color: var(--sm-purple-2);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 0;
+}
+.catalog-clear:hover { text-decoration: underline; }
+
+@media (max-width: 600px) {
+  .catalog-controls { align-items: stretch; }
+  .catalog-filters { justify-content: space-between; }
+  .catalog-field { flex: 1; }
+  .catalog-field select { min-width: 0; width: 100%; }
+}
+
 .course-card {
   border: 1px solid #ddd;
   border-radius: 8px;

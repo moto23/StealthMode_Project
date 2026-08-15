@@ -17,13 +17,16 @@ import Cart from './components/home/Cart';
 
 import { UserProvider } from './context/UserContext';
 import { CartProvider } from './context/CartContext';
+import { ToastProvider } from './context/ToastContext';
+import './styles/tokens.css';
 import './App.css';
 
 function App() {
   return (
     <UserProvider>
       <CartProvider>
-        <Router>
+        <ToastProvider>
+          <Router>
           <div className="App">
             <Navbar />
             <Routes>
@@ -46,9 +49,10 @@ function App() {
                   </AdminRoute>
                 }
               />
-            </Routes>
-          </div>
-        </Router>
+              </Routes>
+            </div>
+          </Router>
+        </ToastProvider>
       </CartProvider>
     </UserProvider>
   );

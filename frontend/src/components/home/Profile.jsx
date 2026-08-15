@@ -1,52 +1,110 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom'; // Import Link from react-router-dom
+import React, { useContext, useEffect, useState, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
 import api from '../../services/api';
+import { CardSkeletonGrid } from '../ui/Skeleton';
+import EmptyState from '../ui/EmptyState';
+import ErrorState from '../ui/ErrorState';
 import '../css/Profile.css';
 
 function Profile() {
   const { user } = useContext(UserContext);
-  const [enrolledCourses, setEnrolledCourses] = useState([]);
+  const [enrollments, setEnrollments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  useEffect(() => {
-    const fetchEnrolledCourses = async () => {
-      try {
-        if (user) {
-          const response = await api.get(`/api/courses/enrolled/${user._id}`);
-          console.log('Fetched Enrolled Courses:', response.data); // Add this line to log the fetched courses
-          setEnrolledCourses(response.data);
-        }
-      } catch (error) {
-        console.error('Error fetching enrolled courses:', error);
-      }
-    };
-
-    fetchEnrolledCourses();
+  const fetchEnrolled = useCallback(async () => {
+    if (!user) return;
+    setLoading(true);
+    setError('');
+    try {
+      const response = await api.get(`/api/courses/enrolled/${user._id}`);
+      setEnrollments(Array.isArray(response.data) ? response.data : []);
+    } catch (err) {
+      console.error('Error fetching enrolled courses:', err.response?.data || err.message);
+      setError('We couldn’t load your courses. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   }, [user]);
 
+  useEffect(() => {
+    fetchEnrolled();
+  }, [fetchEnrolled]);
+
   if (!user) {
-    return <p>Please log in to view your profile.</p>;
+    return (
+      <div className="profile-page">
+        <EmptyState
+          icon="🔒"
+          title="Please log in"
+          message="Log in to view your profile and your courses."
+          action={<Link to="/login" className="sm-btn sm-btn-primary">Log in</Link>}
+        />
+      </div>
+    );
   }
 
+  const initials = (user.fullName || '?')
+    .split(' ')
+    .map((p) => p[0])
+    .filter(Boolean)
+    .slice(0, 2)
+    .join('')
+    .toUpperCase();
+
+  // Populated enrollments may reference a since-deleted course (courseId null).
+  const courses = enrollments
+    .map((e) => e.courseId)
+    .filter((c) => c && typeof c === 'object');
+
   return (
-    <div className="profile-container">
-      <h1>Profile</h1>
-      <div className="profile-details">
-        <p><strong>Full Name:</strong> {user.fullName}</p>
-        <p><strong>Email:</strong> {user.email}</p>
-      </div>
-      <h2>Enrolled Courses:</h2>
-      <ul className="course-list">
-        {enrolledCourses.length === 0 ? (
-          <p>No courses enrolled yet.</p>
+    <div className="profile-page">
+      <header className="profile-header">
+        <div className="profile-avatar" aria-hidden="true">{initials}</div>
+        <div>
+          <h1 className="profile-name">{user.fullName}</h1>
+          <p className="profile-email">{user.email}</p>
+        </div>
+      </header>
+
+      <section className="profile-section">
+        <h2 className="profile-section-title">My Learning</h2>
+
+        {loading ? (
+          <div className="profile-grid">
+            <CardSkeletonGrid count={3} />
+          </div>
+        ) : error ? (
+          <ErrorState message={error} onRetry={fetchEnrolled} />
+        ) : courses.length === 0 ? (
+          <EmptyState
+            icon="📚"
+            title="No courses yet"
+            message="Explore the catalog and enroll to start learning."
+            action={<Link to="/dashboard" className="sm-btn sm-btn-primary">Browse Courses</Link>}
+          />
         ) : (
-          enrolledCourses.map((enrollment, index) => (
-            <li key={index}>
-              <Link to={`/enroll/${enrollment.courseId._id}`}>{enrollment.courseId.title}</Link>
-            </li>
-          ))
+          <div className="profile-grid">
+            {courses.map((course) => (
+              <article key={course._id} className="learning-card">
+                <div className="learning-card-media">
+                  <img src={course.imageUrl} alt={course.title} loading="lazy" />
+                </div>
+                <div className="learning-card-body">
+                  <h3 className="learning-card-title">{course.title}</h3>
+                  {course.instructor && (
+                    <p className="learning-card-instructor">{course.instructor}</p>
+                  )}
+                  <Link to={`/enroll/${course._id}`} className="sm-btn sm-btn-primary learning-card-cta">
+                    Continue Learning
+                  </Link>
+                </div>
+              </article>
+            ))}
+          </div>
         )}
-      </ul>
+      </section>
     </div>
   );
 }

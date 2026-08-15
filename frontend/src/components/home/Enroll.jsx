@@ -1,10 +1,13 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import api from '../../services/api';
 import { UserContext } from '../../context/UserContext';
 import { CartContext } from '../../context/CartContext';
+import { useToast } from '../../context/ToastContext';
 import { buyNowSingle } from '../../services/checkout';
 import { formatINR, hasDiscount, discountPercent, isPaid } from '../../services/price';
+import { CardSkeleton } from '../ui/Skeleton';
+import ErrorState from '../ui/ErrorState';
 import '../css/Enroll.css';
 // Reviews are out of scope for this project and intentionally disabled.
 
@@ -16,14 +19,17 @@ function Enroll() {
   const [course, setCourse] = useState(null);
   const [hasAccess, setHasAccess] = useState(false); // enrolled (free) or purchased (paid)
   const [featureImage, setFeatureImage] = useState('');
-  const [showPopup, setShowPopup] = useState(false);
   const [processing, setProcessing] = useState(false);
+  const [loadError, setLoadError] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
   const { user } = useContext(UserContext);
   const { addToCart, inCart } = useContext(CartContext);
+  const toast = useToast();
 
   useEffect(() => {
     let active = true;
     const load = async () => {
+      setLoadError(false);
       try {
         const res = await api.get(`/api/courses/${id}`);
         if (!active) return;
@@ -53,13 +59,14 @@ function Enroll() {
         }
       } catch (error) {
         console.error('Error fetching course data:', error.response?.data || error.message);
+        if (active) setLoadError(true);
       }
     };
     load();
     return () => {
       active = false;
     };
-  }, [id, user]);
+  }, [id, user, reloadKey]);
 
   // Free enrollment (price === 0 only; the backend also enforces this).
   const handleEnroll = async () => {
@@ -72,9 +79,9 @@ function Enroll() {
     try {
       await api.post('/api/courses/enroll', { courseId: course._id });
       setHasAccess(true);
-      setShowPopup(true);
+      toast.success('Enrolled successfully! Find it in your profile.');
     } catch (error) {
-      alert(error.response?.data?.error || 'Enrollment failed. Please try again.');
+      toast.error(error.response?.data?.error || 'Enrollment failed. Please try again.');
     } finally {
       setProcessing(false);
     }
@@ -93,11 +100,11 @@ function Enroll() {
       user,
       onSuccess: () => {
         setHasAccess(true);
-        setShowPopup(true);
         setProcessing(false);
+        toast.success('Course purchased successfully! Find it in your profile.');
       },
       onError: (msg) => {
-        alert(msg);
+        toast.error(msg);
         setProcessing(false);
       },
       onDismiss: () => setProcessing(false),
@@ -110,110 +117,129 @@ function Enroll() {
       return;
     }
     addToCart(course);
+    toast.success('Added to your cart');
   };
 
-  const Popup = () => (
-    <div className="popup">
-      <div className="popup-content">
-        <h2>
-          {course && Number(course.price) > 0
-            ? 'Course Purchased Successfully! Check your profile.'
-            : 'Enrolled Successfully! Check your profile.'}
-        </h2>
-        <button className="close-button" onClick={() => setShowPopup(false)}>
-          Close
-        </button>
+  if (loadError && !course) {
+    return (
+      <div className="cd-page">
+        <ErrorState
+          title="Couldn’t load this course"
+          message="The course details failed to load. Please try again."
+          onRetry={() => setReloadKey((k) => k + 1)}
+        />
       </div>
-    </div>
-  );
+    );
+  }
 
   if (!course) {
-    return <div>Loading...</div>;
+    return (
+      <div className="cd-page">
+        <div className="cd-grid">
+          <CardSkeleton />
+          <CardSkeleton />
+        </div>
+      </div>
+    );
   }
 
   const paid = isPaid(course);
   const discounted = hasDiscount(course);
 
   return (
-    <div className="enroll-container">
-      {showPopup && <Popup />}
-      <nav className="breadcrumb">
-        <a href="/">Home</a> &gt; <a href="/dashboard">Courses</a> &gt; <span>{course.title}</span>
+    <div className="cd-page">
+      <nav className="cd-breadcrumb" aria-label="Breadcrumb">
+        <Link to="/">Home</Link> <span aria-hidden="true">›</span>{' '}
+        <Link to="/dashboard">Courses</Link> <span aria-hidden="true">›</span>{' '}
+        <span className="cd-breadcrumb-current">{course.title}</span>
       </nav>
-      <div className="enroll-content">
-        <div className="enroll-details">
-          <span className="label">{course.label}</span>
-          <h1>{course.title}</h1>
-          <p>{course.description}</p>
 
-          <div className="enroll-meta">
-            {course.instructor && <span><strong>Instructor:</strong> {course.instructor}</span>}
-            {course.category && <span><strong>Category:</strong> {course.category}</span>}
-            {course.level && <span><strong>Level:</strong> {course.level}</span>}
-            {course.duration && <span><strong>Duration:</strong> {course.duration}</span>}
+      <div className="cd-grid">
+        <div className="cd-main">
+          {course.label && <span className="cd-label">{course.label}</span>}
+          <h1 className="cd-title">{course.title}</h1>
+          {course.description && <p className="cd-desc">{course.description}</p>}
+
+          <ul className="cd-meta">
+            {course.instructor && <li><span>Instructor</span>{course.instructor}</li>}
+            {course.category && <li><span>Category</span>{course.category}</li>}
+            {course.level && <li><span>Level</span>{course.level}</li>}
+            {course.duration && <li><span>Duration</span>{course.duration}</li>}
             {course.registrationDate && (
-              <span><strong>Registration:</strong> {new Date(course.registrationDate).toLocaleDateString()}</span>
+              <li><span>Registration</span>{new Date(course.registrationDate).toLocaleDateString()}</li>
             )}
-          </div>
+          </ul>
 
-          <div className="enroll-price">
-            {paid ? (
-              <>
-                <span className="enroll-price-current">{formatINR(course.price)}</span>
-                {discounted && (
-                  <>
-                    <span className="enroll-price-original">{formatINR(course.originalPrice)}</span>
-                    <span className="enroll-price-off">{discountPercent(course)}% off</span>
-                  </>
-                )}
-              </>
-            ) : (
-              <span className="enroll-price-current enroll-price-free">Free</span>
-            )}
-          </div>
-
-          <p className="enroll-now">Admission Closing Soon! ENROLL NOW!</p>
-
-          {hasAccess ? (
-            <button className="purchased-button" disabled>
-              {paid ? 'Purchased' : 'Enrolled'}
-            </button>
-          ) : paid ? (
-            <div className="enroll-actions">
-              <button className="cart-button" onClick={handleAddToCart} disabled={processing}>
-                {inCart(course._id) ? 'Go to Cart' : 'Add to Cart'}
-              </button>
-              <button className="enroll-button" onClick={handleBuyNow} disabled={processing}>
-                {processing ? 'Processing…' : `Buy now — ${formatINR(course.price)}`}
-              </button>
+          {course.imageUrl && (
+            <div className="cd-hero-img">
+              <img src={course.imageUrl} alt={course.title} />
             </div>
-          ) : (
-            <button className="enroll-button" onClick={handleEnroll} disabled={processing}>
-              {processing ? 'Enrolling…' : 'Enroll for free'}
-            </button>
+          )}
+
+          {Array.isArray(course.features) && course.features.length > 0 && (
+            <div className="cd-features">
+              <h2>What this course covers</h2>
+              <div className="cd-features-grid">
+                {course.features.map((feature, index) => (
+                  <div key={index} className="cd-feature">
+                    <img src={greenTickIcon} alt="" className="cd-feature-tick" aria-hidden="true" />
+                    <div>
+                      <h3>{feature.title}</h3>
+                      {feature.description && <p>{feature.description}</p>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {featureImage && (
+            <div className="cd-feature-banner">
+              <img src={featureImage} alt="Course preview" />
+            </div>
           )}
         </div>
-        <div className="enroll-image">
-          <img src={course.imageUrl} alt={course.title} />
-        </div>
-      </div>
-      <div className="features-section">
-        <div className="features-left">
-          <h2>Features of the Course</h2>
-          {course.features &&
-            course.features.map((feature, index) => (
-              <div key={index} className="feature">
-                <img src={greenTickIcon} alt="Green Tick" className="green-tick-icon" />
-                <div>
-                  <h3>{feature.title}</h3>
-                  <p>{feature.description}</p>
-                </div>
+
+        <aside className="cd-purchase">
+          <div className="cd-purchase-card">
+            <div className="cd-price">
+              {paid ? (
+                <>
+                  <span className="cd-price-current">{formatINR(course.price)}</span>
+                  {discounted && (
+                    <span className="cd-price-meta">
+                      <span className="cd-price-original">{formatINR(course.originalPrice)}</span>
+                      <span className="cd-price-off">{discountPercent(course)}% off</span>
+                    </span>
+                  )}
+                </>
+              ) : (
+                <span className="cd-price-current cd-price-free">Free</span>
+              )}
+            </div>
+
+            {hasAccess ? (
+              <button className="cd-btn cd-btn-owned" disabled>
+                {paid ? '✓ Purchased' : '✓ Enrolled'}
+              </button>
+            ) : paid ? (
+              <div className="cd-actions">
+                <button className="cd-btn cd-btn-primary" onClick={handleBuyNow} disabled={processing}>
+                  {processing ? 'Processing…' : `Buy now — ${formatINR(course.price)}`}
+                </button>
+                <button className="cd-btn cd-btn-outline" onClick={handleAddToCart} disabled={processing}>
+                  {inCart(course._id) ? 'Go to Cart' : 'Add to Cart'}
+                </button>
               </div>
-            ))}
-        </div>
-        <div className="features-right">
-          <img src={featureImage} alt="Course feature" />
-        </div>
+            ) : (
+              <button className="cd-btn cd-btn-primary cd-btn-block" onClick={handleEnroll} disabled={processing}>
+                {processing ? 'Enrolling…' : 'Enroll for free'}
+              </button>
+            )}
+
+            <p className="cd-purchase-note">Secure checkout • Instant access after payment</p>
+          </div>
+        </aside>
       </div>
     </div>
   );

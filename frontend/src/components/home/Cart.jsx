@@ -2,18 +2,20 @@ import React, { useContext, useEffect, useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { CartContext } from '../../context/CartContext';
 import { UserContext } from '../../context/UserContext';
+import { useToast } from '../../context/ToastContext';
 import api from '../../services/api';
 import { checkoutCart } from '../../services/checkout';
 import { formatINR, hasDiscount } from '../../services/price';
+import EmptyState from '../ui/EmptyState';
 import '../css/Cart.css';
 
 function Cart() {
   const navigate = useNavigate();
   const { user } = useContext(UserContext);
   const { items, removeFromCart, clearCart } = useContext(CartContext);
+  const toast = useToast();
   const [owned, setOwned] = useState(() => new Set());
   const [processing, setProcessing] = useState(false);
-  const [message, setMessage] = useState('');
 
   // Authoritative ownership so we don't try to re-charge owned courses.
   useEffect(() => {
@@ -52,7 +54,6 @@ function Cart() {
     }
     if (processing || payable.length === 0) return;
     setProcessing(true);
-    setMessage('');
     await checkoutCart({
       items: payable,
       user,
@@ -63,11 +64,11 @@ function Cart() {
         purchased.forEach((id) => removeFromCart(id));
         setOwned((prev) => new Set([...prev, ...purchased]));
         setProcessing(false);
-        setMessage('Payment successful! Your courses are now in your profile.');
+        toast.success('Payment successful! Your courses are now in your profile.');
       },
       onError: (msg) => {
         setProcessing(false);
-        setMessage(msg);
+        toast.error(msg);
       },
       onDismiss: () => setProcessing(false),
     });
@@ -76,12 +77,12 @@ function Cart() {
   if (items.length === 0) {
     return (
       <div className="cart-page">
-        <div className="cart-empty">
-          <h2>Your cart is empty</h2>
-          {message && <p className="cart-message">{message}</p>}
-          <p>Browse the catalog and add courses you’d like to buy.</p>
-          <Link to="/dashboard" className="cart-btn cart-btn-primary">Continue Shopping</Link>
-        </div>
+        <EmptyState
+          icon="🛒"
+          title="Your cart is empty"
+          message="Browse the catalog and add the courses you’d like to buy."
+          action={<Link to="/dashboard" className="sm-btn sm-btn-primary">Continue Shopping</Link>}
+        />
       </div>
     );
   }
@@ -92,8 +93,6 @@ function Cart() {
         <h1>Shopping Cart</h1>
         <span className="cart-count">{items.length} {items.length === 1 ? 'Course' : 'Courses'}</span>
       </div>
-
-      {message && <p className="cart-message">{message}</p>}
 
       <div className="cart-layout">
         <ul className="cart-items">
