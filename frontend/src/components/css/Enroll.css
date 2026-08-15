@@ -1,4 +1,4 @@
-/* Course detail page — light theme, consistent with the storefront. */
+/* Course detail page — brown-glass, consistent with the storefront. */
 .cd-page {
   max-width: 1100px;
   margin: 0 auto;
@@ -27,10 +27,12 @@
 .cd-label {
   display: inline-block;
   background: var(--sm-gradient);
-  color: #fff;
+  color: #fbf3e4;
+  border: 1px solid rgba(230, 190, 120, 0.22);
   font-size: 12px;
   font-weight: 700;
-  padding: 4px 10px;
+  letter-spacing: 0.3px;
+  padding: 4px 12px;
   border-radius: var(--sm-radius-pill);
   margin-bottom: 12px;
 }
@@ -102,14 +104,28 @@
   .cd-purchase-card { background: var(--sm-glass-strong); }
 }
 /* Emphasize the price/purchase area as the dominant element. */
-.cd-purchase-card .cd-price-current { font-size: 34px; }
+.cd-purchase-card .cd-price-current { font-size: 36px; }
 
-.cd-price { display: flex; flex-direction: column; gap: 4px; margin-bottom: 16px; }
-.cd-price-current { font-size: 30px; font-weight: 800; color: var(--sm-purple); }
+.cd-price {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 18px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--sm-glass-border);
+}
+.cd-price-current { font-size: 30px; font-weight: 800; color: var(--sm-amber); letter-spacing: -0.5px; }
 .cd-price-free { color: var(--sm-success); }
 .cd-price-meta { display: flex; align-items: baseline; gap: 10px; }
 .cd-price-original { font-size: 16px; color: var(--sm-muted-2); text-decoration: line-through; }
-.cd-price-off { font-size: 13px; font-weight: 700; color: var(--sm-danger); }
+.cd-price-off {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--sm-amber-2);
+  background: var(--sm-chip-bg);
+  padding: 2px 8px;
+  border-radius: var(--sm-radius-pill);
+}
 
 .cd-actions { display: flex; flex-direction: column; gap: 10px; }
 
@@ -118,23 +134,35 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  padding: 12px 16px;
+  padding: 13px 16px;
   border: none;
   border-radius: var(--sm-radius-sm);
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 800;
   cursor: pointer;
-  transition: background 0.15s ease, opacity 0.15s ease, color 0.15s ease;
+  transition: transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease, color 0.15s ease;
 }
 .cd-btn-block { width: 100%; }
-.cd-btn-primary { background: var(--sm-gradient); color: #fff; }
-.cd-btn-primary:hover { opacity: 0.92; }
+/* Dominant amber CTA, matching the landing/cart primary language. */
+.cd-btn-primary { background: var(--sm-gradient-accent); color: #2a190f; box-shadow: 0 10px 24px rgba(200, 145, 47, 0.28); }
+.cd-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(200, 145, 47, 0.4); }
 .cd-btn-outline { background: rgba(255, 240, 210, 0.04); color: var(--sm-amber-2); border: 1.5px solid rgba(230, 190, 120, 0.4); }
 .cd-btn-outline:hover { background: rgba(227, 169, 74, 0.14); }
-.cd-btn-owned { width: 100%; background: var(--sm-chip-bg); color: var(--sm-purple-2); cursor: default; }
-.cd-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+.cd-btn-owned { width: 100%; background: var(--sm-chip-bg); color: var(--sm-amber-2); border: 1px solid var(--sm-glass-border); cursor: default; }
+.cd-btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; box-shadow: none; }
 
-.cd-purchase-note { margin: 14px 0 0; font-size: 12px; color: var(--sm-muted-2); text-align: center; }
+.cd-purchase-note {
+  margin: 16px 0 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--sm-glass-border);
+  font-size: 12px;
+  color: var(--sm-muted-2);
+  text-align: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cd-btn-primary:hover { transform: none; }
+}
 
 /* ---- Responsive ---- */
 @media (max-width: 860px) {

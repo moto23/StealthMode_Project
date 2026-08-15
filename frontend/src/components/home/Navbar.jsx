@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
 import { CartContext } from '../../context/CartContext';
 import { FaUser, FaSignOutAlt, FaChevronDown, FaBars, FaTimes, FaUserShield, FaShoppingCart } from 'react-icons/fa';
@@ -9,6 +9,7 @@ function Navbar() {
   const { user, logout } = useContext(UserContext);
   const { count } = useContext(CartContext);
   const navigate = useNavigate();
+  const location = useLocation();
   const [sidebar, setSidebar] = useState(false);
 
   const handleLogout = () => {
@@ -18,6 +19,23 @@ function Navbar() {
 
   const toggleSidebar = () => {
     setSidebar(!sidebar);
+  };
+
+  // About/Contact live only on the home page. A bare "#about" hash does nothing
+  // on other routes, so scroll when already home, otherwise route home first
+  // (Home reads the hash and scrolls into view after mount).
+  const goToSection = (id) => (e) => {
+    e.preventDefault();
+    setSidebar(false);
+    if (location.pathname === '/') {
+      const el = document.getElementById(id);
+      if (el) {
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
+      }
+    } else {
+      navigate(`/#${id}`);
+    }
   };
 
   return (
@@ -32,10 +50,10 @@ function Navbar() {
             <Link to="/" className="nav-links" onClick={toggleSidebar}>Home</Link>
           </li>
           <li className="nav-item">
-            <a href="#about" className="nav-links" onClick={toggleSidebar}>About</a>
+            <a href="/#about" className="nav-links" onClick={goToSection('about')}>About</a>
           </li>
           <li className="nav-item">
-            <a href="#contact" className="nav-links" onClick={toggleSidebar}>Contact</a>
+            <a href="/#contact" className="nav-links" onClick={goToSection('contact')}>Contact</a>
           </li>
           <li className="nav-item">
             <Link to="/cart" className="nav-links nav-cart" onClick={toggleSidebar}>
