@@ -1,7 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
 
 const LEVELS = ['Beginner', 'Intermediate', 'Advanced'];
+
+const emptyLesson = () => ({
+  title: '',
+  duration: '',
+  isPreview: false,
+  video: { provider: '', assetId: '', playbackId: '' },
+});
+const emptySection = () => ({ title: '', lessons: [] });
+
+// Move item at index by delta within an array (immutably); no-op at bounds.
+const move = (arr, index, delta) => {
+  const next = index + delta;
+  if (next < 0 || next >= arr.length) return arr;
+  const copy = [...arr];
+  [copy[index], copy[next]] = [copy[next], copy[index]];
+  return copy;
+};
 
 const emptyForm = {
   title: '',
@@ -51,9 +68,128 @@ function CourseForm({ course, onClose, onSaved }) {
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
+  // ---- Curriculum (Phase 7, Slice 1) ----
+  // Loaded separately (admin endpoint returns full video handles) and saved via
+  // its own endpoint so the existing course create/edit payload is unchanged.
+  const [sections, setSections] = useState([]);
+  const [curriculumMsg, setCurriculumMsg] = useState('');
+  const [savingCurriculum, setSavingCurriculum] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    if (!isEdit) return undefined;
+    api
+      .get(`/api/courses/${course._id}/curriculum`)
+      .then((res) => {
+        if (!active) return;
+        const loaded = (res.data?.data?.sections || []).map((s) => ({
+          title: s.title || '',
+          lessons: (s.lessons || []).map((l) => ({
+            title: l.title || '',
+            duration: l.duration || '',
+            isPreview: Boolean(l.isPreview),
+            video: {
+              provider: l.video?.provider || '',
+              assetId: l.video?.assetId || '',
+              playbackId: l.video?.playbackId || '',
+            },
+          })),
+        }));
+        setSections(loaded);
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, [isEdit, course]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // ---- Curriculum editing helpers ----
+  const addSection = () => setSections((prev) => [...prev, emptySection()]);
+  const removeSection = (si) => setSections((prev) => prev.filter((_, i) => i !== si));
+  const moveSection = (si, delta) => setSections((prev) => move(prev, si, delta));
+  const updateSectionTitle = (si, value) =>
+    setSections((prev) => prev.map((s, i) => (i === si ? { ...s, title: value } : s)));
+
+  const addLesson = (si) =>
+    setSections((prev) =>
+      prev.map((s, i) => (i === si ? { ...s, lessons: [...s.lessons, emptyLesson()] } : s))
+    );
+  const removeLesson = (si, li) =>
+    setSections((prev) =>
+      prev.map((s, i) =>
+        i === si ? { ...s, lessons: s.lessons.filter((_, j) => j !== li) } : s
+      )
+    );
+  const moveLesson = (si, li, delta) =>
+    setSections((prev) =>
+      prev.map((s, i) => (i === si ? { ...s, lessons: move(s.lessons, li, delta) } : s))
+    );
+  const updateLesson = (si, li, field, value) =>
+    setSections((prev) =>
+      prev.map((s, i) =>
+        i === si
+          ? {
+              ...s,
+              lessons: s.lessons.map((l, j) => (j === li ? { ...l, [field]: value } : l)),
+            }
+          : s
+      )
+    );
+  const updateLessonVideo = (si, li, field, value) =>
+    setSections((prev) =>
+      prev.map((s, i) =>
+        i === si
+          ? {
+              ...s,
+              lessons: s.lessons.map((l, j) =>
+                j === li ? { ...l, video: { ...l.video, [field]: value } } : l
+              ),
+            }
+          : s
+      )
+    );
+
+  const saveCurriculum = async () => {
+    if (savingCurriculum) return;
+    if (sections.some((s) => !s.title.trim())) {
+      setCurriculumMsg('Every section needs a title.');
+      return;
+    }
+    if (sections.some((s) => s.lessons.some((l) => !l.title.trim()))) {
+      setCurriculumMsg('Every lesson needs a title.');
+      return;
+    }
+    setSavingCurriculum(true);
+    setCurriculumMsg('');
+    try {
+      // Strip empty video sub-fields so we never send blank handles.
+      const payloadSections = sections.map((s) => ({
+        title: s.title.trim(),
+        lessons: s.lessons.map((l) => {
+          const video = {};
+          if (l.video.provider.trim()) video.provider = l.video.provider.trim();
+          if (l.video.assetId.trim()) video.assetId = l.video.assetId.trim();
+          if (l.video.playbackId.trim()) video.playbackId = l.video.playbackId.trim();
+          return {
+            title: l.title.trim(),
+            duration: l.duration.trim() || undefined,
+            isPreview: Boolean(l.isPreview),
+            ...(Object.keys(video).length ? { video } : {}),
+          };
+        }),
+      }));
+      await api.put(`/api/courses/${course._id}/curriculum`, { sections: payloadSections });
+      setCurriculumMsg('Curriculum saved.');
+    } catch (err) {
+      setCurriculumMsg(err.response?.data?.error || 'Failed to save curriculum');
+    } finally {
+      setSavingCurriculum(false);
+    }
   };
 
   const updateFeature = (index, field, value) => {
@@ -214,6 +350,97 @@ function CourseForm({ course, onClose, onSaved }) {
                 </button>
               </div>
             ))}
+          </div>
+
+          {/* ---- Curriculum editor (Phase 7, Slice 1) ---- */}
+          <div className="admin-curriculum">
+            <div className="admin-features-header">
+              <span>Curriculum (sections &amp; lessons)</span>
+              {isEdit && (
+                <button type="button" className="admin-btn admin-btn-small" onClick={addSection}>
+                  + Add section
+                </button>
+              )}
+            </div>
+
+            {!isEdit ? (
+              <p className="admin-muted">Save the course first, then reopen it to add curriculum.</p>
+            ) : (
+              <>
+                {sections.length === 0 && <p className="admin-muted">No sections yet.</p>}
+                {sections.map((section, si) => (
+                  <div key={si} className="admin-section-card">
+                    <div className="admin-section-row">
+                      <input
+                        className="admin-section-title"
+                        placeholder={`Section ${si + 1} title`}
+                        value={section.title}
+                        onChange={(e) => updateSectionTitle(si, e.target.value)}
+                      />
+                      <div className="admin-reorder">
+                        <button type="button" className="admin-btn admin-btn-small" onClick={() => moveSection(si, -1)} disabled={si === 0} aria-label="Move section up">↑</button>
+                        <button type="button" className="admin-btn admin-btn-small" onClick={() => moveSection(si, 1)} disabled={si === sections.length - 1} aria-label="Move section down">↓</button>
+                        <button type="button" className="admin-btn admin-btn-danger admin-btn-small" onClick={() => removeSection(si)}>Remove</button>
+                      </div>
+                    </div>
+
+                    {section.lessons.map((lesson, li) => (
+                      <div key={li} className="admin-lesson-card">
+                        <div className="admin-lesson-main">
+                          <input
+                            placeholder={`Lesson ${li + 1} title`}
+                            value={lesson.title}
+                            onChange={(e) => updateLesson(si, li, 'title', e.target.value)}
+                          />
+                          <input
+                            className="admin-lesson-duration"
+                            placeholder="Duration (e.g. 8:24)"
+                            value={lesson.duration}
+                            onChange={(e) => updateLesson(si, li, 'duration', e.target.value)}
+                          />
+                          <label className="admin-lesson-preview">
+                            <input
+                              type="checkbox"
+                              checked={lesson.isPreview}
+                              onChange={(e) => updateLesson(si, li, 'isPreview', e.target.checked)}
+                            />
+                            <span>Preview</span>
+                          </label>
+                          <div className="admin-reorder">
+                            <button type="button" className="admin-btn admin-btn-small" onClick={() => moveLesson(si, li, -1)} disabled={li === 0} aria-label="Move lesson up">↑</button>
+                            <button type="button" className="admin-btn admin-btn-small" onClick={() => moveLesson(si, li, 1)} disabled={li === section.lessons.length - 1} aria-label="Move lesson down">↓</button>
+                            <button type="button" className="admin-btn admin-btn-danger admin-btn-small" onClick={() => removeLesson(si, li)}>✕</button>
+                          </div>
+                        </div>
+                        <div className="admin-lesson-video">
+                          <input
+                            placeholder="Video provider (optional)"
+                            value={lesson.video.provider}
+                            onChange={(e) => updateLessonVideo(si, li, 'provider', e.target.value)}
+                          />
+                          <input
+                            placeholder="Playback ID (optional)"
+                            value={lesson.video.playbackId}
+                            onChange={(e) => updateLessonVideo(si, li, 'playbackId', e.target.value)}
+                          />
+                        </div>
+                      </div>
+                    ))}
+
+                    <button type="button" className="admin-btn admin-btn-small admin-btn-ghost" onClick={() => addLesson(si)}>
+                      + Add lesson
+                    </button>
+                  </div>
+                ))}
+
+                <div className="admin-curriculum-actions">
+                  {curriculumMsg && <span className="admin-muted">{curriculumMsg}</span>}
+                  <button type="button" className="admin-btn admin-btn-primary admin-btn-small" onClick={saveCurriculum} disabled={savingCurriculum}>
+                    {savingCurriculum ? 'Saving…' : 'Save Curriculum'}
+                  </button>
+                </div>
+              </>
+            )}
           </div>
 
           {error && <p className="admin-error">{error}</p>}

@@ -1,5 +1,28 @@
 const mongoose = require('mongoose');
 
+// ---- Curriculum (Phase 7, Slice 1) ----
+// A lesson stores VIDEO METADATA ONLY — never a binary. `video.playbackId`/
+// `assetId` are provider handles (e.g. Mux, wired in a later slice) and are
+// treated as PROTECTED: public course reads strip them for non-preview lessons
+// (see courseService.toPublicCourse). Subdocuments get a stable `_id`.
+const lessonSchema = new mongoose.Schema({
+  title: { type: String, required: true, trim: true },
+  order: { type: Number, default: 0 },
+  duration: String, // display string, e.g. "8:24" or "12 min"
+  isPreview: { type: Boolean, default: false }, // free preview → playable pre-purchase
+  video: {
+    provider: String,   // e.g. 'mux' (populated in a later slice)
+    assetId: String,    // protected
+    playbackId: String, // protected
+  },
+});
+
+const sectionSchema = new mongoose.Schema({
+  title: { type: String, required: true, trim: true },
+  order: { type: Number, default: 0 },
+  lessons: [lessonSchema],
+});
+
 const courseSchema = new mongoose.Schema({
   // Stable, unique identifier used for idempotent seeding (upsert key).
   slug: {
@@ -34,6 +57,9 @@ const courseSchema = new mongoose.Schema({
       description: String,
     },
   ],
+  // Ordered curriculum. Additive & backward-compatible (existing courses have
+  // an empty array). Video metadata only — no binaries stored in MongoDB.
+  sections: { type: [sectionSchema], default: [] },
 });
 
 module.exports = mongoose.model('Course', courseSchema);

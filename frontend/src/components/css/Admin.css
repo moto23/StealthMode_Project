@@ -172,6 +172,70 @@
   color: var(--sm-ink);
 }
 
+/* ---- Curriculum editor (Phase 7, Slice 1) ---- */
+.admin-curriculum { margin-top: 18px; border-top: 1px solid var(--sm-border); padding-top: 16px; }
+.admin-section-card {
+  border: 1px solid var(--sm-glass-border);
+  border-radius: var(--sm-radius-sm);
+  background: rgba(20, 11, 7, 0.4);
+  padding: 12px;
+  margin-bottom: 12px;
+}
+.admin-section-row { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; }
+.admin-section-title {
+  flex: 1;
+  padding: 8px 10px;
+  border: 1px solid var(--sm-border);
+  border-radius: var(--sm-radius-sm);
+  background: rgba(20, 11, 7, 0.6);
+  color: var(--sm-ink);
+  font-size: 0.92rem;
+  font-family: inherit;
+  font-weight: 600;
+}
+.admin-reorder { display: inline-flex; gap: 6px; flex-shrink: 0; }
+
+.admin-lesson-card {
+  border: 1px solid var(--sm-border);
+  border-radius: var(--sm-radius-sm);
+  padding: 10px;
+  margin-bottom: 8px;
+  background: rgba(20, 11, 7, 0.3);
+}
+.admin-lesson-main { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.admin-lesson-main > input {
+  flex: 1;
+  min-width: 140px;
+  padding: 7px 10px;
+  border: 1px solid var(--sm-border);
+  border-radius: var(--sm-radius-sm);
+  background: rgba(20, 11, 7, 0.6);
+  color: var(--sm-ink);
+  font-size: 0.88rem;
+  font-family: inherit;
+}
+.admin-lesson-duration { flex: 0 0 130px !important; min-width: 110px !important; }
+.admin-lesson-preview { display: inline-flex; align-items: center; gap: 6px; font-size: 0.82rem; color: var(--sm-ink-2); white-space: nowrap; }
+.admin-lesson-preview input { width: auto; }
+.admin-lesson-video { display: flex; gap: 8px; margin-top: 8px; }
+.admin-lesson-video input {
+  flex: 1;
+  min-width: 0;
+  padding: 7px 10px;
+  border: 1px solid var(--sm-border);
+  border-radius: var(--sm-radius-sm);
+  background: rgba(20, 11, 7, 0.6);
+  color: var(--sm-ink);
+  font-size: 0.85rem;
+  font-family: inherit;
+}
+.admin-curriculum-actions { display: flex; align-items: center; justify-content: flex-end; gap: 12px; margin-top: 6px; }
+
+@media (max-width: 640px) {
+  .admin-lesson-main > input { flex-basis: 100%; }
+  .admin-lesson-video { flex-direction: column; }
+}
+
 .admin-modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
 
 @media (max-width: 640px) {

@@ -30,3 +30,16 @@ exports.deleteCourse = asyncHandler(async (req, res) => {
   await courseService.deleteCourse(req.params.id);
   res.json({ success: true, message: 'Course deleted' });
 });
+
+// GET /api/courses/:id/curriculum  (admin) — FULL curriculum for the editor,
+// including protected video handles (never exposed on public routes).
+exports.getCurriculum = asyncHandler(async (req, res) => {
+  const data = await courseService.getCurriculum(req.params.id);
+  res.json({ success: true, data });
+});
+
+// PUT /api/courses/:id/curriculum  (admin) — bulk-replace sections[]/lessons[].
+exports.updateCurriculum = asyncHandler(async (req, res) => {
+  const data = await courseService.replaceCurriculum(req.params.id, req.body.sections);
+  res.json({ success: true, data });
+});

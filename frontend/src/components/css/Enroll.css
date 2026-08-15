@@ -89,6 +89,55 @@
 }
 .cd-feature-banner img { width: 100%; height: auto; display: block; }
 
+/* ---- Curriculum (read-only, Phase 7 Slice 1) ---- */
+.cd-curriculum { margin-top: 28px; }
+.cd-curriculum h2 { font-size: 22px; color: var(--sm-ink); margin: 0 0 4px; }
+.cd-curriculum-meta { margin: 0 0 16px; font-size: 13px; color: var(--sm-muted); }
+
+.cd-sections { display: flex; flex-direction: column; gap: 12px; }
+.cd-section {
+  border: 1px solid var(--sm-glass-border);
+  border-radius: var(--sm-radius);
+  background: var(--sm-glass-bg);
+  overflow: hidden;
+}
+@supports not ((backdrop-filter: blur(2px)) or (-webkit-backdrop-filter: blur(2px))) {
+  .cd-section { background: var(--sm-glass-strong); }
+}
+.cd-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--sm-glass-border);
+}
+.cd-section-head h3 { margin: 0; font-size: 15px; color: var(--sm-ink); }
+.cd-section-count { font-size: 12px; color: var(--sm-muted); white-space: nowrap; }
+
+.cd-lessons { list-style: none; margin: 0; padding: 6px 0; }
+.cd-lesson {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 16px;
+  font-size: 14px;
+  color: var(--sm-ink-2);
+}
+.cd-lesson-icon { color: var(--sm-amber); font-size: 11px; flex: 0 0 auto; }
+.cd-lesson-title { flex: 1; min-width: 0; }
+.cd-lesson-preview {
+  flex: 0 0 auto;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--sm-amber-2);
+  background: var(--sm-chip-bg);
+  border: 1px solid var(--sm-glass-border);
+  padding: 2px 8px;
+  border-radius: var(--sm-radius-pill);
+}
+.cd-lesson-duration { flex: 0 0 auto; font-size: 12px; color: var(--sm-muted-2); white-space: nowrap; }
+
 /* ---- Sticky purchase panel ---- */
 .cd-purchase { position: sticky; top: 84px; }
 .cd-purchase-card {

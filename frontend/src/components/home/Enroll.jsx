@@ -176,6 +176,41 @@ function Enroll() {
             </div>
           )}
 
+          {Array.isArray(course.sections) && course.sections.length > 0 && (
+            <div className="cd-curriculum">
+              <h2>Course content</h2>
+              <p className="cd-curriculum-meta">
+                {course.sections.length} {course.sections.length === 1 ? 'section' : 'sections'}
+                {' • '}
+                {course.sections.reduce((n, s) => n + (s.lessons ? s.lessons.length : 0), 0)} lessons
+              </p>
+              <div className="cd-sections">
+                {course.sections.map((section) => (
+                  <div key={section._id} className="cd-section">
+                    <div className="cd-section-head">
+                      <h3>{section.title}</h3>
+                      <span className="cd-section-count">
+                        {(section.lessons ? section.lessons.length : 0)} lessons
+                      </span>
+                    </div>
+                    {Array.isArray(section.lessons) && section.lessons.length > 0 && (
+                      <ul className="cd-lessons">
+                        {section.lessons.map((lesson) => (
+                          <li key={lesson._id} className="cd-lesson">
+                            <span className="cd-lesson-icon" aria-hidden="true">▷</span>
+                            <span className="cd-lesson-title">{lesson.title}</span>
+                            {lesson.isPreview && <span className="cd-lesson-preview">Preview</span>}
+                            {lesson.duration && <span className="cd-lesson-duration">{lesson.duration}</span>}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {Array.isArray(course.features) && course.features.length > 0 && (
             <div className="cd-features">
               <h2>What this course covers</h2>
