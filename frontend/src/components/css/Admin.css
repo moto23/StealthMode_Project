@@ -302,3 +302,34 @@
 }
 .admin-status-badge.published { color: var(--sm-success); background: rgba(143, 208, 160, 0.14); }
 .admin-status-badge.draft { color: var(--sm-warning); background: rgba(227, 180, 90, 0.14); }
+
+/* ---- Phase 8.5: auto content seeding ---- */
+.admin-seed {
+  border: 1px dashed var(--sm-glass-border);
+  border-radius: var(--sm-radius-sm);
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  background: rgba(227, 169, 74, 0.05);
+}
+.admin-seed-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.admin-seed-note { margin: 8px 0 0; font-size: 12px; }
+.admin-seed-report { margin-top: 10px; font-size: 13px; color: var(--sm-ink-2); }
+.admin-seed-warn { color: var(--sm-warning); font-weight: 700; }
+.admin-seed-missing { margin: 8px 0 0; padding-left: 18px; }
+.admin-seed-missing li { font-size: 12px; color: var(--sm-warning); margin-top: 2px; }
+
+.admin-auto-badge {
+  flex: 0 0 auto;
+  align-self: center;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--sm-amber-2);
+  background: var(--sm-chip-bg);
+  padding: 2px 7px;
+  border-radius: var(--sm-radius-pill);
+}
+.admin-lesson-card.is-generated { border-left: 2px solid rgba(227, 169, 74, 0.4); }
+.admin-video-link { font-size: 12px; color: var(--sm-amber-2); text-decoration: none; }
+.admin-video-link:hover { text-decoration: underline; }

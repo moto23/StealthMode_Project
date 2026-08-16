@@ -24,14 +24,32 @@ const lessonSchema = new mongoose.Schema({
   order: { type: Number, default: 0 },
   duration: String, // display string, e.g. "8:24" or "12 min"
   isPreview: { type: Boolean, default: false }, // free preview → playable pre-purchase
+  // Phase 8.5 (auto-seeding): mark auto-generated lessons so admins can review
+  // and so regeneration is idempotent (matched by `autoKey`). Manual lessons
+  // have `generated` unset and are preserved across regeneration.
+  description: String,
+  generated: Boolean,
+  autoKey: String,
   video: {
-    provider: String,        // e.g. 'mux'
+    // provider: 'mux' for protected Mux playback; an external provider name
+    // (e.g. 'youtube') for a LEGALLY EMBEDDABLE third-party embed (never
+    // rehosted). The two are mutually exclusive per lesson.
+    provider: String,
+    // --- Mux (protected) ---
     assetId: String,         // PROTECTED — Mux asset id, server-side only
     playbackId: String,      // Mux (signed) playback id
     uploadId: String,        // PROTECTED — Mux direct-upload id (status polling)
     status: String,          // 'preparing' | 'ready' | 'errored'
     policy: String,          // 'signed' (default for new uploads) | 'public'
-    duration: Number,        // seconds, from Mux (optional)
+    // --- External embeddable source (Phase 8.5) ---
+    sourceId: String,        // provider video id (e.g. YouTube videoId)
+    url: String,             // canonical source URL
+    embedUrl: String,        // official iframe embed URL (no rehosting)
+    embeddable: Boolean,     // verified embeddable by the provider
+    license: String,         // e.g. 'creativeCommon' | 'youtube'
+    sourceTitle: String,     // real title from the provider (never invented)
+    // --- Shared ---
+    duration: Number,        // seconds, from the provider/Mux (optional)
     captions: { type: [captionTrackSchema], default: undefined },
   },
 });
@@ -39,6 +57,9 @@ const lessonSchema = new mongoose.Schema({
 const sectionSchema = new mongoose.Schema({
   title: { type: String, required: true, trim: true },
   order: { type: Number, default: 0 },
+  // Phase 8.5: stable key for idempotent regeneration + auto-generated marker.
+  autoKey: String,
+  generated: Boolean,
   lessons: [lessonSchema],
 });
 

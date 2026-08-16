@@ -163,7 +163,30 @@ const getLessonPlayback = async (userId, courseId, lessonId) => {
     await assertEnrolled(userId, courseId);
   }
 
-  const playbackId = lesson.video && lesson.video.playbackId;
+  const video = lesson.video || {};
+
+  // Phase 8.5: external embeddable source (e.g. YouTube). No signed token — the
+  // browser loads the provider's official iframe. Still gated (auth + preview/
+  // enrollment above) so protected embeds aren't exposed to non-enrolled users.
+  // The Mux signed-playback path below is untouched.
+  if (video.provider && video.provider !== 'mux' && (video.embedUrl || video.sourceId)) {
+    if (!video.embeddable || !video.embedUrl) {
+      throw ApiError.notFound('This lesson video is not available');
+    }
+    return {
+      provider: video.provider,
+      embedUrl: video.embedUrl,
+      sourceId: video.sourceId,
+      url: video.url,
+      isPreview: Boolean(lesson.isPreview),
+      lessonId: String(lesson._id),
+      title: lesson.title,
+      captions: [],
+      hasTranscript: false,
+    };
+  }
+
+  const playbackId = video.playbackId;
   if (!playbackId) {
     throw ApiError.notFound('This lesson has no video yet');
   }

@@ -45,8 +45,9 @@ function LessonPlayer({ courseId, lessonId, title }) {
   const refreshTimer = useRef(null);
   const refreshingRef = useRef(false);
 
-  const [status, setStatus] = useState('loading'); // loading | ready | novideo | locked | error
+  const [status, setStatus] = useState('loading'); // loading | ready | external | novideo | locked | error
   const [playback, setPlayback] = useState(null); // { playbackId, token, expiresIn }
+  const [embed, setEmbed] = useState(null); // { embedUrl } for external providers
   const [playerReady, setPlayerReady] = useState(false);
 
   // Load the player script once.
@@ -75,6 +76,14 @@ function LessonPlayer({ courseId, lessonId, title }) {
       if (!silent) setStatus('loading');
       try {
         const data = await getLessonPlayback(courseId, lessonId);
+        // Phase 8.5: external embeddable provider (e.g. YouTube) — no token,
+        // no refresh; render the provider's official iframe.
+        if (data.provider && data.provider !== 'mux' && data.embedUrl) {
+          clearRefresh();
+          setEmbed({ embedUrl: data.embedUrl });
+          setStatus('external');
+          return;
+        }
         setPlayback({ playbackId: data.playbackId, token: data.token, expiresIn: data.expiresIn });
         setStatus('ready');
         // Schedule the next refresh from the token's own lifetime.
@@ -100,6 +109,7 @@ function LessonPlayer({ courseId, lessonId, title }) {
   // Re-fetch whenever the lesson changes; clean up the timer on unmount.
   useEffect(() => {
     setPlayback(null);
+    setEmbed(null);
     fetchToken(false);
     return clearRefresh;
   }, [fetchToken]);
@@ -157,6 +167,22 @@ function LessonPlayer({ courseId, lessonId, title }) {
           <FaLock aria-hidden="true" />
           <p>Enroll in this course to watch this lesson.</p>
         </div>
+      </div>
+    );
+  }
+
+  if (status === 'external' && embed) {
+    // Legally embeddable third-party video via the provider's official iframe
+    // (never rehosted). No signed token is involved.
+    return (
+      <div className="learn-video learn-video-live learn-video-embed">
+        <iframe
+          title={title || 'Lesson video'}
+          src={embed.embedUrl}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowFullScreen
+          loading="lazy"
+        />
       </div>
     );
   }

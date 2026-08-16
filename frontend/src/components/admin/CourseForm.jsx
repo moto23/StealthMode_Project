@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import api from '../../services/api';
 import LessonVideoManager from './LessonVideoManager';
+import { autoGenerateCourse } from '../../services/adminSeeding';
 
 const LEVELS = ['Beginner', 'Intermediate', 'Advanced'];
 
@@ -76,41 +77,85 @@ function CourseForm({ course, onClose, onSaved }) {
   const [curriculumMsg, setCurriculumMsg] = useState('');
   const [savingCurriculum, setSavingCurriculum] = useState(false);
 
+  // ---- Auto content seeding (Phase 8.5) ----
+  const [generating, setGenerating] = useState(false);
+  const [seedReport, setSeedReport] = useState(null);
+  const [seedError, setSeedError] = useState('');
+
+  // Map an admin curriculum payload (full video handles) into editor state.
+  const mapLoaded = (data) =>
+    (data?.sections || []).map((s) => ({
+      title: s.title || '',
+      autoKey: s.autoKey,
+      generated: s.generated,
+      lessons: (s.lessons || []).map((l) => ({
+        title: l.title || '',
+        duration: l.duration || '',
+        isPreview: Boolean(l.isPreview),
+        description: l.description || '',
+        generated: l.generated,
+        autoKey: l.autoKey,
+        video:
+          l.video && (l.video.playbackId || l.video.assetId || l.video.embedUrl || l.video.sourceId)
+            ? {
+                provider: l.video.provider || 'mux',
+                assetId: l.video.assetId,
+                playbackId: l.video.playbackId,
+                uploadId: l.video.uploadId,
+                status: l.video.status,
+                policy: l.video.policy,
+                sourceId: l.video.sourceId,
+                url: l.video.url,
+                embedUrl: l.video.embedUrl,
+                embeddable: l.video.embeddable,
+                license: l.video.license,
+                sourceTitle: l.video.sourceTitle,
+                duration: l.video.duration,
+                captions: l.video.captions,
+              }
+            : null,
+      })),
+    }));
+
+  const loadCurriculum = useCallback(async () => {
+    if (!isEdit) return;
+    try {
+      const res = await api.get(`/api/courses/${course._id}/curriculum`);
+      setSections(mapLoaded(res.data?.data));
+    } catch {
+      /* leave existing state */
+    }
+  }, [isEdit, course]);
+
   useEffect(() => {
     let active = true;
     if (!isEdit) return undefined;
     api
       .get(`/api/courses/${course._id}/curriculum`)
       .then((res) => {
-        if (!active) return;
-        const loaded = (res.data?.data?.sections || []).map((s) => ({
-          title: s.title || '',
-          lessons: (s.lessons || []).map((l) => ({
-            title: l.title || '',
-            duration: l.duration || '',
-            isPreview: Boolean(l.isPreview),
-            video:
-              l.video && (l.video.playbackId || l.video.assetId)
-                ? {
-                    provider: l.video.provider || 'mux',
-                    assetId: l.video.assetId,
-                    playbackId: l.video.playbackId,
-                    uploadId: l.video.uploadId,
-                    status: l.video.status,
-                    policy: l.video.policy || 'signed',
-                    duration: l.video.duration,
-                    captions: l.video.captions,
-                  }
-                : null,
-          })),
-        }));
-        setSections(loaded);
+        if (active) setSections(mapLoaded(res.data?.data));
       })
       .catch(() => {});
     return () => {
       active = false;
     };
   }, [isEdit, course]);
+
+  const runAutoGenerate = async (mode) => {
+    if (generating) return;
+    setGenerating(true);
+    setSeedError('');
+    setSeedReport(null);
+    try {
+      const { report } = await autoGenerateCourse(course._id, mode);
+      setSeedReport(report);
+      await loadCurriculum(); // reflect the generated curriculum in the editor
+    } catch (err) {
+      setSeedError(err.response?.data?.error || 'Auto-generation failed');
+    } finally {
+      setGenerating(false);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -179,14 +224,31 @@ function CourseForm({ course, onClose, onSaved }) {
       // only when a real video is attached; omit it entirely otherwise.
       const payloadSections = sections.map((s) => ({
         title: s.title.trim(),
+        autoKey: s.autoKey || undefined,
+        generated: s.generated || undefined,
         lessons: s.lessons.map((l) => {
           const lesson = {
             title: l.title.trim(),
-            duration: l.duration.trim() || undefined,
+            duration: (l.duration || '').trim() || undefined,
             isPreview: Boolean(l.isPreview),
+            description: l.description || undefined,
+            generated: l.generated || undefined,
+            autoKey: l.autoKey || undefined,
           };
           const v = l.video;
-          if (v && (v.playbackId || v.assetId)) {
+          const isExternal = v && v.provider && v.provider !== 'mux' && (v.embedUrl || v.sourceId);
+          if (isExternal) {
+            lesson.video = {
+              provider: v.provider,
+              sourceId: v.sourceId || undefined,
+              url: v.url || undefined,
+              embedUrl: v.embedUrl || undefined,
+              embeddable: v.embeddable != null ? v.embeddable : undefined,
+              license: v.license || undefined,
+              sourceTitle: v.sourceTitle || undefined,
+              duration: v.duration != null ? v.duration : undefined,
+            };
+          } else if (v && (v.playbackId || v.assetId)) {
             lesson.video = {
               provider: v.provider || 'mux',
               assetId: v.assetId || undefined,
@@ -385,6 +447,55 @@ function CourseForm({ course, onClose, onSaved }) {
               <p className="admin-muted">Save the course first, then reopen it to add curriculum.</p>
             ) : (
               <>
+                {/* Auto content seeding (Phase 8.5) */}
+                <div className="admin-seed">
+                  <div className="admin-seed-actions">
+                    <button
+                      type="button"
+                      className="admin-btn admin-btn-primary admin-btn-small"
+                      onClick={() => runAutoGenerate('fill')}
+                      disabled={generating}
+                    >
+                      {generating ? 'Generating…' : sections.length ? 'Regenerate (fill gaps)' : 'Auto-generate content'}
+                    </button>
+                    {sections.length > 0 && (
+                      <button
+                        type="button"
+                        className="admin-btn admin-btn-small admin-btn-ghost"
+                        onClick={() => runAutoGenerate('replace')}
+                        disabled={generating}
+                      >
+                        Replace curriculum
+                      </button>
+                    )}
+                  </div>
+                  <p className="admin-muted admin-seed-note">
+                    Builds sections &amp; lessons from this course’s title/category and attaches
+                    legally embeddable videos. Auto-generated items are marked “Auto” — review before publishing.
+                  </p>
+                  {seedError && <p className="admin-error">{seedError}</p>}
+                  {seedReport && (
+                    <div className="admin-seed-report">
+                      <span>
+                        {seedReport.sectionCount} sections · {seedReport.lessonCount} lessons ·{' '}
+                        {seedReport.withVideoCount} with video
+                        {!seedReport.providerConfigured && (
+                          <span className="admin-seed-warn"> · video provider not configured</span>
+                        )}
+                      </span>
+                      {seedReport.missingVideo.length > 0 && (
+                        <ul className="admin-seed-missing">
+                          {seedReport.missingVideo.map((m, i) => (
+                            <li key={i}>
+                              ⚠ {m.title} — {m.status === 'not-embeddable' ? 'not embeddable' : 'no video found'}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  )}
+                </div>
+
                 {sections.length === 0 && <p className="admin-muted">No sections yet.</p>}
                 {sections.map((section, si) => (
                   <div key={si} className="admin-section-card">
@@ -403,8 +514,9 @@ function CourseForm({ course, onClose, onSaved }) {
                     </div>
 
                     {section.lessons.map((lesson, li) => (
-                      <div key={li} className="admin-lesson-card">
+                      <div key={li} className={`admin-lesson-card${lesson.generated ? ' is-generated' : ''}`}>
                         <div className="admin-lesson-main">
+                          {lesson.generated && <span className="admin-auto-badge" title="Auto-generated">Auto</span>}
                           <input
                             placeholder={`Lesson ${li + 1} title`}
                             value={lesson.title}

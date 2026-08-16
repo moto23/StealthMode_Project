@@ -37,14 +37,33 @@ const validateOriginalPrice = (originalPrice) => {
   }
 };
 
-// ---- Curriculum helpers (Phase 7, Slice 1; extended Phase 8) ----
+// ---- Curriculum helpers (Phase 7, Slice 1; extended Phase 8 / 8.5) ----
 
 const byOrder = (a, b) => (Number(a.order) || 0) - (Number(b.order) || 0);
+
+// Approved external (embeddable) video providers. Anything else is rejected by
+// the publish gate. Kept tiny and explicit so we never store arbitrary embeds.
+const ALLOWED_EXTERNAL_PROVIDERS = ['youtube'];
+
+const isExternalVideo = (v) =>
+  Boolean(v && v.provider && v.provider !== 'mux' && (v.sourceId || v.embedUrl || v.url));
+
+// A lesson video counts as "valid" (used by idempotent seeding to decide
+// whether to (re)fill) when it is a usable Mux asset OR a verified embeddable
+// external source.
+const hasValidVideo = (v) => {
+  if (!v) return false;
+  if (isExternalVideo(v)) {
+    return Boolean(v.embeddable && v.embedUrl && ALLOWED_EXTERNAL_PROVIDERS.includes(v.provider));
+  }
+  return Boolean(v.playbackId && v.status !== 'errored');
+};
 
 // Normalize an incoming lesson video object, keeping only recognized fields and
 // only when present. Backward compatible with Slice 1 (provider/assetId/
 // playbackId) and additive for Phase 8 (uploadId/status/policy/duration/
-// captions). Returns undefined when there is nothing to store.
+// captions) and Phase 8.5 (external embed: sourceId/url/embedUrl/embeddable/
+// license/sourceTitle). Returns undefined when there is nothing to store.
 const normalizeVideo = (video) => {
   if (!video || typeof video !== 'object') return undefined;
   const out = {};
@@ -54,6 +73,12 @@ const normalizeVideo = (video) => {
   if (video.uploadId != null) out.uploadId = String(video.uploadId);
   if (video.status != null) out.status = String(video.status);
   if (video.policy != null) out.policy = String(video.policy);
+  if (video.sourceId != null) out.sourceId = String(video.sourceId);
+  if (video.url != null) out.url = String(video.url);
+  if (video.embedUrl != null) out.embedUrl = String(video.embedUrl);
+  if (video.embeddable != null) out.embeddable = Boolean(video.embeddable);
+  if (video.license != null) out.license = String(video.license);
+  if (video.sourceTitle != null) out.sourceTitle = String(video.sourceTitle);
   if (video.duration != null && !Number.isNaN(Number(video.duration))) {
     out.duration = Number(video.duration);
   }
@@ -86,20 +111,33 @@ const toPublicCourse = (course) => {
       .map((lesson) => {
         const safe = { ...lesson };
         if (lesson.isPreview && lesson.video) {
-          // Preview: expose ONLY what a client needs to play (inert without a
-          // signed token). Strip protected handles (assetId/uploadId) and
-          // internal caption ids; surface caption availability as a boolean.
           const v = lesson.video;
-          safe.video = {
-            provider: v.provider,
-            playbackId: v.playbackId,
-            policy: v.policy,
-          };
-          if (Array.isArray(v.captions)) {
-            safe.video.hasCaptions = v.captions.some((c) => c.status === 'ready');
+          if (isExternalVideo(v)) {
+            // Preview external embed: the embed URL/id are not secret, but we
+            // only expose them for preview lessons (protected embeds stay gated
+            // behind the authorized playback endpoint, preserving paid access).
+            safe.video = {
+              provider: v.provider,
+              sourceId: v.sourceId,
+              url: v.url,
+              embedUrl: v.embedUrl,
+              embeddable: v.embeddable,
+              license: v.license,
+            };
+          } else {
+            // Preview Mux: expose ONLY what a client needs to play (inert
+            // without a signed token). Strip protected handles + caption ids.
+            safe.video = {
+              provider: v.provider,
+              playbackId: v.playbackId,
+              policy: v.policy,
+            };
+            if (Array.isArray(v.captions)) {
+              safe.video.hasCaptions = v.captions.some((c) => c.status === 'ready');
+            }
           }
         } else {
-          // Protected lessons never expose any video handle.
+          // Protected lessons never expose any video handle (Mux or external).
           delete safe.video;
         }
         return safe;
@@ -136,10 +174,19 @@ const validateCurriculum = (sections) => {
         order: li,
         duration: lesson.duration != null ? String(lesson.duration) : undefined,
         isPreview: Boolean(lesson.isPreview),
+        description: lesson.description != null ? String(lesson.description) : undefined,
+        generated: lesson.generated != null ? Boolean(lesson.generated) : undefined,
+        autoKey: lesson.autoKey != null ? String(lesson.autoKey) : undefined,
         video: normalizeVideo(lesson.video),
       };
     });
-    return { title: String(section.title).trim(), order: si, lessons };
+    return {
+      title: String(section.title).trim(),
+      order: si,
+      autoKey: section.autoKey != null ? String(section.autoKey) : undefined,
+      generated: section.generated != null ? Boolean(section.generated) : undefined,
+      lessons,
+    };
   });
 };
 
@@ -229,7 +276,19 @@ const getPublishIssues = (course) => {
       issues.push(`Lesson ${i + 1} is missing a title.`);
     }
     const v = l.video;
-    if (v && (v.assetId || v.uploadId || v.playbackId)) {
+    if (isExternalVideo(v)) {
+      // External embeddable source — must be an approved provider and verified
+      // embeddable with an embed URL (a broken / non-embeddable reference).
+      if (!ALLOWED_EXTERNAL_PROVIDERS.includes(v.provider)) {
+        issues.push(`${label} uses an unsupported video provider.`);
+      }
+      if (!v.embeddable) {
+        issues.push(`${label} video is not cleared for embedding.`);
+      }
+      if (!v.embedUrl) {
+        issues.push(`${label} external video reference is broken (no embed URL).`);
+      }
+    } else if (v && (v.assetId || v.uploadId || v.playbackId)) {
       if (v.status && v.status !== 'ready') {
         issues.push(
           v.status === 'errored'
@@ -310,4 +369,8 @@ module.exports = {
   getPublishIssues,
   evaluatePublish,
   setStatus,
+  normalizeVideo,
+  hasValidVideo,
+  isExternalVideo,
+  ALLOWED_EXTERNAL_PROVIDERS,
 };

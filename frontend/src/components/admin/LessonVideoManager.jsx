@@ -11,7 +11,10 @@ import {
 // video metadata back to the parent via onChange. Also supports replace/remove
 // and requesting auto-generated captions. Signed playback is the server default.
 function LessonVideoManager({ courseId, video, onChange }) {
-  const attached = Boolean(video && video.playbackId);
+  const isExternal = Boolean(
+    video && video.provider && video.provider !== 'mux' && (video.embedUrl || video.sourceId)
+  );
+  const attached = Boolean(video && (video.playbackId || isExternal));
   const [phase, setPhase] = useState('idle'); // idle | creating | uploading | processing | error
   const [progress, setProgress] = useState(0);
   const [message, setMessage] = useState('');
@@ -175,20 +178,33 @@ function LessonVideoManager({ courseId, video, onChange }) {
       {/* Attached & not replacing */}
       {attached && !busy && !replacing && (
         <div className="admin-video-attached">
-          <div className="admin-video-row">
-            <span className={`admin-video-badge ${video.status === 'ready' ? 'ok' : 'warn'}`}>
-              {video.status === 'ready' ? '● Ready' : `● ${video.status || 'attached'}`}
-            </span>
-            <span className="admin-video-badge policy">{(video.policy || 'signed')} playback</span>
-            {readyCaption && <span className="admin-video-badge cc">CC {readyCaption.languageCode}</span>}
-            {!readyCaption && pendingCaption && <span className="admin-video-badge warn">CC processing</span>}
-          </div>
+          {isExternal ? (
+            <div className="admin-video-row">
+              <span className="admin-video-badge policy">{video.provider} embed</span>
+              <span className={`admin-video-badge ${video.embeddable ? 'ok' : 'warn'}`}>
+                {video.embeddable ? '● Embeddable' : '● Not embeddable'}
+              </span>
+              {video.license && <span className="admin-video-badge cc">{video.license}</span>}
+              {video.url && (
+                <a className="admin-video-link" href={video.url} target="_blank" rel="noreferrer noopener">source ↗</a>
+              )}
+            </div>
+          ) : (
+            <div className="admin-video-row">
+              <span className={`admin-video-badge ${video.status === 'ready' ? 'ok' : 'warn'}`}>
+                {video.status === 'ready' ? '● Ready' : `● ${video.status || 'attached'}`}
+              </span>
+              <span className="admin-video-badge policy">{(video.policy || 'signed')} playback</span>
+              {readyCaption && <span className="admin-video-badge cc">CC {readyCaption.languageCode}</span>}
+              {!readyCaption && pendingCaption && <span className="admin-video-badge warn">CC processing</span>}
+            </div>
+          )}
           <div className="admin-video-actions">
             <button type="button" className="admin-btn admin-btn-small" onClick={() => setReplacing(true)}>Replace</button>
-            {video.uploadId && (
+            {!isExternal && video.uploadId && (
               <button type="button" className="admin-btn admin-btn-small admin-btn-ghost" onClick={refreshStatus}>Refresh</button>
             )}
-            {video.assetId && !readyCaption && (
+            {!isExternal && video.assetId && !readyCaption && (
               <button type="button" className="admin-btn admin-btn-small admin-btn-ghost" onClick={generateCaptions}>Generate captions</button>
             )}
             <button type="button" className="admin-btn admin-btn-small admin-btn-danger" onClick={removeVideo}>Remove</button>

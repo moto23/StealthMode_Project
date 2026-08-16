@@ -15,6 +15,7 @@ const {
   requestVideoCaptions,
   publishCourse,
   unpublishCourse,
+  autoGenerateCourse,
 } = require('../controllers/courseController');
 const { enroll, getUserEnrollments } = require('../controllers/enrollmentController');
 const reviewController = require('../controllers/reviewController');
@@ -43,6 +44,9 @@ router.get('/:id/video/uploads/:uploadId', protect, requireRole('admin'), getVid
 router.post('/:id/video/assets/:assetId/captions', protect, requireRole('admin'), requestVideoCaptions);
 router.post('/:id/publish', protect, requireRole('admin'), publishCourse);
 router.post('/:id/unpublish', protect, requireRole('admin'), unpublishCourse);
+
+// Phase 8.5: auto-generate curriculum + embeddable videos from course metadata.
+router.post('/:id/auto-generate', protect, requireRole('admin'), autoGenerateCourse);
 
 // ---- Reviews & ratings (Phase 7, Slice 3) ----
 // Declared before the generic '/:id' read. '/reviews/me' is more specific than

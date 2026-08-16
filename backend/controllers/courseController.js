@@ -1,5 +1,6 @@
 const courseService = require('../services/courseService');
 const muxAssetService = require('../services/muxAssetService');
+const courseSeedingService = require('../services/courseSeedingService');
 const asyncHandler = require('../utils/asyncHandler');
 
 // GET /api/courses  (public) — backward-compatible raw array
@@ -91,5 +92,15 @@ exports.publishCourse = asyncHandler(async (req, res) => {
 // POST /api/courses/:id/unpublish  (admin) — return a course to draft.
 exports.unpublishCourse = asyncHandler(async (req, res) => {
   const data = await courseService.setStatus(req.params.id, 'draft');
+  res.json({ success: true, data });
+});
+
+// POST /api/courses/:id/auto-generate  (admin) — Phase 8.5: generate a
+// curriculum from the course's real metadata and attach LEGALLY EMBEDDABLE
+// videos. Body { mode: 'fill' | 'replace' } (default 'fill', idempotent).
+// Returns { report, curriculum }.
+exports.autoGenerateCourse = asyncHandler(async (req, res) => {
+  const mode = req.body && req.body.mode === 'replace' ? 'replace' : 'fill';
+  const data = await courseSeedingService.autoGenerate(req.params.id, { mode });
   res.json({ success: true, data });
 });
